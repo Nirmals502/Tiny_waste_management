@@ -1,0 +1,42 @@
+{
+  "project_info": {
+    "project_number": "195316594743",
+    "firebase_url": "https://tidywastemanagemet.firebaseio.com",
+    "project_id": "tidywastemanagemet",
+    "storage_bucket": "tidywastemanagemet.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:195316594743:android:e7f9207e8b8f5f95",
+        "android_client_info": {
+          "package_name": "mobile.tiny_waste_management"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "195316594743-9iesiq995anml2k8aqo8ecel9tfook0l.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyBkcZXH5xr8xp0E_sSNOSMs-bzEmG9QID4"
+        }
+      ],
+      "services": {
+        "analytics_service": {
+          "status": 1
+        },
+        "appinvite_service": {
+          "status": 1,
+          "other_platform_oauth_client": []
+        },
+        "ads_service": {
+          "status": 2
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

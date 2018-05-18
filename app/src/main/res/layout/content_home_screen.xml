@@ -1,0 +1,128 @@
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/crd"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:isScrollContainer="false"
+
+    android:theme="@style/AppTheme"
+
+    >
+
+    <android.support.design.widget.AppBarLayout
+        android:id="@+id/appbar"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:background="#0B813F"
+        android:fitsSystemWindows="true"
+        android:isScrollContainer="false"
+        android:theme="@style/AppTheme"
+        app:layout_behavior="mobile.tiny_waste_management.FixedAppBarLayoutBehavior"
+
+        >
+
+        <android.support.v7.widget.Toolbar
+            android:id="@+id/toolbar"
+            android:layout_width="match_parent"
+            android:layout_height="50dp"
+            android:background="#0B813F"
+            app:layout_scrollFlags="scroll|enterAlways"
+            app:popupTheme="@style/AppTheme" />
+
+        <RelativeLayout
+            android:id="@+id/Calender"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:animateLayoutChanges="true"
+            android:visibility="gone">
+
+            <EditText
+                android:id="@+id/editText3"
+                android:layout_width="match_parent"
+                android:layout_height="45dp"
+                android:layout_alignParentTop="true"
+                android:layout_centerHorizontal="true"
+                android:layout_marginLeft="10dp"
+                android:layout_marginRight="10dp"
+                android:layout_marginTop="5dp"
+                android:background="@android:drawable/editbox_background"
+                android:drawableLeft="@android:drawable/ic_menu_search"
+                android:drawablePadding="10dp"
+                android:ems="10"
+                android:hint="DO/Job number"
+                android:imeOptions="actionDone"
+                android:inputType="textPersonName"
+                android:textColor="#615d5d"
+                android:textColorHint="@android:color/darker_gray" />
+
+            <com.squareup.timessquare.CalendarPickerView
+                android:id="@+id/calendarView"
+                android:layout_width="wrap_content"
+                android:layout_height="300dp"
+                android:layout_below="@+id/editText3"
+                android:layout_centerHorizontal="true"
+                android:layout_marginTop="5dp"
+                android:choiceMode="multipleChoiceModal"
+                android:fadingEdge="horizontal"
+                android:nestedScrollingEnabled="true"
+                android:scrollbars="vertical"
+                android:selectedWeekBackgroundColor="@color/colorPrimaryDark"
+                android:verticalScrollbarPosition="left"
+                android:weekNumberColor="@color/colorPrimaryDark"
+                android:weekSeparatorLineColor="@color/colorPrimaryDark"
+                app:tsquare_dayTextColor="@color/colorPrimaryDark"
+                app:tsquare_dividerColor="@color/colorPrimaryDark"
+                app:tsquare_headerTextColor="@color/colorPrimaryDark" />
+
+            <Button
+                android:id="@+id/button3"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_below="@+id/calendarView"
+                android:layout_centerHorizontal="true"
+                android:layout_marginBottom="10dp"
+                android:layout_marginLeft="20dp"
+                android:layout_marginRight="20dp"
+                android:layout_marginTop="10dp"
+                android:background="@drawable/btn_round___"
+                android:text="Search" />
+        </RelativeLayout>
+
+        <RelativeLayout
+            android:id="@+id/rlv_date_holder"
+            android:layout_width="match_parent"
+            android:layout_height="40dp"
+            android:background="#dddbdb"
+            android:visibility="visible">
+
+            <TextView
+                android:id="@+id/date_"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_centerHorizontal="true"
+                android:layout_centerVertical="true"
+                android:layout_weight="1"
+                android:text="09 Feb 2018"
+                android:textAlignment="center"
+                android:textColor="@android:color/black" />
+        </RelativeLayout>
+
+        <android.support.design.widget.TabLayout
+            android:id="@+id/tabs"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="5dp"
+            android:background="#0B813F"
+            app:tabGravity="fill"
+            app:tabMode="scrollable" />
+
+    </android.support.design.widget.AppBarLayout>
+
+    <android.support.v4.view.ViewPager
+        android:id="@+id/viewpager"
+        android:layout_width="match_parent"
+        android:layout_height="560dp"
+        android:layout_below="@+id/appbar"
+        app:layout_behavior="@string/appbar_scrolling_view_behavior" />
+</RelativeLayout>

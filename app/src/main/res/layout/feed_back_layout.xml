@@ -1,0 +1,426 @@
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@android:color/white">
+
+    <Button
+        android:id="@+id/button2"
+        android:layout_width="336dp"
+        android:layout_height="wrap_content"
+        android:layout_alignParentBottom="true"
+        android:layout_centerHorizontal="true"
+        android:layout_marginBottom="11dp"
+        android:background="@drawable/btn_round"
+        android:text="Submit" />
+
+    <ScrollView
+        android:id="@+id/sv"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_alignParentStart="true"
+        android:layout_alignParentTop="true"
+        android:layout_marginBottom="80dp"
+        android:layout_marginRight="10dp"
+        android:layout_marginTop="50dp">
+
+        <RelativeLayout
+            android:id="@+id/rlv_container"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="50dp"
+            android:orientation="vertical">
+
+
+            <RelativeLayout
+                android:id="@+id/rlv_header"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_alignParentStart="true"
+                android:layout_alignParentTop="true">
+
+                <EditText
+                    android:id="@+id/editText11"
+                    android:layout_width="185dp"
+                    android:layout_height="wrap_content"
+                    android:layout_alignStart="@+id/editText10"
+                    android:layout_below="@+id/editText10"
+                    android:layout_marginTop="5dp"
+                    android:background="@android:drawable/editbox_background"
+                    android:ems="10"
+                    android:inputType="textPersonName"
+                    android:textColor="@color/colorPrimaryDark" />
+
+                <Spinner
+                    android:id="@+id/editText10"
+                    android:layout_width="185dp"
+                    android:layout_height="50dp"
+                    android:layout_alignStart="@+id/imageView7"
+                    android:layout_below="@+id/textView7"
+                    android:layout_marginTop="5dp"
+                    android:background="@android:drawable/btn_dropdown"
+                    android:ems="10"
+                    android:inputType="textPersonName"
+                    android:popupBackground="@color/colorPrimaryDark"
+                    app:layout_constraintEnd_toEndOf="parent" />
+
+                <TextView
+                    android:id="@+id/text_date_time"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_alignParentLeft="true"
+                    android:layout_alignParentStart="true"
+                    android:layout_below="@+id/rlv_line"
+                    android:layout_marginLeft="22dp"
+                    android:layout_marginStart="22dp"
+                    android:layout_marginTop="11dp"
+                    android:text="Job no:"
+                    android:textColor="@color/colorPrimaryDark" />
+
+                <TextView
+                    android:id="@+id/textView7"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_alignParentStart="true"
+                    android:layout_alignTop="@+id/text_date_time"
+                    android:layout_marginLeft="10dp"
+                    android:layout_marginStart="161dp"
+                    android:text="6238"
+                    android:textColor="@color/colorPrimaryDark" />
+
+                <TextView
+                    android:id="@+id/textView9"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_alignStart="@+id/text_date_time"
+                    android:layout_below="@+id/text_date_time"
+                    android:layout_marginTop="20dp"
+                    android:text="Bin/Waste type"
+                    android:textColor="@color/colorPrimaryDark" />
+
+                <TextView
+                    android:id="@+id/textView13"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_alignStart="@+id/text_date_time"
+                    android:layout_below="@+id/textView9"
+                    android:layout_marginTop="28dp"
+                    android:text="Bin number"
+                    android:textColor="@color/colorPrimaryDark" />
+
+                <TextView
+                    android:id="@+id/textView15"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_alignStart="@+id/text_date_time"
+                    android:layout_below="@+id/textView13"
+                    android:layout_marginTop="30dp"
+                    android:text="Additional Charges"
+                    android:textColor="@color/colorPrimaryDark" />
+
+                <Spinner
+                    android:id="@+id/editText5"
+                    android:layout_width="185dp"
+                    android:layout_height="50dp"
+                    android:layout_alignLeft="@+id/textView7"
+                    android:layout_alignStart="@+id/textView7"
+                    android:layout_below="@+id/ratingBar"
+                    android:layout_marginTop="10dp"
+                    android:background="@android:drawable/btn_dropdown"
+                    android:ems="10"
+                    android:inputType="textPersonName"
+                    android:popupBackground="@color/colorPrimaryDark" />
+
+                <ListView
+                    android:id="@+id/lv_aditional_charges"
+                    android:layout_width="156dp"
+                    android:layout_height="wrap_content"
+                    android:layout_alignStart="@+id/editText11"
+                    android:layout_below="@+id/editText11"
+                    android:layout_marginTop="18dp" />
+
+                <CheckBox
+                    android:id="@+id/checkBox2"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_alignStart="@+id/textView7"
+                    android:layout_below="@+id/textView13"
+                    android:layout_marginTop="25dp"
+                    android:buttonTint="@color/colorPrimaryDark"
+                    android:text="Additional charges 1"
+
+                    android:textColor="@color/colorPrimaryDark"
+                    android:visibility="invisible" />
+
+                <CheckBox
+                    android:id="@+id/checkBox3"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_alignStart="@+id/textView7"
+                    android:layout_below="@+id/checkBox2"
+                    android:buttonTint="@color/colorPrimaryDark"
+                    android:text="Additional charges 2"
+                    android:textColor="@color/colorPrimaryDark"
+                    android:visibility="invisible" />
+
+                <CheckBox
+                    android:id="@+id/checkBox4"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_alignStart="@+id/textView7"
+                    android:layout_below="@+id/checkBox3"
+                    android:buttonTint="@color/colorPrimaryDark"
+                    android:text="Additional charges 3"
+                    android:textColor="@color/colorPrimaryDark"
+                    android:visibility="invisible" />
+
+                <CheckBox
+                    android:id="@+id/checkBox5"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_alignStart="@+id/textView7"
+                    android:layout_below="@+id/checkBox4"
+                    android:buttonTint="@color/colorPrimaryDark"
+                    android:text="Additional charges 4"
+                    android:textColor="@color/colorPrimaryDark"
+                    android:visibility="invisible" />
+
+                <TextView
+                    android:id="@+id/textView28"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_alignStart="@+id/text_date_time"
+                    android:layout_below="@+id/contraint"
+                    android:text="Picture"
+                    android:textColor="@color/colorPrimaryDark" />
+
+                <ImageView
+                    android:id="@+id/imageView7"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_alignTop="@+id/textView28"
+                    android:layout_centerHorizontal="true"
+                    app:srcCompat="@android:drawable/ic_menu_camera" />
+
+                <ImageView
+                    android:id="@+id/imageView8"
+                    android:layout_width="110dp"
+                    android:layout_height="110dp"
+                    android:layout_alignEnd="@+id/checkBox2"
+                    android:layout_alignTop="@+id/imageView7"
+                    android:background="@android:color/darker_gray"
+                    android:scaleType="fitXY" />
+
+                <com.kyanogen.signatureview.SignatureView xmlns:sign="http://schemas.android.com/apk/res-auto"
+                    android:id="@+id/textView29"
+                    android:layout_width="322dp"
+                    android:layout_height="80dp"
+                    android:layout_alignStart="@+id/text_date_time"
+                    android:layout_below="@+id/imageView8"
+                    android:layout_marginTop="10dp"
+                    android:background="@color/colorPrimary"
+                    android:padding="10dp"
+                    sign:backgroundColor="@color/colorPrimary"
+
+                    sign:enableSignature="true"
+                    sign:penColor="#000000"
+                    sign:penSize="2dp" />
+
+                <TextView
+                    android:id="@+id/textView30"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_alignStart="@+id/text_date_time"
+                    android:layout_below="@+id/textView29"
+                    android:layout_marginTop="30dp"
+                    android:text="Signed By"
+                    android:textColor="@color/colorPrimaryDark" />
+
+                <EditText
+                    android:id="@+id/editText6"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_alignStart="@+id/textView7"
+                    android:layout_below="@+id/textView29"
+                    android:layout_marginTop="20dp"
+                    android:background="@android:drawable/editbox_background"
+                    android:ems="10"
+                    android:inputType="textPersonName"
+                    android:textColor="@color/colorPrimaryDark" />
+
+                <TextView
+                    android:id="@+id/textView31"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_alignStart="@+id/text_date_time"
+                    android:layout_below="@+id/textView30"
+                    android:layout_marginTop="35dp"
+                    android:text="Rating"
+                    android:textColor="@color/colorPrimaryDark" />
+
+                <RatingBar
+                    android:id="@+id/ratingBar"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_alignParentEnd="true"
+                    android:layout_below="@+id/editText6"
+                    android:layout_marginTop="10dp"
+                    android:numStars="5"
+                    android:progressBackgroundTint="@android:color/darker_gray"
+                    android:progressTint="#0b813f"
+                    android:rating="1"
+                    android:scaleX="0.5"
+                    android:scaleY="0.5"
+                    android:secondaryProgressTint="#0b813f" />
+
+
+                <TextView
+                    android:id="@+id/textView35"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_alignStart="@+id/text_date_time"
+                    android:layout_below="@+id/textView31"
+                    android:layout_marginTop="40dp"
+                    android:text="Driver's Notes"
+                    android:textColor="@color/colorPrimaryDark" />
+
+
+                <android.support.constraint.ConstraintLayout
+                    android:id="@+id/contraint"
+                    android:layout_width="match_parent"
+                    android:layout_height="160dp"
+                    android:layout_alignParentStart="true"
+                    android:layout_below="@+id/lv_aditional_charges"
+                    android:layout_marginTop="10dp">
+
+                    <TextView
+                        android:id="@+id/textView32"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_alignStart="@+id/text_date_time"
+                        android:layout_below="@+id/textView31"
+                        android:layout_marginLeft="22dp"
+                        android:layout_marginStart="22dp"
+                        android:layout_marginTop="8dp"
+                        android:text="Payment Collected"
+                        android:textColor="@color/colorPrimaryDark"
+                        app:layout_constraintStart_toStartOf="parent"
+                        app:layout_constraintTop_toTopOf="parent" />
+
+                    <TextView
+                        android:id="@+id/textView33"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+
+                        android:layout_alignEnd="@+id/textView15"
+                        android:layout_below="@+id/textView32"
+                        android:layout_marginLeft="22dp"
+                        android:layout_marginStart="22dp"
+                        android:layout_marginTop="30dp"
+                        android:text="Collection Method"
+                        android:textColor="@color/colorPrimaryDark"
+                        app:layout_constraintStart_toStartOf="parent"
+                        app:layout_constraintTop_toBottomOf="@+id/textView32" />
+
+                    <Spinner
+                        android:id="@+id/editText7"
+                        android:layout_width="185dp"
+                        android:layout_height="50dp"
+
+                        android:layout_below="@+id/textView32"
+                        android:layout_marginTop="10dp"
+                        android:background="@android:drawable/btn_dropdown"
+                        android:ems="10"
+                        android:inputType="textPersonName"
+                        android:popupBackground="@color/colorPrimaryDark"
+                        android:text="Name"
+                        app:layout_constraintStart_toStartOf="@+id/myRadioGroup"
+                        app:layout_constraintTop_toBottomOf="@+id/myRadioGroup"
+                        tools:ignore="MissingConstraints" />
+
+                    <TextView
+                        android:id="@+id/textView34"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_alignStart="@+id/text_date_time"
+                        android:layout_below="@+id/editText7"
+                        android:layout_marginLeft="22dp"
+                        android:layout_marginStart="22dp"
+                        android:layout_marginTop="30dp"
+                        android:text="Amount Collected"
+                        android:textColor="@color/colorPrimaryDark"
+                        app:layout_constraintStart_toStartOf="parent"
+                        app:layout_constraintTop_toBottomOf="@+id/textView33" />
+
+                    <EditText
+                        android:id="@+id/editText8"
+                        android:layout_width="185dp"
+                        android:layout_height="wrap_content"
+
+                        android:layout_below="@+id/editText7"
+                        android:layout_marginTop="10dp"
+                        android:background="@android:drawable/editbox_background"
+                        android:ems="10"
+                        android:inputType="number"
+                        android:textColor="@color/colorPrimaryDark"
+                        app:layout_constraintStart_toStartOf="@+id/editText7"
+                        app:layout_constraintTop_toBottomOf="@+id/editText7" />
+
+                    <RadioGroup
+                        android:id="@+id/myRadioGroup"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+
+                        android:layout_marginLeft="16dp"
+                        android:layout_marginStart="16dp"
+                        android:checkedButton="@+id/sound"
+                        android:orientation="horizontal"
+                        app:layout_constraintStart_toEndOf="@+id/textView32"
+                        tools:ignore="MissingConstraints"
+                        tools:layout_editor_absoluteY="0dp">
+
+                        <RadioButton
+                            android:id="@+id/sound"
+                            android:layout_width="wrap_content"
+                            android:layout_height="match_parent"
+                            android:buttonTint="#0b813f"
+                            android:text="Yes"
+                            android:textColor="@android:color/black" />
+
+                        <RadioButton
+                            android:id="@+id/vibration"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:buttonTint="#0b813f"
+                            android:text="No"
+                            android:textColor="@android:color/black" />
+
+                    </RadioGroup>
+
+
+                </android.support.constraint.ConstraintLayout>
+
+            </RelativeLayout>
+
+        </RelativeLayout>
+    </ScrollView>
+
+    <RelativeLayout
+        android:id="@+id/rlv"
+        android:layout_width="match_parent"
+        android:layout_height="50dp"
+        android:layout_alignParentTop="true"
+        android:layout_centerHorizontal="true"
+        android:background="@color/colorPrimaryDark">
+
+        <ImageView
+            android:id="@+id/imageView9"
+            android:layout_width="30dp"
+            android:layout_height="30dp"
+
+            android:layout_centerVertical="true"
+            app:srcCompat="@drawable/back" />
+    </RelativeLayout>
+
+</RelativeLayout>
