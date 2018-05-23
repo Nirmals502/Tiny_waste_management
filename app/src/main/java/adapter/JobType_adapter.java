@@ -18,7 +18,6 @@ import android.view.ViewGroup;
 import android.widget.BaseAdapter;
 import android.widget.Button;
 import android.widget.ImageView;
-import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -44,10 +43,8 @@ import java.util.Hashtable;
 import java.util.List;
 import java.util.Map;
 
-import Service_handler.HttpHandler;
 import Service_handler.ServiceHandler;
 import mobile.tiny_waste_management.Home_screen;
-import mobile.tiny_waste_management.Login_screen;
 import mobile.tiny_waste_management.MapsActivity;
 import mobile.tiny_waste_management.R;
 import mobile.tiny_waste_management.feedback;
@@ -120,7 +117,7 @@ public class JobType_adapter extends BaseAdapter {
 
             mViewHolder.txt_datetime.setText(subscriptionarray.get(position).get("JobDate"));
             mViewHolder.txt_jobtype.setText(subscriptionarray.get(position).get("jobtype"));
-            mViewHolder.amounttocollected.setText("Amount to be collected $" + subscriptionarray.get(position).get("Price"));
+
             mViewHolder.customername.setText(subscriptionarray.get(position).get("customer_name"));
             String additional_remarks = subscriptionarray.get(position).get("DriverRemark");
             if (additional_remarks.contentEquals("null")) {
@@ -138,11 +135,48 @@ public class JobType_adapter extends BaseAdapter {
             mViewHolder.img_location.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
+                    String Adress1 = jobs_steps.get(position).get("adress");
+                    String adrss = "";
+                    try {
+                        String[] separated = Adress1.split(",,");
+                        adrss = separated[0];
+
+                    } catch (java.lang.IndexOutOfBoundsException e) {
+                        e.printStackTrace();
+                        mViewHolder.rlv_step2.setVisibility(View.GONE);
+                    }
+                    SharedPreferences shared = context.getSharedPreferences("Tidy_waste_management", context.MODE_PRIVATE);
+                    SharedPreferences.Editor editor = shared.edit();
+                    editor.putString("Location", adrss);
+                    editor.commit();
                     Intent i1 = new Intent(context, MapsActivity.class);
                     context.startActivity(i1);
                     // finish();
                 }
             });
+            mViewHolder.img_location_2.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    String Adress1 = jobs_steps.get(position).get("adress");
+                    String adrss = "";
+                    try {
+                        String[] separated = Adress1.split(",,");
+                        adrss = separated[1];
+
+                    } catch (java.lang.IndexOutOfBoundsException e) {
+                        e.printStackTrace();
+                        mViewHolder.rlv_step2.setVisibility(View.GONE);
+                    }
+                    SharedPreferences shared = context.getSharedPreferences("Tidy_waste_management", context.MODE_PRIVATE);
+                    SharedPreferences.Editor editor = shared.edit();
+                    editor.putString("Location", adrss);
+                    editor.commit();
+                    Intent i1 = new Intent(context, MapsActivity.class);
+                    context.startActivity(i1);
+                    // finish();
+                }
+            });
+
             mViewHolder.Img_phone1.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
@@ -171,52 +205,153 @@ public class JobType_adapter extends BaseAdapter {
                 mViewHolder.rlv_step2.setBackgroundColor(Color.parseColor("#fefffe"));
                 mViewHolder.btn_acknowledge.setText("Acknowledge");
                 mViewHolder.btn_acknowledge.setVisibility(View.VISIBLE);
+                if (Job_type.contentEquals("Exchange")) {
+
+                    mViewHolder.personincharge2.setVisibility(View.GONE);
+                    mViewHolder.txt_person_in___.setVisibility(View.GONE);
+                } else if (Job_type.contentEquals("Pull")) {
+
+                    mViewHolder.personincharge2.setVisibility(View.GONE);
+                    mViewHolder.txt_person_in___.setVisibility(View.GONE);
+                } else {
+                    mViewHolder.personincharge2.setVisibility(View.VISIBLE);
+                    mViewHolder.txt_person_in___.setVisibility(View.VISIBLE);
+                }
+
             } else if (Status.contentEquals("Acknowledge")) {
                 mViewHolder.rlv_step1.setBackgroundColor(Color.parseColor("#E4F8EB"));
                 mViewHolder.rlv_step2.setBackgroundColor(Color.parseColor("#fefffe"));
                 mViewHolder.btn_acknowledge.setText("Start");
                 mViewHolder.btn_acknowledge.setVisibility(View.VISIBLE);
+                mViewHolder.personincharge2.setVisibility(View.VISIBLE);
+                mViewHolder.txt_person_in___.setVisibility(View.VISIBLE);
+                if (Job_type.contentEquals("Exchange")) {
+
+                    mViewHolder.personincharge2.setVisibility(View.GONE);
+                    mViewHolder.txt_person_in___.setVisibility(View.GONE);
+                } else if (Job_type.contentEquals("Pull")) {
+
+                    mViewHolder.personincharge2.setVisibility(View.GONE);
+                    mViewHolder.txt_person_in___.setVisibility(View.GONE);
+                } else {
+                    mViewHolder.personincharge2.setVisibility(View.VISIBLE);
+                    mViewHolder.txt_person_in___.setVisibility(View.VISIBLE);
+                }
             } else if (Status.contentEquals("In Progress")) {
                 mViewHolder.rlv_step1.setBackgroundColor(Color.parseColor("#E4F8EB"));
                 mViewHolder.rlv_step2.setBackgroundColor(Color.parseColor("#fefffe"));
                 mViewHolder.btn_acknowledge.setVisibility(View.VISIBLE);
                 if (Job_type.contentEquals("Exchange")) {
                     mViewHolder.btn_acknowledge.setText("Changed");
+                    mViewHolder.personincharge2.setVisibility(View.GONE);
+                    mViewHolder.txt_person_in___.setVisibility(View.GONE);
                 } else if (Job_type.contentEquals("Pull")) {
                     mViewHolder.btn_acknowledge.setText("Pulled");
+                    mViewHolder.personincharge2.setVisibility(View.GONE);
+                    mViewHolder.txt_person_in___.setVisibility(View.GONE);
                 } else if (Job_type.contentEquals("Put")) {
                     mViewHolder.btn_acknowledge.setText("Completed");
+                    mViewHolder.personincharge2.setVisibility(View.VISIBLE);
+                    mViewHolder.txt_person_in___.setVisibility(View.VISIBLE);
                 } else if (Job_type.contentEquals("Shift")) {
                     mViewHolder.btn_acknowledge.setText("Shifted");
+                    mViewHolder.personincharge2.setVisibility(View.VISIBLE);
+                    mViewHolder.txt_person_in___.setVisibility(View.VISIBLE);
                 } else if (Job_type.contentEquals("Out")) {
                     mViewHolder.btn_acknowledge.setText("Completed");
+                    mViewHolder.personincharge2.setVisibility(View.VISIBLE);
+                    mViewHolder.txt_person_in___.setVisibility(View.VISIBLE);
                 } else if (Job_type.contentEquals("Throw At Customer Site")) {
                     mViewHolder.btn_acknowledge.setText("Shifted");
+                    mViewHolder.personincharge2.setVisibility(View.VISIBLE);
+                    mViewHolder.txt_person_in___.setVisibility(View.VISIBLE);
                 } else if (Job_type.contentEquals("Pull Empty Bin")) {
                     mViewHolder.btn_acknowledge.setText("Completed");
+                    mViewHolder.personincharge2.setVisibility(View.VISIBLE);
+                    mViewHolder.txt_person_in___.setVisibility(View.VISIBLE);
                 }
 
             } else if (Status.contentEquals("cancelled")) {
+                if (Job_type.contentEquals("Exchange")) {
+
+                    mViewHolder.personincharge2.setVisibility(View.GONE);
+                    mViewHolder.txt_person_in___.setVisibility(View.GONE);
+                } else if (Job_type.contentEquals("Pull")) {
+
+                    mViewHolder.personincharge2.setVisibility(View.GONE);
+                    mViewHolder.txt_person_in___.setVisibility(View.GONE);
+                } else {
+                    mViewHolder.personincharge2.setVisibility(View.VISIBLE);
+                    mViewHolder.txt_person_in___.setVisibility(View.VISIBLE);
+                }
                 mViewHolder.rlv_step1.setBackgroundColor(Color.parseColor("#E4F8EB"));
                 mViewHolder.rlv_step2.setBackgroundColor(Color.parseColor("#fefffe"));
                 mViewHolder.btn_acknowledge.setText("Completed");
                 mViewHolder.btn_acknowledge.setVisibility(View.INVISIBLE);
             } else if (Status.contentEquals("Changed")) {
+                if (Job_type.contentEquals("Exchange")) {
+
+                    mViewHolder.personincharge2.setVisibility(View.GONE);
+                    mViewHolder.txt_person_in___.setVisibility(View.GONE);
+                } else if (Job_type.contentEquals("Pull")) {
+
+                    mViewHolder.personincharge2.setVisibility(View.GONE);
+                    mViewHolder.txt_person_in___.setVisibility(View.GONE);
+                } else {
+                    mViewHolder.personincharge2.setVisibility(View.VISIBLE);
+                    mViewHolder.txt_person_in___.setVisibility(View.VISIBLE);
+                }
                 mViewHolder.rlv_step1.setBackgroundColor(Color.parseColor("#fefffe"));
                 mViewHolder.rlv_step2.setBackgroundColor(Color.parseColor("#E4F8EB"));
                 mViewHolder.btn_acknowledge.setText("Completed");
                 mViewHolder.btn_acknowledge.setVisibility(View.VISIBLE);
             } else if (Status.contentEquals("Completed")) {
+                if (Job_type.contentEquals("Exchange")) {
+
+                    mViewHolder.personincharge2.setVisibility(View.GONE);
+                    mViewHolder.txt_person_in___.setVisibility(View.GONE);
+                } else if (Job_type.contentEquals("Pull")) {
+
+                    mViewHolder.personincharge2.setVisibility(View.GONE);
+                    mViewHolder.txt_person_in___.setVisibility(View.GONE);
+                } else {
+                    mViewHolder.personincharge2.setVisibility(View.VISIBLE);
+                    mViewHolder.txt_person_in___.setVisibility(View.VISIBLE);
+                }
                 mViewHolder.rlv_step1.setBackgroundColor(Color.parseColor("#E4F8EB"));
                 mViewHolder.rlv_step2.setBackgroundColor(Color.parseColor("#fefffe"));
                 mViewHolder.btn_acknowledge.setText("Completed");
                 mViewHolder.btn_acknowledge.setVisibility(View.INVISIBLE);
             } else if (Status.contentEquals("pulled")) {
+                if (Job_type.contentEquals("Exchange")) {
+
+                    mViewHolder.personincharge2.setVisibility(View.GONE);
+                    mViewHolder.txt_person_in___.setVisibility(View.GONE);
+                } else if (Job_type.contentEquals("Pull")) {
+
+                    mViewHolder.personincharge2.setVisibility(View.GONE);
+                    mViewHolder.txt_person_in___.setVisibility(View.GONE);
+                } else {
+                    mViewHolder.personincharge2.setVisibility(View.VISIBLE);
+                    mViewHolder.txt_person_in___.setVisibility(View.VISIBLE);
+                }
                 mViewHolder.rlv_step1.setBackgroundColor(Color.parseColor("#fefffe"));
                 mViewHolder.rlv_step2.setBackgroundColor(Color.parseColor("#E4F8EB"));
                 mViewHolder.btn_acknowledge.setText("Completed");
                 mViewHolder.btn_acknowledge.setVisibility(View.VISIBLE);
             } else if (Status.contentEquals("Shifted")) {
+                if (Job_type.contentEquals("Exchange")) {
+
+                    mViewHolder.personincharge2.setVisibility(View.GONE);
+                    mViewHolder.txt_person_in___.setVisibility(View.GONE);
+                } else if (Job_type.contentEquals("Pull")) {
+
+                    mViewHolder.personincharge2.setVisibility(View.GONE);
+                    mViewHolder.txt_person_in___.setVisibility(View.GONE);
+                } else {
+                    mViewHolder.personincharge2.setVisibility(View.VISIBLE);
+                    mViewHolder.txt_person_in___.setVisibility(View.VISIBLE);
+                }
                 mViewHolder.rlv_step1.setBackgroundColor(Color.parseColor("#fefffe"));
                 mViewHolder.rlv_step2.setBackgroundColor(Color.parseColor("#E4F8EB"));
                 mViewHolder.btn_acknowledge.setText("Completed");
@@ -261,7 +396,26 @@ public class JobType_adapter extends BaseAdapter {
             try {
                 String[] separated = Adress1.split(",,");
                 mViewHolder.siteadess.setText(separated[0]);
+                if (separated[0].contentEquals("")) {
+                    mViewHolder.img_location.setVisibility(View.INVISIBLE);
+                } else if (separated[0].contentEquals(" ")) {
+                    mViewHolder.img_location.setVisibility(View.INVISIBLE);
+                } else if (separated[0].contentEquals("  ")) {
+                    mViewHolder.img_location.setVisibility(View.INVISIBLE);
+                } else {
+                    mViewHolder.img_location.setVisibility(View.VISIBLE);
+                }
                 mViewHolder.siteadess2.setText(separated[1]);
+                String locationn = separated[1];
+                if (locationn.contentEquals("")) {
+                    mViewHolder.img_location_2.setVisibility(View.INVISIBLE);
+                } else if (locationn.contentEquals(" ")) {
+                    mViewHolder.img_location_2.setVisibility(View.INVISIBLE);
+                } else if (locationn.contentEquals("   ")) {
+                    mViewHolder.img_location_2.setVisibility(View.INVISIBLE);
+                } else {
+                    mViewHolder.img_location_2.setVisibility(View.VISIBLE);
+                }
                 mViewHolder.rlv_step2.setVisibility(View.VISIBLE);
             } catch (java.lang.IndexOutOfBoundsException e) {
                 e.printStackTrace();
@@ -271,8 +425,23 @@ public class JobType_adapter extends BaseAdapter {
                 String[] separated2 = ContactNo1.split(",,");
                 mViewHolder.contactnumber.setText(separated2[0]);
                 Str_phone1 = separated2[0];
+                if (Str_phone1.contentEquals("")) {
+                    mViewHolder.Img_phone1.setVisibility(View.INVISIBLE);
+                } else if (Str_phone1.contentEquals(" ")) {
+                    mViewHolder.Img_phone1.setVisibility(View.INVISIBLE);
+                } else {
+                    mViewHolder.ImgPhone2.setVisibility(View.VISIBLE);
+                }
+
                 mViewHolder.contactnumber2.setText(separated2[1]);
                 StrPhone2 = separated2[1];
+                if (StrPhone2.contentEquals("")) {
+                    mViewHolder.ImgPhone2.setVisibility(View.INVISIBLE);
+                } else if (StrPhone2.contentEquals(" ")) {
+                    mViewHolder.ImgPhone2.setVisibility(View.INVISIBLE);
+                } else {
+                    mViewHolder.ImgPhone2.setVisibility(View.VISIBLE);
+                }
                 mViewHolder.rlv_step2.setVisibility(View.VISIBLE);
 
             } catch (java.lang.IndexOutOfBoundsException e) {
@@ -321,8 +490,10 @@ public class JobType_adapter extends BaseAdapter {
                 String[] separated = collect_payment.split(",,");
                 collect_paymenttt = separated[0];
                 if (collect_paymenttt.contentEquals("true")) {
+                    mViewHolder.amounttocollected.setText("Amount to be collected $" + subscriptionarray.get(position).get("Price"));
                     mViewHolder.amounttocollected.setVisibility(View.VISIBLE);
                 } else {
+                    mViewHolder.amounttocollected.setText("");
                     mViewHolder.amounttocollected.setVisibility(View.INVISIBLE);
                 }
 
@@ -337,7 +508,7 @@ public class JobType_adapter extends BaseAdapter {
         mViewHolder.btn_acknowledge.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                String Project_site= subscriptionarray.get(position).get("Project_site");
+                String Project_site = subscriptionarray.get(position).get("Project_site");
                 String payment_term = subscriptionarray.get(position).get("Payment_term");
                 mViewHolder.Job_number = subscriptionarray.get(position).get("Jobnumber");
                 mViewHolder.Job_additional_charge = subscriptionarray.get(position).get("Job_additional_charges");
@@ -508,8 +679,7 @@ public class JobType_adapter extends BaseAdapter {
 
                     context.startActivity(i1);
                     ((Activity) context).finish();
-                }
-                else {
+                } else {
 
                     new Status_update().execute();
                     //Submit_Update();
@@ -522,11 +692,11 @@ public class JobType_adapter extends BaseAdapter {
     }
 
     private class MyViewHolder {
-        TextView Additionalremarks, job_number, txt_datetime, txt_jobtype, amounttocollected, customername, personincharge, contactnumber, siteadess, bintype, wastetype, remarksforstep, personincharge2, contactnumber2, siteadess2, bintype2, wastetype2, remarksforstep2;
+        TextView Additionalremarks, job_number, txt_datetime, txt_jobtype, amounttocollected, customername, personincharge, contactnumber, siteadess, bintype, wastetype, remarksforstep, personincharge2, txt_person_in___, contactnumber2, siteadess2, bintype2, wastetype2, remarksforstep2;
         //  ImageView Restaurant_image;
         RelativeLayout rlv_step1, rlv_step2;
         Button btn_acknowledge;
-        ImageView img_location, Img_phone1, ImgPhone2;
+        ImageView img_location, img_location_2, Img_phone1, ImgPhone2;
         String Job_number = "", Job_additional_charge = "", Project_site_id = "", Jobid = "", Job_stepid = "", Next_status = "", current_status = "";
 
         public MyViewHolder(View item) {
@@ -540,6 +710,7 @@ public class JobType_adapter extends BaseAdapter {
             //personincharge = (TextView) item.findViewById(R.id.textView14);
             //customername = (TextView) item.findViewById(R.id.textView14);
             personincharge = (TextView) item.findViewById(R.id.textView18);
+            txt_person_in___ = (TextView) item.findViewById(R.id.textView17p);
             contactnumber = (TextView) item.findViewById(R.id.textView200);
             siteadess = (TextView) item.findViewById(R.id.textView22);
             bintype = (TextView) item.findViewById(R.id.textView23);
@@ -554,7 +725,8 @@ public class JobType_adapter extends BaseAdapter {
             rlv_step1 = (RelativeLayout) item.findViewById(R.id.rlv_step1);
             rlv_step2 = (RelativeLayout) item.findViewById(R.id.rlv_step2);
             btn_acknowledge = (Button) item.findViewById(R.id.button4);
-            img_location = (ImageView) item.findViewById(R.id.imageView6);
+            img_location = (ImageView) item.findViewById(R.id.imageView66);
+            img_location_2 = (ImageView) item.findViewById(R.id.imageView664);
             Img_phone1 = (ImageView) item.findViewById(R.id.imageView4);
             ImgPhone2 = (ImageView) item.findViewById(R.id.imageView5_phone);
 
@@ -716,4 +888,6 @@ public class JobType_adapter extends BaseAdapter {
             requestQueue.add(stringRequest);
         }
     }
+
+
 }
