@@ -5,14 +5,18 @@ import android.animation.AnimatorListenerAdapter;
 import android.animation.ObjectAnimator;
 import android.app.AlertDialog;
 import android.app.ProgressDialog;
+import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.content.IntentFilter;
 import android.content.SharedPreferences;
+import android.graphics.Color;
 import android.os.AsyncTask;
 import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
+import android.provider.Settings;
 import android.support.annotation.NonNull;
 import android.support.annotation.RequiresApi;
 import android.support.design.widget.AppBarLayout;
@@ -23,7 +27,13 @@ import android.support.design.widget.TabLayout;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentPagerAdapter;
+import android.support.v4.content.LocalBroadcastManager;
 import android.support.v4.view.ViewPager;
+import android.telephony.TelephonyManager;
+import android.text.SpannableString;
+import android.text.TextUtils;
+import android.text.style.BackgroundColorSpan;
+import android.text.style.ForegroundColorSpan;
 import android.util.DisplayMetrics;
 import android.util.Log;
 import android.view.MotionEvent;
@@ -52,6 +62,7 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 
+import com.google.firebase.messaging.FirebaseMessaging;
 import com.squareup.timessquare.CalendarPickerView;
 
 import org.apache.http.NameValuePair;
@@ -71,10 +82,12 @@ import java.util.Calendar;
 import java.util.Collection;
 import java.util.Date;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
 import java.util.ListIterator;
 import java.util.Locale;
+import java.util.Set;
 import java.util.TimeZone;
 
 import Fragments.acknowledge_fragment;
@@ -88,6 +101,8 @@ import Fragments.shifted;
 import Service_handler.HttpHandler;
 import Service_handler.ServiceHandler;
 import adapter.JobType_adapter;
+import mobile.tiny_waste_management.app.Config;
+import util.NotificationUtils;
 
 
 import static com.squareup.timessquare.CalendarPickerView.SelectionMode.RANGE;
@@ -102,7 +117,7 @@ public class Home_screen extends AppCompatActivity
     boolean isUp;
     AppBarLayout app_bar_layout;
     private ProgressDialog pDialog;
-
+    private BroadcastReceiver mRegistrationBroadcastReceiver;
     private Handler handler;
     private CalendarPickerView calendar;
     TextView date_now;
@@ -133,6 +148,7 @@ public class Home_screen extends AppCompatActivity
     String Status = "Current", Check_screen = "", Next_status = "";
     String jsonStr = "";
     EditText EdtTxt_job_number;
+    NavigationView navigationView;
     //CalendarView Calender;
 
     @Override
@@ -146,6 +162,7 @@ public class Home_screen extends AppCompatActivity
         img_refresh = (ImageView) findViewById(R.id.imageView3);
         BTn_search = (Button) findViewById(R.id.button3);
         EdtTxt_job_number = (EditText) findViewById(R.id.editText3);
+        navigationView = (NavigationView) findViewById(R.id.nav_view);
         Format formatter = new SimpleDateFormat("dd MMMM yyyy");
         String today = formatter.format(new Date());
         //String date = new SimpleDateFormat("yyyy-MM-dd", Locale.getDefault()).format(new Date());
@@ -153,6 +170,55 @@ public class Home_screen extends AppCompatActivity
 
         formatter = new SimpleDateFormat("dd-MM-yyyy");
         today = formatter.format(new Date());
+//        String android_id = Settings.Secure.getString(Home_screen.this.getContentResolver(),
+//                Settings.Secure.ANDROID_ID);
+//        TelephonyManager telephonyManager = (TelephonyManager)getSystemService(Context.TELEPHONY_SERVICE);
+//        telephonyManager.getDeviceId();
+        mRegistrationBroadcastReceiver = new BroadcastReceiver() {
+            @Override
+            public void onReceive(Context context, Intent intent) {
+
+                // checking for type intent filter
+                if (intent.getAction().equals(Config.REGISTRATION_COMPLETE)) {
+                    // gcm successfully registered
+                    // now subscribe to `global` topic to receive app wide notifications
+                    FirebaseMessaging.getInstance().subscribeToTopic(Config.TOPIC_GLOBAL);
+
+                    displayFirebaseRegId();
+
+                } else if (intent.getAction().equals(Config.PUSH_NOTIFICATION)) {
+                    // new push notification is received
+
+                    String message = intent.getStringExtra("message");
+
+                    String[] separated = message.split(":");
+
+                    message = separated[1];
+                    message = message.replaceAll("\\s+", "");
+                    fist_date = "";
+                    last_date = "";
+                    EdtTxt_job_number.setText(message);
+                    Search_withjob_number = EdtTxt_job_number.getText().toString();
+                    date_now.setText(Search_withjob_number);
+//                    if (Rlv_Content.getVisibility() == View.VISIBLE) {
+//                        showView_slideup();
+//                    } else if (Rlv_Content.getVisibility() == View.GONE) {
+//                        showView();
+//                    }
+                    SharedPreferences.Editor editor = shared.edit();
+                    editor.putString("First_date", "");
+                    editor.putString("Last_date", "");
+                    editor.putString("Job_number", Search_withjob_number);
+
+                    editor.commit();
+                    new Search().execute();
+
+                    //Toast.makeText(getApplicationContext(), "Push notification: " + message, Toast.LENGTH_LONG).show();
+
+                    //  txtMessage.setText(message);
+                }
+            }
+        };
 
 
         shared = getSharedPreferences("Tidy_waste_management", MODE_PRIVATE);
@@ -160,7 +226,31 @@ public class Home_screen extends AppCompatActivity
         Driver_id = (shared.getString("Driver_id", "nologin"));
         Check_screen = (shared.getString("Check_screen", "nologin"));
         Next_status = (shared.getString("Next_status", "null"));
+        Menu menuNav = navigationView.getMenu();
+        MenuItem element = menuNav.findItem(R.id.alerts);
+        String before = element.getTitle().toString();
+        Set<String> set = new HashSet<String>();
+        SharedPreferences pref = getApplicationContext().getSharedPreferences(Config.SHARED_PREF, 0);
+        set = pref.getStringSet("Notification_LIST", null);
+        String counter = "";
+        try {
+            if (set.size() != 0) {
+                counter = Integer.toString(set.size());
+            } else {
+                counter = "0";
+            }
+        } catch (java.lang.NullPointerException e) {
+            e.printStackTrace();
+            counter = "0";
+        }
+        String s = before + "   " + counter + " ";
+        SpannableString sColored = new SpannableString(s);
 
+        sColored.setSpan(new BackgroundColorSpan(Color.parseColor("#0b813f")), s.length() - (counter.length() + 2), s.length(), 0);
+        sColored.setSpan(new ForegroundColorSpan(Color.WHITE), s.length() - (counter.length() + 2), s.length(), 0);
+
+
+        element.setTitle(sColored);
         img_refresh.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -235,7 +325,7 @@ public class Home_screen extends AppCompatActivity
         NavigationView navigationView = (NavigationView) findViewById(R.id.nav_view);
         navigationView.setNavigationItemSelectedListener(this);
         viewPager = (ViewPager) findViewById(R.id.viewpager);
-        setupViewPager(viewPager, 0);
+        setupViewPager(viewPager, 0, 0);
 
         tabLayout = (TabLayout) findViewById(R.id.tabs);
         tabLayout.setupWithViewPager(viewPager);
@@ -435,8 +525,10 @@ public class Home_screen extends AppCompatActivity
             startActivity(i1);
             finish();
             // Handle the camera action
-        } else if (id == R.id.nav_gallery) {
-
+        } else if (id == R.id.alerts) {
+            Intent i1 = new Intent(Home_screen.this, notification_listt.class);
+            startActivity(i1);
+            finish();
         } else if (id == R.id.nav_slideshow) {
             SharedPreferences settings = getSharedPreferences("Tidy_waste_management", Context.MODE_PRIVATE);
             settings.edit().clear().commit();
@@ -454,16 +546,17 @@ public class Home_screen extends AppCompatActivity
 //
 //
 
-    private void setupViewPager(ViewPager viewPager, int pos) {
+    private void setupViewPager(ViewPager viewPager, int pos, int size) {
+        //  String str_count = String.valueOf(size);
         ViewPagerAdapter adapter = new ViewPagerAdapter(getSupportFragmentManager());
-        adapter.addFrag(new fragment(Arraylist_for_Search_assigned1, Arraylist_for_Search_assigned2, Status), "Assigned");
-        adapter.addFrag(new acknowledge_fragment(Arraylist_for_Search_acknowledge1, Arraylist_for_Search_acknowledge2, Status), "Acknowledged");
-        adapter.addFrag(new inpro(Arraylist_for_Search_inprogress1, Arraylist_for_Search_inprogress2, Status), "In Progress");
-        adapter.addFrag(new pulled(Arraylist_for_Search_pulled1, Arraylist_for_Search_pulled2, Status), "Pulled");
-        adapter.addFrag(new changed(Arraylist_for_Search_changed1, Arraylist_for_Search_changed2, Status), "Changed");
-        adapter.addFrag(new shifted(Arraylist_for_Search_shifted1, Arraylist_for_Search_shifted2, Status), "Shifted");
-        adapter.addFrag(new completed(Arraylist_for_Search_completed1, Arraylist_for_Search_competed2, Status), "Completed");
-        adapter.addFrag(new cancelled(Arraylist_for_Search_cancelled1, Arraylist_for_Search_cancelled2, Status), "Cancelled");
+        adapter.addFrag(new fragment(Arraylist_for_Search_assigned1, Arraylist_for_Search_assigned2, Status), "Assigned (" + Arraylist_for_Search_assigned1.size() + ")");
+        adapter.addFrag(new acknowledge_fragment(Arraylist_for_Search_acknowledge1, Arraylist_for_Search_acknowledge2, Status), "Acknowledged (" + Arraylist_for_Search_acknowledge1.size() + ")");
+        adapter.addFrag(new inpro(Arraylist_for_Search_inprogress1, Arraylist_for_Search_inprogress2, Status), "In Progress (" + Arraylist_for_Search_inprogress1.size() + ")");
+        adapter.addFrag(new pulled(Arraylist_for_Search_pulled1, Arraylist_for_Search_pulled2, Status), "Pulled (" + Arraylist_for_Search_pulled1.size() + ")");
+        adapter.addFrag(new changed(Arraylist_for_Search_changed1, Arraylist_for_Search_changed2, Status), "Changed (" + Arraylist_for_Search_changed1.size() + ")");
+        adapter.addFrag(new shifted(Arraylist_for_Search_shifted1, Arraylist_for_Search_shifted2, Status), "Shifted (" + Arraylist_for_Search_shifted1.size() + ")");
+        adapter.addFrag(new completed(Arraylist_for_Search_completed1, Arraylist_for_Search_competed2, Status), "Completed (" + Arraylist_for_Search_completed1.size() + ")");
+        adapter.addFrag(new cancelled(Arraylist_for_Search_cancelled1, Arraylist_for_Search_cancelled2, Status), "Cancelled (" + Arraylist_for_Search_cancelled1.size() + ")");
 
 
         viewPager.setAdapter(adapter);
@@ -682,7 +775,7 @@ public class Home_screen extends AppCompatActivity
                             String JobDate = jsonObjj.getString("JobDateShort") + " " + jsonObjj.getString("JobTime");
                             String Nextstatus = jsonObjj.getString("Nextstatus");
                             String Job_additional_charges = jsonObjj.getString("JobAdditionalCharges");
-                           // String ProjectSiteCharges = jsonObjj.getString("ProjectSiteCharges");
+                            // String ProjectSiteCharges = jsonObjj.getString("ProjectSiteCharges");
 
                             String DriverRemark = jsonObjj.getString("DriverRemark");
                             // JobDate = convertDate(JobDate);
@@ -706,6 +799,13 @@ public class Home_screen extends AppCompatActivity
                                 String job_step_id1 = "";
                                 String bin_number1 = "";
                                 String Collect_payment = "";
+                                String Collection_method1 = "";
+                                String AmountCollected1 = "";
+                                String DriverNotes1 = "";
+                                String CompletedTime1 = "";
+                                String CustomerSignature1 = "";
+                                String PhotoFile1 = "";
+                                String signedby1 = "";
 
 
                                 //////////////////////////////////////////////////////
@@ -725,6 +825,14 @@ public class Home_screen extends AppCompatActivity
                                         String JobStepID = jsonObj_steps.getString("JobStepID");
                                         String BinNumber = jsonObj_steps.getString("BinNumber");
                                         String Collect_paymentt = jsonObj_steps.getString("CollectPayment");
+                                        String Collection_method = jsonObj_steps.getString("CollectionMethod");
+                                        String AmountCollected = jsonObj_steps.getString("AmountCollected");
+                                        String DriverNotes = jsonObj_steps.getString("DriverNotes");
+                                        String CompletedTime = jsonObj_steps.getString("CompletedTime");
+                                        String CustomerSignature = jsonObj_steps.getString("CustomerSignature");
+                                        String PhotoFile = jsonObj_steps.getString("PhotoFile");
+                                        String signed_by = jsonObj_steps.getString("SignedBy");
+                                        //String signed_by = jsonObj_steps.getString("SignedBy");
 
                                         if (PersonInCharge.contentEquals("null")) {
                                             PersonInCharge = " ";
@@ -752,6 +860,27 @@ public class Home_screen extends AppCompatActivity
                                         }
                                         if (BinNumber.contentEquals("null")) {
                                             BinNumber = " ";
+                                        }
+                                        if (Collection_method.contentEquals("null")) {
+                                            Collection_method = " ";
+                                        }
+                                        if (AmountCollected.contentEquals("null")) {
+                                            AmountCollected = " ";
+                                        }
+                                        if (DriverNotes.contentEquals("null")) {
+                                            DriverNotes = " ";
+                                        }
+                                        if (CompletedTime.contentEquals("null")) {
+                                            CompletedTime = " ";
+                                        }
+                                        if (CustomerSignature.contentEquals("null")) {
+                                            CustomerSignature = " ";
+                                        }
+                                        if (PhotoFile.contentEquals("null")) {
+                                            PhotoFile = " ";
+                                        }
+                                        if (signed_by.contentEquals("null")) {
+                                            signed_by = " ";
                                         }
                                         String Adress = Location_BlockNo + " " + Location_RoadName;
 
@@ -784,7 +913,13 @@ public class Home_screen extends AppCompatActivity
                                             job_step_id1 = JobStepID;
                                             bin_number1 = BinNumber;
                                             Collect_payment = Collect_paymentt;
-
+                                            Collection_method1 = Collection_method;
+                                            AmountCollected1 = AmountCollected;
+                                            DriverNotes1 = DriverNotes;
+                                            CompletedTime1 = CompletedTime;
+                                            CustomerSignature1 = CustomerSignature;
+                                            PhotoFile1 = PhotoFile;
+                                            signedby1 = signed_by;
                                         }
                                         if (count_step == 1) {
                                             PersonInCharge1 = PersonInCharge1 + ",," + PersonInCharge;
@@ -800,8 +935,13 @@ public class Home_screen extends AppCompatActivity
                                             int final_int = amount1 + amount2;
                                             amount_tocllect = String.valueOf(final_int);
                                             Collect_payment = Collect_payment + ",," + Collect_paymentt;
-
-
+                                            Collection_method1 = Collection_method1 + ",," + Collection_method;
+                                            AmountCollected1 = AmountCollected1 + ",," + AmountCollected;
+                                            DriverNotes1 = DriverNotes1 + ",," + DriverNotes;
+                                            CompletedTime1 = CompletedTime1 + ",," + CompletedTime;
+                                            CustomerSignature1 = CustomerSignature1 + ",," + CustomerSignature;
+                                            PhotoFile1 = PhotoFile1 + ",," + PhotoFile;
+                                            signedby1 = signedby1 + ",," + signed_by;
                                         }
 
                                     } catch (JSONException e) {
@@ -822,6 +962,13 @@ public class Home_screen extends AppCompatActivity
                                 jobs_steps.put("bin_type_name", BinType1);
                                 jobs_steps.put("adress", Address1);
                                 jobs_steps.put("job_step_id1", job_step_id1);
+                                jobs_steps.put("Collection_method1", Collection_method1);
+                                jobs_steps.put("AmountCollected1", AmountCollected1);
+                                jobs_steps.put("DriverNotes1", DriverNotes1);
+                                jobs_steps.put("CompletedTime1", CompletedTime1);
+                                jobs_steps.put("CustomerSignature1", CustomerSignature1);
+                                jobs_steps.put("PhotoFile1", PhotoFile1);
+                                jobs_steps.put("signedby1", signedby1);
                                 if (jobstatus.contentEquals("Assigned")) {
                                     Arraylist_for_Search_assigned1.add(jobs_steps);
                                 } else if (jobstatus.contentEquals("Acknowledged")) {
@@ -850,14 +997,11 @@ public class Home_screen extends AppCompatActivity
                             String payment_term = "";
 
 
-
-
                             try {
                                 Json_Cutomer = new JSONObject(Customerr);
                                 customer_name = Json_Cutomer.getString("CustomerName");
                                 Address = Json_Cutomer.getString("AddressLine1");
                                 payment_term = Json_Cutomer.getString("PaymentTerms");
-
 
 
                             } catch (JSONException e) {
@@ -945,6 +1089,9 @@ public class Home_screen extends AppCompatActivity
             super.onPostExecute(result);
             // Dismiss the progress dialog
             pDialog.dismiss();
+            if (Rlv_Content.getVisibility() == View.VISIBLE) {
+                showView_slideup();
+            }
             if (jsonStr == null) {
                 open_loginWindow();
             } else if (jsonStr.contentEquals("Invalid_Token")) {
@@ -952,6 +1099,7 @@ public class Home_screen extends AppCompatActivity
             }
             Status = "Search";
             int position = 0;
+            int size = 0;
             if (!Next_status.contentEquals("null")) {
 
                 if (Next_status.contentEquals("Assigned")) {
@@ -974,26 +1122,72 @@ public class Home_screen extends AppCompatActivity
                 }
 
             } else {
-                if (jobstatus.contentEquals("Assigned")) {
-                    position = 0;
+//                if (jobstatus.contentEquals("Assigned")) {
+//                    Arraylist_for_Search_assigned1.add(jobs_steps);
+//                } else if (jobstatus.contentEquals("Acknowledged")) {
+//                    Arraylist_for_Search_acknowledge1.add(jobs_steps);
+//                } else if (jobstatus.contentEquals("In Progress")) {
+//                    Arraylist_for_Search_inprogress1.add(jobs_steps);
+//                } else if (jobstatus.contentEquals("Pulled")) {
+//                    Arraylist_for_Search_pulled1.add(jobs_steps);
+//                } else if (jobstatus.contentEquals("Changed")) {
+//                    Arraylist_for_Search_changed1.add(jobs_steps);
+//                } else if (jobstatus.contentEquals("Shifted")) {
+//                    Arraylist_for_Search_shifted1.add(jobs_steps);
+//                } else if (jobstatus.contentEquals("Completed")) {
+//                    Arraylist_for_Search_completed1.add(jobs_steps);
+//                } else if (jobstatus.contentEquals("Cancelled")) {
+//                    Arraylist_for_Search_cancelled1.add(jobs_steps);
+//                }
 
-                } else if (jobstatus.contentEquals("Acknowledged")) {
+                if (Arraylist_for_Search_assigned1.size() > 0) {
+                    position = 0;
+                    size = Arraylist_for_Search_assigned1.size();
+                } else if (Arraylist_for_Search_acknowledge1.size() > 0) {
                     position = 1;
-                } else if (jobstatus.contentEquals("In Progress")) {
+                    size = Arraylist_for_Search_acknowledge1.size();
+                } else if (Arraylist_for_Search_inprogress1.size() > 0) {
+                    size = Arraylist_for_Search_inprogress1.size();
                     position = 2;
-                } else if (jobstatus.contentEquals("cancelled")) {
-                    position = 7;
-                } else if (jobstatus.contentEquals("Changed")) {
-                    position = 4;
-                } else if (jobstatus.contentEquals("Competed")) {
-                    position = 6;
-                } else if (jobstatus.contentEquals("pulled")) {
+                } else if (Arraylist_for_Search_pulled1.size() > 0) {
+                    size = Arraylist_for_Search_pulled1.size();
                     position = 3;
-                } else if (jobstatus.contentEquals("Shifted")) {
+                } else if (Arraylist_for_Search_changed1.size() > 0) {
+                    size = Arraylist_for_Search_changed1.size();
+                    position = 4;
+                } else if (Arraylist_for_Search_shifted1.size() > 0) {
+                    size = Arraylist_for_Search_shifted1.size();
                     position = 5;
+                } else if (Arraylist_for_Search_completed1.size() > 0) {
+                    size = Arraylist_for_Search_completed1.size();
+                    position = 6;
+                } else if (Arraylist_for_Search_cancelled1.size() > 0) {
+                    size = Arraylist_for_Search_cancelled1.size();
+                    position = 7;
                 }
+
+
+//                if (jobstatus.contentEquals("Assigned")) {
+//                    position = 0;
+//
+//                } else if (jobstatus.contentEquals("Acknowledged")) {
+//                    position = 1;
+//                } else if (jobstatus.contentEquals("In Progress")) {
+//                    position = 2;
+//                } else if (jobstatus.contentEquals("cancelled")) {
+//                    position = 7;
+//                } else if (jobstatus.contentEquals("Changed")) {
+//                    position = 4;
+//                } else if (jobstatus.contentEquals("Competed")) {
+//                    position = 6;
+//                } else if (jobstatus.contentEquals("pulled")) {
+//                    position = 3;
+//                } else if (jobstatus.contentEquals("Shifted")) {
+//                    position = 5;
+//                }
+
             }
-            setupViewPager(viewPager, position);
+            setupViewPager(viewPager, position, size);
         }
 
         @Override
@@ -1038,5 +1232,43 @@ public class Home_screen extends AppCompatActivity
         AlertDialog alertDialog = alertDialogBuilder.create();
         alertDialog.show();
     }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+
+        // register GCM registration complete receiver
+        LocalBroadcastManager.getInstance(this).registerReceiver(mRegistrationBroadcastReceiver,
+                new IntentFilter(Config.REGISTRATION_COMPLETE));
+
+        // register new push message receiver
+        // by doing this, the activity will be notified each time a new message arrives
+        LocalBroadcastManager.getInstance(this).registerReceiver(mRegistrationBroadcastReceiver,
+                new IntentFilter(Config.PUSH_NOTIFICATION));
+
+        // clear the notification area when the app is opened
+        NotificationUtils.clearNotifications(getApplicationContext());
+    }
+
+    @Override
+    protected void onPause() {
+        LocalBroadcastManager.getInstance(this).unregisterReceiver(mRegistrationBroadcastReceiver);
+        super.onPause();
+    }
+
+    private void displayFirebaseRegId() {
+        SharedPreferences pref = getApplicationContext().getSharedPreferences(Config.SHARED_PREF, 0);
+        String regId = pref.getString("regId", null);
+
+        // Log.e(TAG, "Firebase reg id: " + regId);
+
+        if (!TextUtils.isEmpty(regId))
+            Toast.makeText(getApplicationContext(), regId, Toast.LENGTH_LONG).show();
+            //txtRegId.setText("Firebase Reg Id: " + regId);
+        else
+            Toast.makeText(getApplicationContext(), "Firebase Reg Id is not received yet!", Toast.LENGTH_LONG).show();
+        //txtRegId.setText("Firebase Reg Id is not received yet!");
+    }
+
 }
 
