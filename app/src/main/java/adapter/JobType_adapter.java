@@ -1,6 +1,7 @@
 package adapter;
 
 import android.app.Activity;
+import android.app.Dialog;
 import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.DialogInterface;
@@ -15,6 +16,7 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.Window;
 import android.widget.BaseAdapter;
 import android.widget.Button;
 import android.widget.ImageView;
@@ -31,6 +33,8 @@ import com.android.volley.RetryPolicy;
 import com.android.volley.VolleyError;
 import com.android.volley.toolbox.StringRequest;
 import com.android.volley.toolbox.Volley;
+import com.squareup.picasso.MemoryPolicy;
+import com.squareup.picasso.Picasso;
 
 import org.apache.http.NameValuePair;
 import org.json.JSONArray;
@@ -209,15 +213,27 @@ public class JobType_adapter extends BaseAdapter {
 
                     mViewHolder.personincharge2.setVisibility(View.GONE);
                     mViewHolder.txt_person_in___.setVisibility(View.GONE);
+                    mViewHolder.Txt_contperson.setVisibility(View.INVISIBLE);
+                    mViewHolder.contactnumber2.setVisibility(View.INVISIBLE);
+                    mViewHolder.ImgPhone2.setVisibility(View.INVISIBLE);
+
                 } else if (Job_type.contentEquals("Pull")) {
 
                     mViewHolder.personincharge2.setVisibility(View.GONE);
                     mViewHolder.txt_person_in___.setVisibility(View.GONE);
+                    mViewHolder.Txt_contperson.setVisibility(View.INVISIBLE);
+                    mViewHolder.contactnumber2.setVisibility(View.INVISIBLE);
+                    mViewHolder.ImgPhone2.setVisibility(View.INVISIBLE);
+
                 } else {
                     mViewHolder.personincharge2.setVisibility(View.VISIBLE);
                     mViewHolder.txt_person_in___.setVisibility(View.VISIBLE);
+                    mViewHolder.Txt_contperson.setVisibility(View.VISIBLE);
+                    mViewHolder.contactnumber2.setVisibility(View.VISIBLE);
+                    mViewHolder.ImgPhone2.setVisibility(View.VISIBLE);
                 }
-
+                mViewHolder.rlv_holder1.setVisibility(View.GONE);
+                mViewHolder.Rlvholder2.setVisibility(View.GONE);
             } else if (Status.contentEquals("Acknowledge")) {
                 mViewHolder.rlv_step1.setBackgroundColor(Color.parseColor("#E4F8EB"));
                 mViewHolder.rlv_step2.setBackgroundColor(Color.parseColor("#fefffe"));
@@ -229,14 +245,28 @@ public class JobType_adapter extends BaseAdapter {
 
                     mViewHolder.personincharge2.setVisibility(View.GONE);
                     mViewHolder.txt_person_in___.setVisibility(View.GONE);
+                    mViewHolder.Txt_contperson.setVisibility(View.INVISIBLE);
+                    mViewHolder.contactnumber2.setVisibility(View.INVISIBLE);
+                    mViewHolder.ImgPhone2.setVisibility(View.INVISIBLE);
+
+
                 } else if (Job_type.contentEquals("Pull")) {
 
                     mViewHolder.personincharge2.setVisibility(View.GONE);
                     mViewHolder.txt_person_in___.setVisibility(View.GONE);
+                    mViewHolder.Txt_contperson.setVisibility(View.INVISIBLE);
+                    mViewHolder.contactnumber2.setVisibility(View.INVISIBLE);
+                    mViewHolder.ImgPhone2.setVisibility(View.INVISIBLE);
+
                 } else {
                     mViewHolder.personincharge2.setVisibility(View.VISIBLE);
                     mViewHolder.txt_person_in___.setVisibility(View.VISIBLE);
+                    mViewHolder.Txt_contperson.setVisibility(View.VISIBLE);
+                    mViewHolder.contactnumber2.setVisibility(View.VISIBLE);
+                    mViewHolder.ImgPhone2.setVisibility(View.VISIBLE);
                 }
+                mViewHolder.rlv_holder1.setVisibility(View.GONE);
+                mViewHolder.Rlvholder2.setVisibility(View.GONE);
             } else if (Status.contentEquals("In Progress")) {
                 mViewHolder.rlv_step1.setBackgroundColor(Color.parseColor("#E4F8EB"));
                 mViewHolder.rlv_step2.setBackgroundColor(Color.parseColor("#fefffe"));
@@ -245,117 +275,461 @@ public class JobType_adapter extends BaseAdapter {
                     mViewHolder.btn_acknowledge.setText("Changed");
                     mViewHolder.personincharge2.setVisibility(View.GONE);
                     mViewHolder.txt_person_in___.setVisibility(View.GONE);
+                    mViewHolder.Txt_contperson.setVisibility(View.INVISIBLE);
+                    mViewHolder.contactnumber2.setVisibility(View.INVISIBLE);
+                    mViewHolder.ImgPhone2.setVisibility(View.INVISIBLE);
                 } else if (Job_type.contentEquals("Pull")) {
                     mViewHolder.btn_acknowledge.setText("Pulled");
                     mViewHolder.personincharge2.setVisibility(View.GONE);
                     mViewHolder.txt_person_in___.setVisibility(View.GONE);
+                    mViewHolder.Txt_contperson.setVisibility(View.INVISIBLE);
+                    mViewHolder.contactnumber2.setVisibility(View.INVISIBLE);
+                    mViewHolder.ImgPhone2.setVisibility(View.INVISIBLE);
+
                 } else if (Job_type.contentEquals("Put")) {
                     mViewHolder.btn_acknowledge.setText("Completed");
                     mViewHolder.personincharge2.setVisibility(View.VISIBLE);
                     mViewHolder.txt_person_in___.setVisibility(View.VISIBLE);
+                    mViewHolder.Txt_contperson.setVisibility(View.VISIBLE);
+                    mViewHolder.contactnumber2.setVisibility(View.VISIBLE);
+                    mViewHolder.ImgPhone2.setVisibility(View.VISIBLE);
                 } else if (Job_type.contentEquals("Shift")) {
                     mViewHolder.btn_acknowledge.setText("Shifted");
                     mViewHolder.personincharge2.setVisibility(View.VISIBLE);
                     mViewHolder.txt_person_in___.setVisibility(View.VISIBLE);
+                    mViewHolder.Txt_contperson.setVisibility(View.VISIBLE);
+                    mViewHolder.contactnumber2.setVisibility(View.VISIBLE);
+                    mViewHolder.ImgPhone2.setVisibility(View.VISIBLE);
                 } else if (Job_type.contentEquals("Out")) {
                     mViewHolder.btn_acknowledge.setText("Completed");
                     mViewHolder.personincharge2.setVisibility(View.VISIBLE);
                     mViewHolder.txt_person_in___.setVisibility(View.VISIBLE);
+                    mViewHolder.Txt_contperson.setVisibility(View.VISIBLE);
+                    mViewHolder.contactnumber2.setVisibility(View.VISIBLE);
+                    mViewHolder.ImgPhone2.setVisibility(View.VISIBLE);
                 } else if (Job_type.contentEquals("Throw At Customer Site")) {
                     mViewHolder.btn_acknowledge.setText("Shifted");
                     mViewHolder.personincharge2.setVisibility(View.VISIBLE);
                     mViewHolder.txt_person_in___.setVisibility(View.VISIBLE);
+                    mViewHolder.Txt_contperson.setVisibility(View.VISIBLE);
+                    mViewHolder.contactnumber2.setVisibility(View.VISIBLE);
+                    mViewHolder.ImgPhone2.setVisibility(View.VISIBLE);
                 } else if (Job_type.contentEquals("Pull Empty Bin")) {
                     mViewHolder.btn_acknowledge.setText("Completed");
                     mViewHolder.personincharge2.setVisibility(View.VISIBLE);
                     mViewHolder.txt_person_in___.setVisibility(View.VISIBLE);
+                    mViewHolder.Txt_contperson.setVisibility(View.VISIBLE);
+                    mViewHolder.contactnumber2.setVisibility(View.VISIBLE);
+                    mViewHolder.ImgPhone2.setVisibility(View.VISIBLE);
                 }
-
+                mViewHolder.rlv_holder1.setVisibility(View.GONE);
+                mViewHolder.Rlvholder2.setVisibility(View.GONE);
             } else if (Status.contentEquals("cancelled")) {
                 if (Job_type.contentEquals("Exchange")) {
 
                     mViewHolder.personincharge2.setVisibility(View.GONE);
                     mViewHolder.txt_person_in___.setVisibility(View.GONE);
+                    mViewHolder.Txt_contperson.setVisibility(View.INVISIBLE);
+                    mViewHolder.contactnumber2.setVisibility(View.INVISIBLE);
+                    mViewHolder.ImgPhone2.setVisibility(View.INVISIBLE);
+
+
                 } else if (Job_type.contentEquals("Pull")) {
 
                     mViewHolder.personincharge2.setVisibility(View.GONE);
                     mViewHolder.txt_person_in___.setVisibility(View.GONE);
+                    mViewHolder.Txt_contperson.setVisibility(View.INVISIBLE);
+                    mViewHolder.contactnumber2.setVisibility(View.INVISIBLE);
+                    mViewHolder.ImgPhone2.setVisibility(View.INVISIBLE);
+
                 } else {
                     mViewHolder.personincharge2.setVisibility(View.VISIBLE);
                     mViewHolder.txt_person_in___.setVisibility(View.VISIBLE);
+                    mViewHolder.Txt_contperson.setVisibility(View.VISIBLE);
+                    mViewHolder.contactnumber2.setVisibility(View.VISIBLE);
+                    mViewHolder.ImgPhone2.setVisibility(View.VISIBLE);
                 }
                 mViewHolder.rlv_step1.setBackgroundColor(Color.parseColor("#E4F8EB"));
                 mViewHolder.rlv_step2.setBackgroundColor(Color.parseColor("#fefffe"));
                 mViewHolder.btn_acknowledge.setText("Completed");
                 mViewHolder.btn_acknowledge.setVisibility(View.INVISIBLE);
+                mViewHolder.rlv_holder1.setVisibility(View.GONE);
+                mViewHolder.Rlvholder2.setVisibility(View.GONE);
             } else if (Status.contentEquals("Changed")) {
                 if (Job_type.contentEquals("Exchange")) {
 
                     mViewHolder.personincharge2.setVisibility(View.GONE);
                     mViewHolder.txt_person_in___.setVisibility(View.GONE);
+                    mViewHolder.Txt_contperson.setVisibility(View.INVISIBLE);
+                    mViewHolder.contactnumber2.setVisibility(View.INVISIBLE);
+                    mViewHolder.ImgPhone2.setVisibility(View.INVISIBLE);
+
                 } else if (Job_type.contentEquals("Pull")) {
 
                     mViewHolder.personincharge2.setVisibility(View.GONE);
                     mViewHolder.txt_person_in___.setVisibility(View.GONE);
+                    mViewHolder.Txt_contperson.setVisibility(View.INVISIBLE);
+                    mViewHolder.contactnumber2.setVisibility(View.INVISIBLE);
+                    mViewHolder.ImgPhone2.setVisibility(View.INVISIBLE);
+
                 } else {
                     mViewHolder.personincharge2.setVisibility(View.VISIBLE);
                     mViewHolder.txt_person_in___.setVisibility(View.VISIBLE);
+                    mViewHolder.Txt_contperson.setVisibility(View.VISIBLE);
+                    mViewHolder.contactnumber2.setVisibility(View.VISIBLE);
+                    mViewHolder.ImgPhone2.setVisibility(View.VISIBLE);
                 }
                 mViewHolder.rlv_step1.setBackgroundColor(Color.parseColor("#fefffe"));
                 mViewHolder.rlv_step2.setBackgroundColor(Color.parseColor("#E4F8EB"));
                 mViewHolder.btn_acknowledge.setText("Completed");
                 mViewHolder.btn_acknowledge.setVisibility(View.VISIBLE);
+                mViewHolder.rlv_holder1.setVisibility(View.GONE);
+                mViewHolder.Rlvholder2.setVisibility(View.GONE);
             } else if (Status.contentEquals("Completed")) {
                 if (Job_type.contentEquals("Exchange")) {
 
                     mViewHolder.personincharge2.setVisibility(View.GONE);
                     mViewHolder.txt_person_in___.setVisibility(View.GONE);
+                    mViewHolder.Txt_contperson.setVisibility(View.INVISIBLE);
+                    mViewHolder.contactnumber2.setVisibility(View.INVISIBLE);
+                    mViewHolder.ImgPhone2.setVisibility(View.INVISIBLE);
+
+
                 } else if (Job_type.contentEquals("Pull")) {
 
                     mViewHolder.personincharge2.setVisibility(View.GONE);
                     mViewHolder.txt_person_in___.setVisibility(View.GONE);
+                    mViewHolder.Txt_contperson.setVisibility(View.INVISIBLE);
+                    mViewHolder.contactnumber2.setVisibility(View.INVISIBLE);
+                    mViewHolder.ImgPhone2.setVisibility(View.INVISIBLE);
+
                 } else {
                     mViewHolder.personincharge2.setVisibility(View.VISIBLE);
                     mViewHolder.txt_person_in___.setVisibility(View.VISIBLE);
+                    mViewHolder.Txt_contperson.setVisibility(View.VISIBLE);
+                    mViewHolder.contactnumber2.setVisibility(View.VISIBLE);
+                    mViewHolder.ImgPhone2.setVisibility(View.VISIBLE);
                 }
                 mViewHolder.rlv_step1.setBackgroundColor(Color.parseColor("#E4F8EB"));
-                mViewHolder.rlv_step2.setBackgroundColor(Color.parseColor("#fefffe"));
-                mViewHolder.btn_acknowledge.setText("Completed");
+                mViewHolder.rlv_step2.setBackgroundColor(Color.parseColor("#E4F8EB"));
+                //mViewHolder.btn_acknowledge.setText("Proof of Delivery");
                 mViewHolder.btn_acknowledge.setVisibility(View.INVISIBLE);
+                mViewHolder.rlv_holder1.setVisibility(View.VISIBLE);
+                mViewHolder.Rlvholder2.setVisibility(View.VISIBLE);
+                String Collection_method1 = "";
+                String AmountCollected1 = "";
+                String DriverNotes1 = "";
+                String CompletedTime1 = "";
+                String CustomerSignature1 = "";
+                String PhotoFile1 = "";
+                String Signedby1 = "";
+
+//                Signedby1= (TextView) item.findViewById(R.id.textView36);
+//                signedby2= (TextView) item.findViewById(R.id.textView51);
+                Collection_method1 = jobs_steps.get(position).get("Collection_method1");
+                AmountCollected1 = jobs_steps.get(position).get("AmountCollected1");
+                DriverNotes1 = jobs_steps.get(position).get("DriverNotes1");
+                CompletedTime1 = jobs_steps.get(position).get("CompletedTime1");
+                CustomerSignature1 = jobs_steps.get(position).get("CustomerSignature1");
+                PhotoFile1 = jobs_steps.get(position).get("PhotoFile1");
+                Signedby1 = jobs_steps.get(position).get("signedby1");
+                try {
+                    String[] separated = Collection_method1.split(",,");
+                    mViewHolder.collection_method1.setText(separated[0]);
+                    mViewHolder.collection_method2.setText(separated[1]);
+
+                } catch (java.lang.IndexOutOfBoundsException e) {
+                    e.printStackTrace();
+
+                }
+                try {
+                    String[] separated = AmountCollected1.split(",,");
+                    mViewHolder.amountcollected1.setText(separated[0]);
+                    mViewHolder.amountcollected2.setText(separated[1]);
+
+                } catch (java.lang.IndexOutOfBoundsException e) {
+                    e.printStackTrace();
+
+                }
+                try {
+                    String[] separated = DriverNotes1.split(",,");
+                    mViewHolder.drivernotes1.setText(separated[0]);
+                    mViewHolder.drivernotes2.setText(separated[1]);
+
+                } catch (java.lang.IndexOutOfBoundsException e) {
+                    e.printStackTrace();
+
+                }
+                try {
+                    String[] separated = CompletedTime1.split(",,");
+                    mViewHolder.completedtime1.setText(separated[0]);
+                    mViewHolder.completedtime2.setText(separated[1]);
+
+                } catch (java.lang.IndexOutOfBoundsException e) {
+                    e.printStackTrace();
+
+                }
+                try {
+                    String[] separated = Signedby1.split(",,");
+                    mViewHolder.Signedby1.setText(separated[0]);
+                    mViewHolder.signedby2.setText(separated[1]);
+
+                } catch (java.lang.IndexOutOfBoundsException e) {
+                    e.printStackTrace();
+
+                }
+
+                try {
+                    String[] separated = CustomerSignature1.split(",,");
+                    String image1 = "";
+                    image1 = separated[0];
+                    try {
+
+                        Picasso.with(context).load(image1).error(R.drawable.noimage).memoryPolicy(MemoryPolicy.NO_CACHE).into(mViewHolder.img_signature1);
+                        final String finalImage = image1;
+                        mViewHolder.img_signature1.setEnabled(true);
+                        mViewHolder.img_signature1.setOnClickListener(new View.OnClickListener() {
+                            @Override
+                            public void onClick(View v) {
+                                final Dialog nagDialog = new Dialog(context, android.R.style.Theme_Translucent_NoTitleBar_Fullscreen);
+                                nagDialog.requestWindowFeature(Window.FEATURE_NO_TITLE);
+                                nagDialog.setCancelable(false);
+                                nagDialog.setContentView(R.layout.big_image_click);
+                                Button btnClose = (Button) nagDialog.findViewById(R.id.btnIvClose);
+                                ImageView ivPreview = (ImageView) nagDialog.findViewById(R.id.iv_preview_image);
+                                try {
+                                    Picasso.with(context).load(finalImage).error(R.drawable.noimage).into(ivPreview);
+                                } catch (java.lang.IllegalArgumentException e) {
+                                    e.printStackTrace();
+                                }
+                                //ivPreview.setBackgroundDrawable(dd);
+
+                                btnClose.setOnClickListener(new View.OnClickListener() {
+                                    @Override
+                                    public void onClick(View arg0) {
+
+                                        nagDialog.dismiss();
+                                    }
+                                });
+                                nagDialog.show();
+                            }
+                        });
+
+                    } catch (java.lang.IllegalArgumentException e) {
+                        e.printStackTrace();
+                        Picasso.with(context).load(R.drawable.noimage).error(R.drawable.noimage).memoryPolicy(MemoryPolicy.NO_CACHE).into(mViewHolder.img_signature1);
+                        mViewHolder.img_signature1.setEnabled(false);
+                    }
+
+                    String image2 = "";
+                    image2 = separated[1];
+                    mViewHolder.img_signature2.setEnabled(true);
+                    try {
+                        Picasso.with(context).load(image2).error(R.drawable.noimage).memoryPolicy(MemoryPolicy.NO_CACHE).into(mViewHolder.img_signature2);
+                        final String finalImage = image2;
+                        mViewHolder.img_signature2.setOnClickListener(new View.OnClickListener() {
+                            @Override
+                            public void onClick(View v) {
+                                final Dialog nagDialog = new Dialog(context, android.R.style.Theme_Translucent_NoTitleBar_Fullscreen);
+                                nagDialog.requestWindowFeature(Window.FEATURE_NO_TITLE);
+                                nagDialog.setCancelable(false);
+                                nagDialog.setContentView(R.layout.big_image_click);
+                                Button btnClose = (Button) nagDialog.findViewById(R.id.btnIvClose);
+                                ImageView ivPreview = (ImageView) nagDialog.findViewById(R.id.iv_preview_image);
+                                try {
+                                    Picasso.with(context).load(finalImage).error(R.drawable.noimage).into(ivPreview);
+                                } catch (java.lang.IllegalArgumentException e) {
+                                    e.printStackTrace();
+                                }
+                                //ivPreview.setBackgroundDrawable(dd);
+
+                                btnClose.setOnClickListener(new View.OnClickListener() {
+                                    @Override
+                                    public void onClick(View arg0) {
+
+                                        nagDialog.dismiss();
+                                    }
+                                });
+                                nagDialog.show();
+                            }
+                        });
+                    } catch (java.lang.IllegalArgumentException e) {
+                        e.printStackTrace();
+                        mViewHolder.img_signature2.setEnabled(false);
+                        Picasso.with(context).load(R.drawable.noimage).error(R.drawable.noimage).memoryPolicy(MemoryPolicy.NO_CACHE).into(mViewHolder.img_signature2);
+                    }
+
+//                    mViewHolder.completedtime1.setText(separated[0]);
+//                    mViewHolder.completedtime2.setText(separated[1]);
+
+                } catch (java.lang.IndexOutOfBoundsException e) {
+                    e.printStackTrace();
+
+                }
+                try {
+                    String[] separated = PhotoFile1.split(",,");
+                    String image1 = "";
+                    image1 = separated[0];
+                    mViewHolder.photo1.setEnabled(true);
+                    try {
+                        Picasso.with(context).load(image1).error(R.drawable.noimage).memoryPolicy(MemoryPolicy.NO_CACHE).into(mViewHolder.photo1);
+                        final String finalImage = image1;
+                        mViewHolder.photo1.setOnClickListener(new View.OnClickListener() {
+                            @Override
+                            public void onClick(View v) {
+                                final Dialog nagDialog = new Dialog(context, android.R.style.Theme_Translucent_NoTitleBar_Fullscreen);
+                                nagDialog.requestWindowFeature(Window.FEATURE_NO_TITLE);
+                                nagDialog.setCancelable(false);
+                                nagDialog.setContentView(R.layout.big_image_click);
+                                Button btnClose = (Button) nagDialog.findViewById(R.id.btnIvClose);
+                                ImageView ivPreview = (ImageView) nagDialog.findViewById(R.id.iv_preview_image);
+                                try {
+                                    Picasso.with(context).load(finalImage).error(R.drawable.noimage).into(ivPreview);
+                                } catch (java.lang.IllegalArgumentException e) {
+                                    e.printStackTrace();
+                                }
+                                //ivPreview.setBackgroundDrawable(dd);
+
+                                btnClose.setOnClickListener(new View.OnClickListener() {
+                                    @Override
+                                    public void onClick(View arg0) {
+
+                                        nagDialog.dismiss();
+                                    }
+                                });
+                                nagDialog.show();
+                            }
+                        });
+                    } catch (java.lang.IllegalArgumentException e) {
+                        e.printStackTrace();
+                        mViewHolder.photo1.setEnabled(false);
+                        Picasso.with(context).load(R.drawable.noimage).error(R.drawable.noimage).memoryPolicy(MemoryPolicy.NO_CACHE).into(mViewHolder.photo1);
+                    }
+
+                    String image2 = "";
+                    image2 = separated[1];
+                    mViewHolder.photo2.setEnabled(true);
+                    try {
+                        Picasso.with(context).load(image2).error(R.drawable.noimage).memoryPolicy(MemoryPolicy.NO_CACHE).into(mViewHolder.photo2);
+                        final String finalImage = image2;
+                        mViewHolder.photo2.setOnClickListener(new View.OnClickListener() {
+                            @Override
+                            public void onClick(View v) {
+                                final Dialog nagDialog = new Dialog(context, android.R.style.Theme_Translucent_NoTitleBar_Fullscreen);
+                                nagDialog.requestWindowFeature(Window.FEATURE_NO_TITLE);
+                                nagDialog.setCancelable(false);
+                                nagDialog.setContentView(R.layout.big_image_click);
+                                Button btnClose = (Button) nagDialog.findViewById(R.id.btnIvClose);
+                                ImageView ivPreview = (ImageView) nagDialog.findViewById(R.id.iv_preview_image);
+                                try {
+                                    Picasso.with(context).load(finalImage).error(R.drawable.noimage).into(ivPreview);
+                                } catch (java.lang.IllegalArgumentException e) {
+                                    e.printStackTrace();
+                                }
+                                //ivPreview.setBackgroundDrawable(dd);
+
+                                btnClose.setOnClickListener(new View.OnClickListener() {
+                                    @Override
+                                    public void onClick(View arg0) {
+
+                                        nagDialog.dismiss();
+                                    }
+                                });
+                                nagDialog.show();
+                            }
+                        });
+
+                    } catch (java.lang.IllegalArgumentException e) {
+                        e.printStackTrace();
+                        mViewHolder.photo2.setEnabled(false);
+                        Picasso.with(context).load(R.drawable.noimage).error(R.drawable.noimage).memoryPolicy(MemoryPolicy.NO_CACHE).into(mViewHolder.photo2);
+                    }
+
+//                    mViewHolder.completedtime1.setText(separated[0]);
+//                    mViewHolder.completedtime2.setText(separated[1]);
+
+                } catch (java.lang.IndexOutOfBoundsException e) {
+                    e.printStackTrace();
+
+                }
+
+
+//                rlv_holder1 = (RelativeLayout) item.findViewById(R.id.rlv_holder);
+//                Rlvholder2 = (RelativeLayout) item.findViewById(R.id.rlv_holder2);
+//                collection_method1= (TextView) item.findViewById(R.id.textView41);
+//                amountcollected1= (TextView) item.findViewById(R.id.textView43);
+//                drivernotes1= (TextView) item.findViewById(R.id.textView45);
+//                completedtime1= (TextView) item.findViewById(R.id.textView47);
+//                collection_method2= (TextView) item.findViewById(R.id.textView411);
+//                amountcollected2= (TextView) item.findViewById(R.id.textView433);
+//                drivernotes2= (TextView) item.findViewById(R.id.textView455);
+//                completedtime2= (TextView) item.findViewById(R.id.textView477);
+//                img_signature1 = (ImageView)item.findViewById(R.id.imageView6);
+//                photo1 = (ImageView)item.findViewById(R.id.imageView11);
+//                img_signature2 = (ImageView)item.findViewById(R.id.imageView66);
+//                photo2 = (ImageView)item.findViewById(R.id.imageView111);
             } else if (Status.contentEquals("pulled")) {
                 if (Job_type.contentEquals("Exchange")) {
 
                     mViewHolder.personincharge2.setVisibility(View.GONE);
                     mViewHolder.txt_person_in___.setVisibility(View.GONE);
+                    mViewHolder.Txt_contperson.setVisibility(View.INVISIBLE);
+                    mViewHolder.contactnumber2.setVisibility(View.INVISIBLE);
+                    mViewHolder.ImgPhone2.setVisibility(View.INVISIBLE);
+
+
                 } else if (Job_type.contentEquals("Pull")) {
 
                     mViewHolder.personincharge2.setVisibility(View.GONE);
                     mViewHolder.txt_person_in___.setVisibility(View.GONE);
+                    mViewHolder.Txt_contperson.setVisibility(View.INVISIBLE);
+                    mViewHolder.contactnumber2.setVisibility(View.INVISIBLE);
+                    mViewHolder.ImgPhone2.setVisibility(View.INVISIBLE);
+
                 } else {
                     mViewHolder.personincharge2.setVisibility(View.VISIBLE);
                     mViewHolder.txt_person_in___.setVisibility(View.VISIBLE);
+                    mViewHolder.Txt_contperson.setVisibility(View.VISIBLE);
+                    mViewHolder.contactnumber2.setVisibility(View.VISIBLE);
+                    mViewHolder.ImgPhone2.setVisibility(View.VISIBLE);
                 }
                 mViewHolder.rlv_step1.setBackgroundColor(Color.parseColor("#fefffe"));
                 mViewHolder.rlv_step2.setBackgroundColor(Color.parseColor("#E4F8EB"));
                 mViewHolder.btn_acknowledge.setText("Completed");
                 mViewHolder.btn_acknowledge.setVisibility(View.VISIBLE);
+                mViewHolder.rlv_holder1.setVisibility(View.GONE);
+                mViewHolder.Rlvholder2.setVisibility(View.GONE);
             } else if (Status.contentEquals("Shifted")) {
                 if (Job_type.contentEquals("Exchange")) {
 
                     mViewHolder.personincharge2.setVisibility(View.GONE);
                     mViewHolder.txt_person_in___.setVisibility(View.GONE);
+                    mViewHolder.Txt_contperson.setVisibility(View.INVISIBLE);
+                    mViewHolder.contactnumber2.setVisibility(View.INVISIBLE);
+                    mViewHolder.ImgPhone2.setVisibility(View.INVISIBLE);
+
+
                 } else if (Job_type.contentEquals("Pull")) {
 
                     mViewHolder.personincharge2.setVisibility(View.GONE);
                     mViewHolder.txt_person_in___.setVisibility(View.GONE);
+                    mViewHolder.Txt_contperson.setVisibility(View.INVISIBLE);
+                    mViewHolder.contactnumber2.setVisibility(View.INVISIBLE);
+                    mViewHolder.ImgPhone2.setVisibility(View.INVISIBLE);
+
                 } else {
                     mViewHolder.personincharge2.setVisibility(View.VISIBLE);
                     mViewHolder.txt_person_in___.setVisibility(View.VISIBLE);
+                    mViewHolder.Txt_contperson.setVisibility(View.VISIBLE);
+                    mViewHolder.contactnumber2.setVisibility(View.VISIBLE);
+                    mViewHolder.ImgPhone2.setVisibility(View.VISIBLE);
                 }
                 mViewHolder.rlv_step1.setBackgroundColor(Color.parseColor("#fefffe"));
                 mViewHolder.rlv_step2.setBackgroundColor(Color.parseColor("#E4F8EB"));
                 mViewHolder.btn_acknowledge.setText("Completed");
                 mViewHolder.btn_acknowledge.setVisibility(View.VISIBLE);
+                mViewHolder.rlv_holder1.setVisibility(View.GONE);
+                mViewHolder.Rlvholder2.setVisibility(View.GONE);
             }
 
 
@@ -430,7 +804,16 @@ public class JobType_adapter extends BaseAdapter {
                 } else if (Str_phone1.contentEquals(" ")) {
                     mViewHolder.Img_phone1.setVisibility(View.INVISIBLE);
                 } else {
-                    mViewHolder.ImgPhone2.setVisibility(View.VISIBLE);
+                    if (Job_type.contentEquals("Exchange")) {
+                        mViewHolder.ImgPhone2.setVisibility(View.INVISIBLE);
+
+
+                    } else if (Job_type.contentEquals("Pull")) {
+                        mViewHolder.ImgPhone2.setVisibility(View.INVISIBLE);
+                    } else {
+                        mViewHolder.ImgPhone2.setVisibility(View.VISIBLE);
+                    }
+
                 }
 
                 mViewHolder.contactnumber2.setText(separated2[1]);
@@ -440,7 +823,15 @@ public class JobType_adapter extends BaseAdapter {
                 } else if (StrPhone2.contentEquals(" ")) {
                     mViewHolder.ImgPhone2.setVisibility(View.INVISIBLE);
                 } else {
-                    mViewHolder.ImgPhone2.setVisibility(View.VISIBLE);
+                    if (Job_type.contentEquals("Exchange")) {
+                        mViewHolder.ImgPhone2.setVisibility(View.INVISIBLE);
+
+
+                    } else if (Job_type.contentEquals("Pull")) {
+                        mViewHolder.ImgPhone2.setVisibility(View.INVISIBLE);
+                    } else {
+                        mViewHolder.ImgPhone2.setVisibility(View.VISIBLE);
+                    }
                 }
                 mViewHolder.rlv_step2.setVisibility(View.VISIBLE);
 
@@ -692,9 +1083,11 @@ public class JobType_adapter extends BaseAdapter {
     }
 
     private class MyViewHolder {
-        TextView Additionalremarks, job_number, txt_datetime, txt_jobtype, amounttocollected, customername, personincharge, contactnumber, siteadess, bintype, wastetype, remarksforstep, personincharge2, txt_person_in___, contactnumber2, siteadess2, bintype2, wastetype2, remarksforstep2;
-        //  ImageView Restaurant_image;
-        RelativeLayout rlv_step1, rlv_step2;
+        TextView Additionalremarks, job_number, txt_datetime, txt_jobtype, amounttocollected, customername, personincharge, contactnumber, siteadess, bintype, wastetype, remarksforstep, personincharge2, txt_person_in___, contactnumber2, siteadess2, bintype2, wastetype2, remarksforstep2, Txt_contperson;
+        ImageView img_signature1, photo1, img_signature2, photo2;
+        ;
+        TextView collection_method1, amountcollected1, drivernotes1, completedtime1, collection_method2, amountcollected2, drivernotes2, completedtime2, Signedby1, signedby2;
+        RelativeLayout rlv_step1, rlv_step2, rlv_holder1, Rlvholder2;
         Button btn_acknowledge;
         ImageView img_location, img_location_2, Img_phone1, ImgPhone2;
         String Job_number = "", Job_additional_charge = "", Project_site_id = "", Jobid = "", Job_stepid = "", Next_status = "", current_status = "";
@@ -721,6 +1114,7 @@ public class JobType_adapter extends BaseAdapter {
             siteadess2 = (TextView) item.findViewById(R.id.textView222);
             bintype2 = (TextView) item.findViewById(R.id.textView233);
             wastetype2 = (TextView) item.findViewById(R.id.textView255);
+            Txt_contperson = (TextView) item.findViewById(R.id.textView19p);
             remarksforstep2 = (TextView) item.findViewById(R.id.textView277);
             rlv_step1 = (RelativeLayout) item.findViewById(R.id.rlv_step1);
             rlv_step2 = (RelativeLayout) item.findViewById(R.id.rlv_step2);
@@ -729,6 +1123,26 @@ public class JobType_adapter extends BaseAdapter {
             img_location_2 = (ImageView) item.findViewById(R.id.imageView664);
             Img_phone1 = (ImageView) item.findViewById(R.id.imageView4);
             ImgPhone2 = (ImageView) item.findViewById(R.id.imageView5_phone);
+
+
+            //////////////////////////////////////////////////////////////////////////
+            rlv_holder1 = (RelativeLayout) item.findViewById(R.id.rlv_holder);
+            Rlvholder2 = (RelativeLayout) item.findViewById(R.id.rlv_holder2);
+            collection_method1 = (TextView) item.findViewById(R.id.textView41);
+            amountcollected1 = (TextView) item.findViewById(R.id.textView43);
+            drivernotes1 = (TextView) item.findViewById(R.id.textView45);
+            completedtime1 = (TextView) item.findViewById(R.id.textView47);
+            collection_method2 = (TextView) item.findViewById(R.id.textView411);
+            amountcollected2 = (TextView) item.findViewById(R.id.textView433);
+            drivernotes2 = (TextView) item.findViewById(R.id.textView455);
+            completedtime2 = (TextView) item.findViewById(R.id.textView477);
+            img_signature1 = (ImageView) item.findViewById(R.id.imageView6);
+            photo1 = (ImageView) item.findViewById(R.id.imageView11);
+            img_signature2 = (ImageView) item.findViewById(R.id.imageView6662);
+            photo2 = (ImageView) item.findViewById(R.id.imageView111);
+            Signedby1 = (TextView) item.findViewById(R.id.textView36);
+            signedby2 = (TextView) item.findViewById(R.id.textView51);
+            //  collection_method1 = ()
 
 //            tvDesc = (TextView) item.findViewById(R.id.tvDesc);
 
