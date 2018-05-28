@@ -19,6 +19,7 @@ import android.provider.MediaStore;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.annotation.RequiresApi;
+import android.support.constraint.ConstraintLayout;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 
@@ -125,10 +126,15 @@ public class feedback extends AppCompatActivity {
     String str_prefix = "";
     ListView Lv_aditional_charges;
     String Str_collect_payment = "", Payment_term = "", project_site_array = "";
-    TextView txt_additional_charges;
+    TextView txt_additional_charges, Text_rating__;
     String additional_charges_string_to_send = "";
     ArrayList<String> alstring_to_send = new ArrayList<String>();
     final ArrayList<HashMap<String, String>> listt = new ArrayList<HashMap<String, String>>();
+    ImageView img_signature_clear;
+    TextView txt_collectionmethod;
+    String str_chec_step = "";
+    ConstraintLayout cs_lv;
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -147,6 +153,7 @@ public class feedback extends AppCompatActivity {
         radio_no = (RadioButton) findViewById(R.id.vibration);
         Img_image = (ImageView) findViewById(R.id.imageView8);
         img_click_photo = (ImageView) findViewById(R.id.imageView7);
+        img_signature_clear = (ImageView) findViewById(R.id.imageView10);
         Btn_submit = (Button) findViewById(R.id.button2);
         Signedby = (EditText) findViewById(R.id.editText6);
         Edt_txt_amount_collected = (EditText) findViewById(R.id.editText8);
@@ -155,10 +162,15 @@ public class feedback extends AppCompatActivity {
         signatureView = (SignatureView) findViewById(R.id.textView29);
         sv = (ScrollView) findViewById(R.id.sv);
         txt_additional_charges = (TextView) findViewById(R.id.textView15);
+        Text_rating__ = (TextView) findViewById(R.id.textView31);
+        txt_collectionmethod = (TextView) findViewById(R.id.textView33);
         Lv_aditional_charges = (ListView) findViewById(R.id.lv_aditional_charges);
+        cs_lv = (ConstraintLayout) findViewById(R.id.contraint);
         shared = getSharedPreferences("Tidy_waste_management", MODE_PRIVATE);
         Access_tocken = (shared.getString("Acess_tocken", "nologin"));
         Driver_id = (shared.getString("Driver_id", "nologin"));
+        rtingbar.setVisibility(View.GONE);
+        Text_rating__.setVisibility(View.GONE);
         if (Build.VERSION.SDK_INT >= 24) {
             try {
                 Method m = StrictMode.class.getMethod("disableDeathOnFileUriExposure");
@@ -181,6 +193,7 @@ public class feedback extends AppCompatActivity {
                 Str_collect_payment = null;
                 Payment_term = null;
                 project_site_array = null;
+                str_chec_step = null;
             } else {
                 Job_number = extras.getString("Job_number");
                 Job_additional_charge = extras.getString("Job_additional_charge");
@@ -193,6 +206,7 @@ public class feedback extends AppCompatActivity {
                 Str_collect_payment = extras.getString("Collect_payment");
                 Payment_term = extras.getString("payment_term");
                 project_site_array = extras.getString("Project_site");
+                str_chec_step = extras.getString("Check_step");
             }
         } else {
             Job_number = (String) savedInstanceState.getSerializable("Job_number");
@@ -206,9 +220,17 @@ public class feedback extends AppCompatActivity {
             Str_collect_payment = (String) savedInstanceState.getSerializable("Collect_payment");
             Payment_term = (String) savedInstanceState.getSerializable("payment_term");
             project_site_array = (String) savedInstanceState.getSerializable("Project_site");
+            str_chec_step = (String) savedInstanceState.getSerializable("Check_step");
         }
         if (Strng_bin_number.contentEquals("null")) {
             Strng_bin_number = "";
+        } else if (Strng_bin_number.contentEquals(" ")) {
+            Strng_bin_number = "";
+        }
+        if (str_chec_step.contentEquals("2")) {
+            cs_lv.setVisibility(View.GONE);
+        } else {
+            cs_lv.setVisibility(View.VISIBLE);
         }
         Txt_job_number.setText(Job_number);
         Edttxt_bin.setText(Strng_bin_number);
@@ -218,14 +240,18 @@ public class feedback extends AppCompatActivity {
         if (Str_collect_payment.contentEquals("true")) {
             radio_yes.setChecked(true);
             radio_no.setChecked(false);
+            collection_method.setVisibility(View.VISIBLE);
+            txt_collectionmethod.setVisibility(View.VISIBLE);
         } else {
+            collection_method.setVisibility(View.GONE);
+            txt_collectionmethod.setVisibility(View.GONE);
             radio_yes.setChecked(false);
             radio_no.setChecked(true);
-            collection_method.setEnabled(false);
+            //collection_method.setEnabled(false);
             Edt_txt_amount_collected.setText("0");
             Edt_txt_amount_collected.setEnabled(false);
             List<String> list = new ArrayList<String>();
-            list.add("Select Payment method");
+            list.add("Select Collection method");
 
 
             options = list.toArray(new String[list.size()]);
@@ -326,31 +352,58 @@ public class feedback extends AppCompatActivity {
                 listt, listt_check
         );
         Lv_aditional_charges.setAdapter(adapter);
+        img_signature_clear.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                signatureView.clearCanvas();
+                Signedby.setEnabled(false);
+                rtingbar.setEnabled(false);
+                rtingbar.setRating(0.0f);
+                Signedby.setText("");
+                rtingbar.setVisibility(View.GONE);
+                Text_rating__.setVisibility(View.GONE);
+                Signedby.setFocusable(false);
+                Str_signature_base_64 = "";
+            }
+        });
 
         Lv_aditional_charges.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, final int position, long id) {
                 //  long viewId = view.getId();
                 final CheckBox ch = (CheckBox) view.findViewById(R.id.checkBox);
-                ch.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
-                    @Override
-                    public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
-                        if (isChecked) {
-                            String str_id = listt.get(position).get("ad_id");
-                            alstring_to_send.add(str_id);
+                if (ch.isChecked()) {
+                    String str_id = listt.get(position).get("ad_id");
+                    alstring_to_send.add(str_id);
 //                                    String listString = alstring_to_send.stream().map(Object::toString)
 //                                            .collect(Collectors.joining(", "));
-                            //ch.getText();
-                            additional_charges_string_to_send = TextUtils.join("| ", alstring_to_send);
-                            //Toast.makeText(feedback.this,joined,Toast.LENGTH_LONG).show();
-                        } else {
-                            String str_id = listt.get(position).get("ad_id");
-                            alstring_to_send.remove(str_id);
-                            additional_charges_string_to_send = TextUtils.join("| ", alstring_to_send);
-                            // Toast.makeText(feedback.this,joined,Toast.LENGTH_LONG).show();
-                        }
-                    }
-                });
+                    //ch.getText();
+                    additional_charges_string_to_send = TextUtils.join("| ", alstring_to_send);
+                } else {
+                    String str_id = listt.get(position).get("ad_id");
+                    alstring_to_send.remove(str_id);
+                    additional_charges_string_to_send = TextUtils.join("| ", alstring_to_send);
+                    // Toast.makeText(feedback.this,joined,Toast.LENGTH_LONG).show();
+                }
+//                ch.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
+//                    @Override
+//                    public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
+//                        if (isChecked) {
+//                            String str_id = listt.get(position).get("ad_id");
+//                            alstring_to_send.add(str_id);
+////                                    String listString = alstring_to_send.stream().map(Object::toString)
+////                                            .collect(Collectors.joining(", "));
+//                            //ch.getText();
+//                            additional_charges_string_to_send = TextUtils.join("| ", alstring_to_send);
+//                            //Toast.makeText(feedback.this,joined,Toast.LENGTH_LONG).show();
+//                        } else {
+//                            String str_id = listt.get(position).get("ad_id");
+//                            alstring_to_send.remove(str_id);
+//                            additional_charges_string_to_send = TextUtils.join("| ", alstring_to_send);
+//                            // Toast.makeText(feedback.this,joined,Toast.LENGTH_LONG).show();
+//                        }
+//                    }
+//                });
 //                        if (viewId == R.id.checkBox) {
 //                            Toast.makeText(feedback.this,"Clicked",Toast.LENGTH_LONG).show();
 //
@@ -432,6 +485,7 @@ public class feedback extends AppCompatActivity {
             e.printStackTrace();
         }
         rtingbar.setRating(0.0f);
+        // Text_rating__
         img_back.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -448,9 +502,19 @@ public class feedback extends AppCompatActivity {
             @Override
             public boolean onTouch(View view, MotionEvent motionEvent) {
                 int action = motionEvent.getAction();
+                // Signedby.setFocusable(false);
                 Signedby.setEnabled(true);
+                // Signedby.setFocusable(true);
                 rtingbar.setEnabled(true);
-                rtingbar.setRating(1.0f);
+                rtingbar.setRating(0.0f);
+                if (!str_chec_step.contentEquals("2")) {
+                    rtingbar.setVisibility(View.VISIBLE);
+                    Text_rating__.setVisibility(View.VISIBLE);
+                }
+
+                Signedby.setFocusableInTouchMode(true);
+                Signedby.setFocusable(true);
+
                 switch (action) {
                     case MotionEvent.ACTION_DOWN:
                         // Disable the scroll view to intercept the touch event
@@ -561,7 +625,12 @@ public class feedback extends AppCompatActivity {
         collection_method.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
             @Override
             public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
-                Str_collection_method = options[position];
+                if (options[position].contentEquals("Select Collection method")) {
+                    Str_collection_method = "";
+                } else {
+                    Str_collection_method = options[position];
+                }
+
             }
 
             @Override
@@ -587,6 +656,7 @@ public class feedback extends AppCompatActivity {
             @Override
             public void onRatingChanged(RatingBar ratingBar, float rating, boolean fromUser) {
                 Str_rating = String.valueOf(rating);
+                Str_rating = Str_rating.substring(0, Str_rating.indexOf("."));
             }
         });
 
@@ -595,18 +665,20 @@ public class feedback extends AppCompatActivity {
             @Override
             public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
                 if (isChecked) {
-                    collection_method.setEnabled(true);
+                    collection_method.setVisibility(View.VISIBLE);
+                    txt_collectionmethod.setVisibility(View.VISIBLE);
                     new Collection_Method().execute();
                     Payment_collected_method = "true";
                     //collection_method.setEnabled(true);
                     Edt_txt_amount_collected.setEnabled(true);
                     Edt_txt_amount_collected.setText("");
                 } else {
-                    collection_method.setEnabled(false);
+                    collection_method.setVisibility(View.GONE);
+                    txt_collectionmethod.setVisibility(View.GONE);
                     Edt_txt_amount_collected.setText("0");
                     Edt_txt_amount_collected.setEnabled(false);
                     List<String> list = new ArrayList<String>();
-                    list.add("Select Payment method");
+                    list.add("Select Collection method");
                     options = list.toArray(new String[list.size()]);
                     ArrayAdapter aa = new ArrayAdapter(feedback.this, android.R.layout.simple_spinner_item, options) {
                         @NonNull
@@ -682,7 +754,14 @@ public class feedback extends AppCompatActivity {
                         //new SUBMIT_INFO().execute();
                     }
                     if (!str_prefix.contentEquals(Str_check)) {
-                        Toast.makeText(feedback.this, "First Chracter of Bin number should start from " + str_prefix, Toast.LENGTH_LONG).show();
+                        Toast.makeText(feedback.this, "First Character of Bin number should start from " + str_prefix, Toast.LENGTH_LONG).show();
+                        //new SUBMIT_INFO().execute();
+                        // Str_collection_method
+                    } else if (Str_collection_method.contentEquals("Select Collection method")) {
+                        Toast.makeText(feedback.this, "Select Collection method", Toast.LENGTH_LONG).show();
+                        //new SUBMIT_INFO().execute();
+                    } else if (Str_collection_method.contentEquals("")) {
+                        Toast.makeText(feedback.this, "Select Collection method", Toast.LENGTH_LONG).show();
                         //new SUBMIT_INFO().execute();
                     } else if (Str_amount_collected.contentEquals("")) {
                         Toast.makeText(feedback.this, "Amount collected cannot be empty", Toast.LENGTH_LONG).show();
@@ -710,16 +789,25 @@ public class feedback extends AppCompatActivity {
                         // Toast.makeText(feedback.this, "Signature cannot be empty", Toast.LENGTH_LONG).show();
                         //new SUBMIT_INFO().execute();
                         // img_base64
-                    } else {
-                        Bitmap bitmap = signatureView.getSignatureBitmap();
-                        //Str_signature_base_64 = ImageUtil.convert(bitmap);
-                        Str_signature_base_64 = convertBitmapToString(bitmap);
-                        if (!Str_signature_base_64.contentEquals("")) {
-                            //new SUBMIT_INFO().execute();
-                            ///Submit_Update();
-                            //new Submit_Task().execute();
+                    } else if (signatureView.isBitmapEmpty()) {
+                        if (Str_driver_notes.contentEquals("noid")) {
+                            Toast.makeText(feedback.this, "Driver notes cannot be empty", Toast.LENGTH_LONG).show();
+                        } else {
                             UPDATE_FEEDBACK();
                         }
+                        // Toast.makeText(feedback.this, "Signature cannot be empty", Toast.LENGTH_LONG).show();
+                        //new SUBMIT_INFO().execute();
+                        // img_base64
+                    } else {
+                        // Bitmap bitmap = signatureView.getSignatureBitmap();
+                        //Str_signature_base_64 = ImageUtil.convert(bitmap);
+                        // Str_signature_base_64 = convertBitmapToString(bitmap);
+                        // if (!Str_signature_base_64.contentEquals("")) {
+                        //new SUBMIT_INFO().execute();
+                        ///Submit_Update();
+                        //new Submit_Task().execute();
+                        UPDATE_FEEDBACK();
+                        // }
 
                     }
 
@@ -750,6 +838,8 @@ public class feedback extends AppCompatActivity {
                             Toast.makeText(feedback.this, "Signed By cannot be empty", Toast.LENGTH_LONG).show();
                             //new SUBMIT_INFO().execute();
                             // img_base64
+                        } else if (Str_driver_notes.contentEquals("noid")) {
+                            Toast.makeText(feedback.this, "Driver notes cannot be empty", Toast.LENGTH_LONG).show();
                         } else {
                             Bitmap bitmap = signatureView.getSignatureBitmap();
                             //Str_signature_base_64 = ImageUtil.convert(bitmap);
@@ -765,17 +855,19 @@ public class feedback extends AppCompatActivity {
                         // Toast.makeText(feedback.this, "Signature cannot be empty", Toast.LENGTH_LONG).show();
                         //new SUBMIT_INFO().execute();
                         // img_base64
+                    } else if (Str_driver_notes.contentEquals("noid")) {
+                        Toast.makeText(feedback.this, "Driver notes cannot be empty", Toast.LENGTH_LONG).show();
                     } else {
-                        Bitmap bitmap = signatureView.getSignatureBitmap();
+                        //  Bitmap bitmap = signatureView.getSignatureBitmap();
                         //Str_signature_base_64 = ImageUtil.convert(bitmap);
-                        Str_signature_base_64 = convertBitmapToString(bitmap);
-                        if (!Str_signature_base_64.contentEquals("")) {
-                            // new SUBMIT_INFO().execute();
-                            //Submit_Update();
-                            //new Submit_Task().execute();
-                            UPDATE_FEEDBACK();
+                        //  Str_signature_base_64 = convertBitmapToString(bitmap);
+                        // if (!Str_signature_base_64.contentEquals("")) {
+                        // new SUBMIT_INFO().execute();
+                        //Submit_Update();
+                        //new Submit_Task().execute();
+                        UPDATE_FEEDBACK();
 
-                        }
+                        //}
                     }
                 }
 
@@ -894,15 +986,19 @@ public class feedback extends AppCompatActivity {
             adapter.setDropDownViewResource(R.layout.support_simple_spinner_dropdown_item);
 
             wastetype.setAdapter(adapter);
-            char first = bin_waste.get(0).getContact_name().charAt(0);
-            String str = String.valueOf(first);
+            try {
+                char first = bin_waste.get(0).getContact_name().charAt(0);
+                String str = String.valueOf(first);
 
-            if (Strng_bin_number.contentEquals("")) {
-                Edttxt_bin.setText(str);
-                str_prefix = str;
-            } else {
-                //Edttxt_bin.setText(Strng_bin_number);
-                str_prefix = Strng_bin_number;
+                if (Strng_bin_number.contentEquals("")) {
+                    Edttxt_bin.setText(str);
+                    str_prefix = str;
+                } else {
+                    //Edttxt_bin.setText(Strng_bin_number);
+                    str_prefix = Strng_bin_number;
+                }
+            } catch (java.lang.IndexOutOfBoundsException e) {
+                e.printStackTrace();
             }
 
 
@@ -962,6 +1058,8 @@ public class feedback extends AppCompatActivity {
                 JSONArray jsonArray = null;
                 try {
                     List<String> list = new ArrayList<String>();
+                    //List<String> list = new ArrayList<String>();
+                    list.add("Select Collection method");
                     jsonArray = new JSONArray(jsonStr_for_collection_method);
                     for (int count = 0; count < jsonArray.length(); count++) {
                         //String value = jsonArray.getString(count);
@@ -1068,6 +1166,7 @@ public class feedback extends AppCompatActivity {
                 try {
                     List<String> list = new ArrayList<String>();
                     jsonArray = new JSONArray(jsonStr_for_collection_method);
+                    get_driver_notes.add(new waste_value("none", "noid"));
                     for (int count = 0; count < jsonArray.length(); count++) {
                         //String value = jsonArray.getString(count);
                         JSONObject jsonObjj = null;
@@ -1195,7 +1294,7 @@ public class feedback extends AppCompatActivity {
             public void onClick(DialogInterface dialog, int item) {
                 if (options[item].equals("Take Photo")) {
                     Intent chooserIntent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
-                    File f = new File(Environment.getExternalStorageDirectory(), System.currentTimeMillis() + "tidy_signature.jpg");
+                    File f = new File(Environment.getExternalStorageDirectory(), "tidy_signature.jpg");
                     chooserIntent.putExtra(MediaStore.EXTRA_OUTPUT, Uri.fromFile(f));
                     imageToUploadUri = Uri.fromFile(f);
                     startActivityForResult(chooserIntent, CAMERA_PHOTO);
@@ -1214,19 +1313,25 @@ public class feedback extends AppCompatActivity {
         super.onActivityResult(requestCode, resultCode, data);
         if (requestCode == CAMERA_PHOTO && resultCode == RESULT_OK) {
             if (imageToUploadUri != null) {
-                Uri selectedImage = imageToUploadUri;
-                getContentResolver().notifyChange(selectedImage, null);
-                Str_img_path = imageToUploadUri.getPath();
-                // img_base64 = getFileToByte(Str_img_path);
-                Bitmap reducedSizeBitmap = getBitmap(imageToUploadUri.getPath());
-                img_base64 = convertBitmapToString(reducedSizeBitmap);
-                // Bitmap rotated_bitmap = rotateBitmap(reducedSizeBitmap, 90);
-                if (reducedSizeBitmap != null) {
-                    Img_image.setImageBitmap(reducedSizeBitmap);
+                try {
+                    Uri selectedImage = imageToUploadUri;
+                    getContentResolver().notifyChange(selectedImage, null);
+                    Str_img_path = imageToUploadUri.getPath();
+                    // img_base64 = getFileToByte(Str_img_path);
+                    Bitmap reducedSizeBitmap = getBitmap(imageToUploadUri.getPath());
 
+                    // Bitmap rotated_bitmap = rotateBitmap(reducedSizeBitmap, 90);
+                    if (reducedSizeBitmap != null) {
+                        Img_image.setImageBitmap(reducedSizeBitmap);
+                        img_base64 = convertBitmapToString(reducedSizeBitmap);
 
-                } else {
-                    Toast.makeText(this, "Error while capturing Image", Toast.LENGTH_LONG).show();
+                    } else {
+                        Toast.makeText(this, "Error while capturing Image", Toast.LENGTH_LONG).show();
+                    }
+                } catch (OutOfMemoryError e) {
+                    e.printStackTrace();
+                    img_base64 = "";
+                    Toast.makeText(this, "Memory Error while capturing Image", Toast.LENGTH_LONG).show();
                 }
             } else {
                 Toast.makeText(this, "Error while capturing Image", Toast.LENGTH_LONG).show();
@@ -1781,7 +1886,8 @@ public class feedback extends AppCompatActivity {
         SimpleDateFormat simpleDateFormat = new SimpleDateFormat(pattern, new Locale("fr", "FR"));
         String date = simpleDateFormat.format(new Date());
         pdioalog__ = new ProgressDialog(feedback.this);
-        pdioalog__.setMessage("please wait...");
+        pdioalog__.setMessage("Please wait...");
+        pdioalog__.setCancelable(false);
         pdioalog__.show();
         Tidy_feedback tidyfeedback = new Tidy_feedback();
         tidyfeedback.setJobID(Job_id);
@@ -1789,7 +1895,9 @@ public class feedback extends AppCompatActivity {
         tidyfeedback.setPhotoFile(img_base64);
         tidyfeedback.setProjectSiteId(Project_site_id);
         tidyfeedback.setProjectSiteChargeID(str_projectsite_chargeid);
-        tidyfeedback.setJobAdditionalCharges(additional_charges_string_to_send);
+        if (!additional_charges_string_to_send.contentEquals("")) {
+            tidyfeedback.setJobAdditionalCharges(additional_charges_string_to_send);
+        }
         tidyfeedback.setSignedBy(Strng_signedby);
         tidyfeedback.setRating(Str_rating);
         tidyfeedback.setPaymentCollected(Payment_collected_method);

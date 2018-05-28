@@ -5,6 +5,7 @@
     <uses-permission android:name="android.permission.INTERNET" />
     <uses-permission android:name="android.permission.CALL_PHONE" />
     <uses-permission android:name="android.permission.CAMERA" />
+    <uses-permission android:name="android.permission.READ_PHONE_STATE" />
     <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
 
     <!--
@@ -19,6 +20,7 @@
         android:icon="@drawable/newlogo"
         android:label="@string/app_name"
         android:roundIcon="@drawable/tdss"
+        android:name=".TestApplication"
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
         <activity
@@ -58,7 +60,25 @@
         <activity
             android:name=".MapsActivity"
             android:label="@string/title_activity_maps"
-            android:screenOrientation="portrait"></activity>
+            android:screenOrientation="portrait" />
+        <!-- Firebase Notifications -->
+
+        <service android:name=".service.MyFirebaseMessagingService">
+            <intent-filter>
+                <action android:name="com.google.firebase.MESSAGING_EVENT" />
+            </intent-filter>
+        </service>
+        <service android:name=".service.MyFirebaseInstanceIDService">
+            <intent-filter>
+                <action android:name="com.google.firebase.INSTANCE_ID_EVENT" />
+            </intent-filter>
+        </service>
+
+        <!-- ./Firebase Notifications -->
+
+
+        <activity android:name=".notification_listt" />
+        <activity android:name=".proof_of_delivery"></activity>
     </application>
 
 </manifest>

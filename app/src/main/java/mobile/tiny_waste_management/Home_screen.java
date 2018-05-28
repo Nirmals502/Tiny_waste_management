@@ -188,7 +188,7 @@ public class Home_screen extends AppCompatActivity
 
                 } else if (intent.getAction().equals(Config.PUSH_NOTIFICATION)) {
                     // new push notification is received
-
+                    Next_status = "null";
                     String message = intent.getStringExtra("message");
 
                     String[] separated = message.split(":");
@@ -827,11 +827,21 @@ public class Home_screen extends AppCompatActivity
                                         String Collect_paymentt = jsonObj_steps.getString("CollectPayment");
                                         String Collection_method = jsonObj_steps.getString("CollectionMethod");
                                         String AmountCollected = jsonObj_steps.getString("AmountCollected");
-                                        String DriverNotes = jsonObj_steps.getString("DriverNotes");
+                                        String driverjsonobjectnode = jsonObj_steps.getString("DriverNote");
+                                        //String DriverNotes = jsonObj_steps.getString("DriverNotes");
                                         String CompletedTime = jsonObj_steps.getString("CompletedTime");
                                         String CustomerSignature = jsonObj_steps.getString("CustomerSignature");
                                         String PhotoFile = jsonObj_steps.getString("PhotoFile");
                                         String signed_by = jsonObj_steps.getString("SignedBy");
+                                        String DriverNotes="";
+                                        try {
+                                            JSONObject Json_object = null;
+                                            Json_object = new JSONObject(driverjsonobjectnode);
+                                            DriverNotes = Json_object.getString("DriverNotes");
+
+                                        } catch (JSONException e) {
+                                            e.printStackTrace();
+                                        }
                                         //String signed_by = jsonObj_steps.getString("SignedBy");
 
                                         if (PersonInCharge.contentEquals("null")) {
@@ -894,6 +904,7 @@ public class Home_screen extends AppCompatActivity
                                         } catch (JSONException e) {
                                             e.printStackTrace();
                                         }
+
                                         try {
                                             JSONObject Json_object = null;
                                             Json_object = new JSONObject(WasteType);

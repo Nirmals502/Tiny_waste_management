@@ -1,24 +1,18 @@
-package mobile.tiny_waste_management;
+package mobile.tiny_waste_management.service;
 
 import android.app.ProgressDialog;
-import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.AsyncTask;
-import android.provider.Settings;
-import android.support.v7.app.AppCompatActivity;
-import android.os.Bundle;
-import android.text.InputType;
+import android.support.v4.content.LocalBroadcastManager;
 import android.util.Log;
-import android.view.View;
-import android.view.animation.Animation;
-import android.view.animation.CycleInterpolator;
-import android.view.animation.TranslateAnimation;
-import android.widget.Button;
 import android.widget.EditText;
 import android.widget.TextView;
 import android.widget.Toast;
+
+import com.google.firebase.iid.FirebaseInstanceId;
+import com.google.firebase.iid.FirebaseInstanceIdService;
 
 import org.apache.http.NameValuePair;
 import org.apache.http.message.BasicNameValuePair;
@@ -30,10 +24,17 @@ import java.util.List;
 
 import Service_handler.SERVER;
 import Service_handler.ServiceHandler;
+import mobile.tiny_waste_management.Home_screen;
+import mobile.tiny_waste_management.Login_screen;
 import mobile.tiny_waste_management.app.Config;
 
-public class Login_screen extends AppCompatActivity {
-    Button Btn_login;
+
+/**
+ * Created by Ravi Tamada on 08/08/16.
+ * www.androidhive.info
+ */
+public class MyFirebaseInstanceIDService extends FirebaseInstanceIdService {
+    private static final String TAG = MyFirebaseInstanceIDService.class.getSimpleName();
     private ProgressDialog pDialog;
     String Device_id = "";
     String status = "", Message;
@@ -43,87 +44,41 @@ public class Login_screen extends AppCompatActivity {
     String str_email = "", Str_password = "", Driver_id = "", String_device_tocken = "";
 
     @Override
-    protected void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_main);
-        Btn_login = (Button) findViewById(R.id.button);
-        Edt_txt_username = (EditText) findViewById(R.id.editText);
-        Edt_password = (EditText) findViewById(R.id.editText2);
-        Txt_show = (TextView) findViewById(R.id.textView4);
-        Device_id = getDeviceId(Login_screen.this);
+    public void onTokenRefresh() {
+        super.onTokenRefresh();
+        String refreshedToken = FirebaseInstanceId.getInstance().getToken();
 
-        final SharedPreferences shared = getSharedPreferences("Tidy_waste_management", MODE_PRIVATE);
-        Acess_tocken = (shared.getString("Acess_tocken", "nodata"));
+        // Saving reg id to shared preferences
+        storeRegIdInPref(refreshedToken);
 
-        if (!Acess_tocken.contentEquals("nodata")) {
-//            SharedPreferences.Editor editor = shared.edit();
-//
-//            editor.putString("Check_screen", "Login");
-//            editor.commit();
-//                    // do some thing
-            Intent i1 = new Intent(Login_screen.this, Home_screen.class);
-
-            startActivity(i1);
-
-            finish();
-        }
-//
-//                }else{
-//                    Intent i = new Intent(Screen_01.this, Main.class);
-//                    startActivity(i);
-//
-//                    finish();
-//                }
-        Txt_show.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                if (Txt_show.getText().toString().contentEquals("Show")) {
-                    Txt_show.setText("Hide");
-                    Edt_password.setInputType(InputType.TYPE_TEXT_VARIATION_VISIBLE_PASSWORD);
-                    Edt_password.setSelection(Edt_password.getText().length());
-                } else if (Txt_show.getText().toString().contentEquals("Hide")) {
-                    Txt_show.setText("Show");
-                    Edt_password.setInputType(InputType.TYPE_TEXT_VARIATION_PASSWORD | InputType.TYPE_CLASS_TEXT);
-                    Edt_password.setSelection(Edt_password.getText().length());
-
-                }
-
-            }
-        });
-        Btn_login.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                //  Intent i1 = new Intent(Login_screen.this, Home_screen.class);
-                //  startActivity(i1);
-                SharedPreferences pref = getApplicationContext().getSharedPreferences(Config.SHARED_PREF, 0);
-                String_device_tocken = pref.getString("regId", "");
-             //   if (!String_device_tocken.contentEquals("nodata")) {
-                    if (Edt_txt_username.getText().toString().contentEquals("")) {
-                        Animation anm = Shake_Animation();
-                        Edt_txt_username.startAnimation(anm);
-                    } else if (Edt_password.getText().toString().contentEquals("")) {
-                        Animation anm = Shake_Animation();
-                        Edt_password.startAnimation(anm);
-                    } else {
+        // sending reg id to your server
 
 
-                        str_email = Edt_txt_username.getText().toString();
-                        Str_password = Edt_password.getText().toString();
-                        new Login().execute();
-                    }
-                }
-                //new Login().execute();
-           // }
-        });
+        sendRegistrationToServer(refreshedToken);
+
+        // Notify UI that registration has completed, so the progress indicator can be hidden.
+        Intent registrationComplete = new Intent(Config.REGISTRATION_COMPLETE);
+        registrationComplete.putExtra("token", refreshedToken);
+        LocalBroadcastManager.getInstance(this).sendBroadcast(registrationComplete);
     }
 
-    public Animation Shake_Animation() {
-        Animation shake = new TranslateAnimation(0, 5, 0, 0);
-        shake.setInterpolator(new CycleInterpolator(5));
-        shake.setDuration(300);
+    private void sendRegistrationToServer(final String token) {
+        // sending gcm token to server
+        String_device_tocken = token;
+        final SharedPreferences shared = getSharedPreferences("Tidy_waste_management", MODE_PRIVATE);
+        str_email = (shared.getString("UserName", "nodata"));
+        Str_password = (shared.getString("Str_password", "nodata"));
+        Device_id = (shared.getString("DeviceId", "nodata"));
+        new Login().execute();
 
+        Log.e(TAG, "sendRegistrationToServer: " + token);
+    }
 
-        return shake;
+    private void storeRegIdInPref(String token) {
+        SharedPreferences pref = getApplicationContext().getSharedPreferences(Config.SHARED_PREF, 0);
+        SharedPreferences.Editor editor = pref.edit();
+        editor.putString("regId", token);
+        editor.commit();
     }
 
     private class Login extends AsyncTask<Void, String, Void> implements DialogInterface.OnCancelListener {
@@ -138,7 +93,7 @@ public class Login_screen extends AppCompatActivity {
 
             // mProgressHUD = ProgressHUD.show(Login_Screen.this, "Connecting", true, true, this);
             // Showing progress dialog
-            pDialog = new ProgressDialog(Login_screen.this);
+            pDialog = new ProgressDialog(MyFirebaseInstanceIDService.this);
             pDialog.setMessage("Please wait...");
             pDialog.setCancelable(false);
             pDialog.show();
@@ -228,11 +183,11 @@ public class Login_screen extends AppCompatActivity {
                 editor.putString("DeviceId", Device_id);
 
                 editor.commit();
-                Intent i1 = new Intent(Login_screen.this, Home_screen.class);
+                Intent i1 = new Intent(MyFirebaseInstanceIDService.this, Home_screen.class);
                 startActivity(i1);
-                finish();
+                //finish();
             } else if (status.contentEquals("")) {
-                Toast.makeText(Login_screen.this, "Invalid Username or Password", Toast.LENGTH_LONG).show();
+                Toast.makeText(MyFirebaseInstanceIDService.this, "Invalid Username or Password", Toast.LENGTH_LONG).show();
             }
 
         }
@@ -242,10 +197,5 @@ public class Login_screen extends AppCompatActivity {
 
         }
     }
-
-    public String getDeviceId(Context context) {
-        // returns 64-bit unique string
-        return Settings.Secure.getString(context.getContentResolver(), Settings.Secure.ANDROID_ID);
-
-    }
 }
+

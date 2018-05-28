@@ -1,0 +1,141 @@
+<?xml version="1.0" encoding="utf-8"?>
+<android.support.constraint.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context=".notification_listt">
+
+    <RelativeLayout
+        android:id="@+id/rlv_holder"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/textView26">
+
+        <TextView
+            android:id="@+id/textView8"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+
+
+            android:layout_marginLeft="5dp"
+
+            android:text="Collection Method"
+            android:textColor="#7d7b7b" />
+
+        <TextView
+            android:id="@+id/textView411"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentTop="true"
+            android:layout_marginLeft="22dp"
+            android:layout_toEndOf="@+id/textView8"
+            android:layout_toRightOf="@+id/textView8"
+            android:text="TextView"
+            android:textColor="#7d7b7b" />
+
+        <TextView
+            android:id="@+id/textView42"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignStart="@+id/textView8"
+            android:layout_below="@+id/textView8"
+            android:layout_marginTop="5dp"
+            android:text="Amount Collected"
+            android:textColor="#7d7b7b" />
+
+        <TextView
+            android:id="@+id/textView433"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignTop="@+id/textView42"
+            android:layout_marginLeft="22dp"
+            android:layout_toEndOf="@+id/textView8"
+            android:text="TextView"
+            android:textColor="#7d7b7b"
+            tools:ignore="RtlCompat" />
+
+        <TextView
+            android:id="@+id/textView44"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignStart="@+id/textView8"
+            android:layout_below="@+id/textView42"
+            android:layout_marginTop="5dp"
+            android:text="Driver Notes"
+            android:textColor="#7d7b7b"
+            tools:ignore="RtlCompat" />
+
+        <TextView
+            android:id="@+id/textView455"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignStart="@+id/textView411"
+            android:layout_below="@+id/textView42"
+            android:layout_marginTop="5dp"
+            android:text="TextView"
+            android:textColor="#7d7b7b"
+            tools:ignore="RtlCompat" />
+
+        <TextView
+            android:id="@+id/textView46"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignStart="@+id/textView8"
+            android:layout_below="@+id/textView44"
+            android:layout_marginTop="5dp"
+            android:text="Completed Time"
+            android:textColor="#7d7b7b"
+            tools:ignore="RtlCompat" />
+
+        <TextView
+            android:id="@+id/textView477"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignStart="@+id/textView411"
+            android:layout_below="@+id/textView44"
+            android:layout_marginTop="5dp"
+            android:text="TextView"
+            android:textColor="#7d7b7b"
+            tools:ignore="RtlCompat" />
+
+        <TextView
+            android:id="@+id/textView48"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignStart="@+id/textView8"
+            android:layout_below="@+id/textView46"
+            android:layout_marginTop="20dp"
+            android:text="Signature"
+            android:textColor="#7d7b7b"
+            tools:ignore="RtlCompat" />
+
+        <ImageView
+            android:id="@+id/imageView66"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignTop="@+id/textView48"
+            android:layout_centerHorizontal="true"
+            app:srcCompat="@drawable/ic_menu_gallery" />
+
+        <TextView
+            android:id="@+id/textView49"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignStart="@+id/textView8"
+            android:layout_below="@+id/textView48"
+            android:layout_marginTop="20dp"
+            android:text="Uploaded Photo"
+            android:textColor="#7d7b7b"
+            tools:ignore="RtlCompat" />
+
+        <ImageView
+            android:id="@+id/imageView111"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_below="@+id/imageView66"
+            android:layout_centerHorizontal="true"
+            android:layout_marginTop="14dp"
+            app:srcCompat="@drawable/ic_menu_gallery" />
+    </RelativeLayout>
+</android.support.constraint.ConstraintLayout>
