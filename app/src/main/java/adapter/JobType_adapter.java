@@ -15,6 +15,7 @@ import android.support.annotation.RequiresApi;
 import android.text.TextUtils;
 import android.util.Log;
 import android.view.LayoutInflater;
+import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.Window;
@@ -71,7 +72,7 @@ public class JobType_adapter extends BaseAdapter {
     SharedPreferences shared;
     String Access_tocken = "", Driver_id = "", Search_withjob_number = "", Jobidd = "", Next_statuss = "", current_statuss = "";
     String Status = "";
-    String Str_aditional_charges="";
+    String Str_aditional_charges = "";
 
     public JobType_adapter(Context context, ArrayList<HashMap<String, String>> Array_subscription, ArrayList<HashMap<String, String>> list_jobs_steps) {
         this.subscriptionarray = Array_subscription;
@@ -128,6 +129,13 @@ public class JobType_adapter extends BaseAdapter {
             mViewHolder.customername.setText(subscriptionarray.get(position).get("customer_name"));
             Str_aditional_charges = subscriptionarray.get(position).get("Job_additional_charges");
             String additional_remarks = subscriptionarray.get(position).get("DriverRemark");
+            String str_rating = subscriptionarray.get(position).get("Rating");
+            if (str_rating.contentEquals("null")) {
+                str_rating = "";
+            } else if (str_rating.contentEquals("0")) {
+                str_rating = "";
+            }
+            mViewHolder.Rating.setText(str_rating);
             if (additional_remarks.contentEquals("null")) {
                 additional_remarks = "";
             }
@@ -208,6 +216,114 @@ public class JobType_adapter extends BaseAdapter {
 
             Status = subscriptionarray.get(position).get("Check_fragment");
             String Job_type = subscriptionarray.get(position).get("jobtype");
+
+            JSONArray jArr_aditional = null;
+            try {
+                //String Str_response = jsonObj.getString("data");
+//                    Json_category = new JSONObject(Str_response);
+//                    Str_response = Json_category.getString("categories");
+                jArr_aditional = new JSONArray(Str_aditional_charges);
+            } catch (JSONException e) {
+                e.printStackTrace();
+            }
+
+            ArrayList<HashMap<String, String>> listt_check = new ArrayList<HashMap<String, String>>();
+            try {
+                //  List<String> listt = new ArrayList<String>();
+                //ArrayList<HashMap<String, String>> listt = new ArrayList<HashMap<String, String>>();
+                for (int count = 0; count < jArr_aditional.length(); count++) {
+                    JSONObject jsonObj_steps = null;
+
+                    try {
+                        jsonObj_steps = jArr_aditional.getJSONObject(count);
+                        String Job_adtional_charge = jsonObj_steps.getString("AdditionalCharge");
+                        jsonObj_steps = new JSONObject(Job_adtional_charge);
+                        Job_adtional_charge = jsonObj_steps.getString("AdditionalChargeName");
+                        String Job_adtional_charge_id = jsonObj_steps.getString("AdditionalChargeId");
+                        //additional_charges_string_to_send =
+                        //alstring_to_send.add(Job_adtional_charge_id);
+                        HashMap<String, String> charges = new HashMap<String, String>();
+
+                        // adding each child node to HashMap key => value
+                        charges.put("charges_name", Job_adtional_charge);
+                        listt_check.add(charges);
+
+                    } catch (JSONException e) {
+                        e.printStackTrace();
+                    }
+                }
+                aditional_charges_for_completed adapter = new aditional_charges_for_completed(context,
+                        listt_check
+                );
+                mViewHolder.lv_aditional_chargesStep1.setAdapter(adapter);
+
+                if (adapter.getCount() == 1) {
+                    View item = adapter.getView(0, null, mViewHolder.lv_aditional_chargesStep1);
+                    item.measure(0, 0);
+                    ViewGroup.LayoutParams params = mViewHolder.lv_aditional_chargesStep1.getLayoutParams();
+                    params.width = ViewGroup.LayoutParams.MATCH_PARENT;
+                    params.height = 1 * item.getMeasuredHeight();
+                    mViewHolder.lv_aditional_chargesStep1.setLayoutParams(params);
+
+
+                } else if (adapter.getCount() == 2) {
+                    View item = adapter.getView(0, null, mViewHolder.lv_aditional_chargesStep1);
+                    item.measure(0, 0);
+                    ViewGroup.LayoutParams params = mViewHolder.lv_aditional_chargesStep1.getLayoutParams();
+                    params.width = ViewGroup.LayoutParams.MATCH_PARENT;
+                    params.height = 2 * item.getMeasuredHeight();
+                    mViewHolder.lv_aditional_chargesStep1.setLayoutParams(params);
+
+
+                } else if (adapter.getCount() == 3) {
+                    View item = adapter.getView(0, null, mViewHolder.lv_aditional_chargesStep1);
+                    item.measure(0, 0);
+                    ViewGroup.LayoutParams params = mViewHolder.lv_aditional_chargesStep1.getLayoutParams();
+                    params.width = ViewGroup.LayoutParams.MATCH_PARENT;
+                    params.height = 3 * item.getMeasuredHeight();
+                    mViewHolder.lv_aditional_chargesStep1.setLayoutParams(params);
+
+
+                } else if (adapter.getCount() > 3) {
+                    View item = adapter.getView(0, null, mViewHolder.lv_aditional_chargesStep1);
+                    item.measure(0, 0);
+                    ViewGroup.LayoutParams params = mViewHolder.lv_aditional_chargesStep1.getLayoutParams();
+                    params.width = ViewGroup.LayoutParams.MATCH_PARENT;
+                    params.height = 3 * item.getMeasuredHeight();
+                    mViewHolder.lv_aditional_chargesStep1.setLayoutParams(params);
+
+
+                }
+
+//                    mViewHolder.lv_aditional_chargesStep1.setOnTouchListener(new View.OnTouchListener() {
+//                        @Override
+//                        public boolean onTouch(View view, MotionEvent motionEvent) {
+//                            int action = motionEvent.getAction();
+//                            switch (action) {
+//                                case MotionEvent.ACTION_DOWN:
+//                                    // Disable the scroll view to intercept the touch event
+//                                    view.dis(true);
+//                                    return false;
+//                                case MotionEvent.ACTION_UP:
+//                                    // Allow scroll View to interceot the touch event
+//                                    sv.requestDisallowInterceptTouchEvent(false);
+//                                    return true;
+//                                case MotionEvent.ACTION_MOVE:
+//                                    sv.requestDisallowInterceptTouchEvent(true);
+//                                    return false;
+//                                default:
+//                                    return true;
+//                            }
+//                        }
+//                    });
+
+                // additional_charges_string_to_send = TextUtils.join("| ", alstring_to_send);
+            } catch (java.lang.NullPointerException e) {
+                e.printStackTrace();
+                Log.e("ServiceHandler", "Couldn't get any data from the url");
+            }
+
+
             if (Status.contentEquals("Assigned")) {
                 mViewHolder.rlv_step1.setBackgroundColor(Color.parseColor("#E4F8EB"));
                 mViewHolder.rlv_step2.setBackgroundColor(Color.parseColor("#fefffe"));
@@ -390,55 +506,6 @@ public class JobType_adapter extends BaseAdapter {
                 mViewHolder.rlv_holder1.setVisibility(View.GONE);
                 mViewHolder.Rlvholder2.setVisibility(View.GONE);
             } else if (Status.contentEquals("Completed")) {
-                JSONArray jArr_aditional = null;
-                try {
-                    //String Str_response = jsonObj.getString("data");
-//                    Json_category = new JSONObject(Str_response);
-//                    Str_response = Json_category.getString("categories");
-                    jArr_aditional = new JSONArray(Str_aditional_charges);
-                } catch (JSONException e) {
-                    e.printStackTrace();
-                }
-
-                ArrayList<HashMap<String, String>> listt_check = new ArrayList<HashMap<String, String>>();
-                try {
-                    //  List<String> listt = new ArrayList<String>();
-                    //ArrayList<HashMap<String, String>> listt = new ArrayList<HashMap<String, String>>();
-                    for (int count = 0; count < jArr_aditional.length(); count++) {
-                        JSONObject jsonObj_steps = null;
-
-                        try {
-                            jsonObj_steps = jArr_aditional.getJSONObject(count);
-                            String Job_adtional_charge = jsonObj_steps.getString("AdditionalCharge");
-                            jsonObj_steps = new JSONObject(Job_adtional_charge);
-                            Job_adtional_charge = jsonObj_steps.getString("AdditionalChargeName");
-                            String Job_adtional_charge_id = jsonObj_steps.getString("AdditionalChargeId");
-                            //additional_charges_string_to_send =
-                            //alstring_to_send.add(Job_adtional_charge_id);
-                            HashMap<String, String> charges = new HashMap<String, String>();
-
-                            // adding each child node to HashMap key => value
-                            charges.put("charges_name", Job_adtional_charge);
-                            listt_check.add(charges);
-
-                        } catch (JSONException e) {
-                            e.printStackTrace();
-                        }
-                    }
-                    aditional_charges_for_completed adapter = new aditional_charges_for_completed(context,
-                             listt_check
-                    );
-                    mViewHolder.lv_aditional_chargesStep1.setAdapter(adapter);
-                   // additional_charges_string_to_send = TextUtils.join("| ", alstring_to_send);
-                } catch (java.lang.NullPointerException e) {
-                    e.printStackTrace();
-                    Log.e("ServiceHandler", "Couldn't get any data from the url");
-                }
-
-
-
-
-
 
 
                 if (Job_type.contentEquals("Exchange")) {
@@ -495,6 +562,7 @@ public class JobType_adapter extends BaseAdapter {
 
                 } catch (java.lang.IndexOutOfBoundsException e) {
                     e.printStackTrace();
+                    mViewHolder.collection_method2.setText("");
 
                 }
                 try {
@@ -504,7 +572,7 @@ public class JobType_adapter extends BaseAdapter {
 
                 } catch (java.lang.IndexOutOfBoundsException e) {
                     e.printStackTrace();
-
+                    mViewHolder.amountcollected2.setText("");
                 }
                 try {
                     String[] separated = DriverNotes1.split(",,");
@@ -513,6 +581,7 @@ public class JobType_adapter extends BaseAdapter {
 
                 } catch (java.lang.IndexOutOfBoundsException e) {
                     e.printStackTrace();
+                    mViewHolder.drivernotes2.setText("");
 
                 }
                 try {
@@ -522,16 +591,27 @@ public class JobType_adapter extends BaseAdapter {
 
                 } catch (java.lang.IndexOutOfBoundsException e) {
                     e.printStackTrace();
-
+                    mViewHolder.completedtime2.setText("");
                 }
                 try {
                     String[] separated = Signedby1.split(",,");
+                    //String signedby1 = separated[0];
+
                     mViewHolder.Signedby1.setText(separated[0]);
+
+
+                } catch (java.lang.IndexOutOfBoundsException e) {
+                    e.printStackTrace();
+                    mViewHolder.Signedby1.setText("");
+                }
+
+                try {
+                    String[] separated = Signedby1.split(",,");
                     mViewHolder.signedby2.setText(separated[1]);
 
                 } catch (java.lang.IndexOutOfBoundsException e) {
                     e.printStackTrace();
-
+                    mViewHolder.signedby2.setText("");
                 }
 
                 try {
@@ -575,7 +655,14 @@ public class JobType_adapter extends BaseAdapter {
                         Picasso.with(context).load(R.drawable.noimage).error(R.drawable.noimage).memoryPolicy(MemoryPolicy.NO_CACHE).into(mViewHolder.img_signature1);
                         mViewHolder.img_signature1.setEnabled(false);
                     }
+                } catch (java.lang.IndexOutOfBoundsException e) {
+                    e.printStackTrace();
+                    Picasso.with(context).load(R.drawable.noimage).error(R.drawable.noimage).memoryPolicy(MemoryPolicy.NO_CACHE).into(mViewHolder.img_signature1);
+                    mViewHolder.img_signature1.setEnabled(false);
 
+                }
+                try {
+                    String[] separated = CustomerSignature1.split(",,");
                     String image2 = "";
                     image2 = separated[1];
                     mViewHolder.img_signature2.setEnabled(true);
@@ -620,6 +707,8 @@ public class JobType_adapter extends BaseAdapter {
                 } catch (java.lang.IndexOutOfBoundsException e) {
                     e.printStackTrace();
 
+                    mViewHolder.img_signature2.setEnabled(false);
+                    Picasso.with(context).load(R.drawable.noimage).error(R.drawable.noimage).memoryPolicy(MemoryPolicy.NO_CACHE).into(mViewHolder.img_signature2);
                 }
                 try {
                     String[] separated = PhotoFile1.split(",,");
@@ -1142,7 +1231,7 @@ public class JobType_adapter extends BaseAdapter {
     }
 
     private class MyViewHolder {
-        TextView Additionalremarks, job_number, txt_datetime, txt_jobtype, amounttocollected, customername, personincharge, contactnumber, siteadess, bintype, wastetype, remarksforstep, personincharge2, txt_person_in___, contactnumber2, siteadess2, bintype2, wastetype2, remarksforstep2, Txt_contperson;
+        TextView Additionalremarks, job_number, txt_datetime, txt_jobtype, amounttocollected, customername, personincharge, contactnumber, siteadess, bintype, wastetype, remarksforstep, personincharge2, txt_person_in___, contactnumber2, siteadess2, bintype2, wastetype2, remarksforstep2, Txt_contperson, Rating;
         ImageView img_signature1, photo1, img_signature2, photo2;
         ;
         TextView collection_method1, amountcollected1, drivernotes1, completedtime1, collection_method2, amountcollected2, drivernotes2, completedtime2, Signedby1, signedby2;
@@ -1150,7 +1239,8 @@ public class JobType_adapter extends BaseAdapter {
         Button btn_acknowledge;
         ImageView img_location, img_location_2, Img_phone1, ImgPhone2;
         String Job_number = "", Job_additional_charge = "", Project_site_id = "", Jobid = "", Job_stepid = "", Next_status = "", current_status = "";
-        ListView lv_aditional_chargesStep1,lv_aditional_chargesstep2;
+        ListView lv_aditional_chargesStep1, lv_aditional_chargesstep2;
+
         public MyViewHolder(View item) {
 
             job_number = (TextView) item.findViewById(R.id.text_date_time);
@@ -1201,7 +1291,8 @@ public class JobType_adapter extends BaseAdapter {
             photo2 = (ImageView) item.findViewById(R.id.imageView111);
             Signedby1 = (TextView) item.findViewById(R.id.textView36);
             signedby2 = (TextView) item.findViewById(R.id.textView51);
-            lv_aditional_chargesStep1 = (ListView)item.findViewById(R.id.LV_dynamic);
+            lv_aditional_chargesStep1 = (ListView) item.findViewById(R.id.LV_dynamic);
+            Rating = (TextView) item.findViewById(R.id.textView40);
             //lv_aditional_chargesstep2 = (ListView)item.findViewById(R.id.textView53);
             //  collection_method1 = ()
 
