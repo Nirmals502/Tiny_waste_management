@@ -2,6 +2,7 @@ package mobile.tiny_waste_management;
 
 import android.app.AlertDialog;
 import android.app.ProgressDialog;
+import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
@@ -379,10 +380,12 @@ public class feedback extends AppCompatActivity {
 //                                            .collect(Collectors.joining(", "));
                     //ch.getText();
                     additional_charges_string_to_send = TextUtils.join("| ", alstring_to_send);
+                    // Toast.makeText(feedback.this, additional_charges_string_to_send, Toast.LENGTH_LONG).show();
                 } else {
                     String str_id = listt.get(position).get("ad_id");
                     alstring_to_send.remove(str_id);
                     additional_charges_string_to_send = TextUtils.join("| ", alstring_to_send);
+                    //    Toast.makeText(feedback.this, additional_charges_string_to_send, Toast.LENGTH_LONG).show();
                     // Toast.makeText(feedback.this,joined,Toast.LENGTH_LONG).show();
                 }
 //                ch.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
@@ -738,6 +741,10 @@ public class feedback extends AppCompatActivity {
             @Override
             public void onClick(View v) {
                 //additional_charges_string_to_send = "1|10|13";
+                if (str_chec_step.contentEquals("2")) {
+                    Payment_collected_method = "false";
+                }
+
                 if (Payment_collected_method.contentEquals("true")) {
                     Strng_signedby = Signedby.getText().toString();
                     Str_amount_collected = Edt_txt_amount_collected.getText().toString();
@@ -838,8 +845,23 @@ public class feedback extends AppCompatActivity {
                             Toast.makeText(feedback.this, "Signed By cannot be empty", Toast.LENGTH_LONG).show();
                             //new SUBMIT_INFO().execute();
                             // img_base64
-                        } else if (Str_driver_notes.contentEquals("noid")) {
-                            Toast.makeText(feedback.this, "Driver notes cannot be empty", Toast.LENGTH_LONG).show();
+
+                        } else if (str_chec_step.contentEquals("1")) {
+                            // Payment_collected_method = "false";
+                            if (Str_driver_notes.contentEquals("noid")) {
+                                Toast.makeText(feedback.this, "Driver notes cannot be empty", Toast.LENGTH_LONG).show();
+                            } else {
+                                Bitmap bitmap = signatureView.getSignatureBitmap();
+                                //Str_signature_base_64 = ImageUtil.convert(bitmap);
+                                Str_signature_base_64 = convertBitmapToString(bitmap);
+                                if (!Str_signature_base_64.contentEquals("")) {
+                                    // new SUBMIT_INFO().execute();
+                                    //Submit_Update();
+                                    //new Submit_Task().execute();
+                                    UPDATE_FEEDBACK();
+
+                                }
+                            }
                         } else {
                             Bitmap bitmap = signatureView.getSignatureBitmap();
                             //Str_signature_base_64 = ImageUtil.convert(bitmap);
@@ -855,8 +877,10 @@ public class feedback extends AppCompatActivity {
                         // Toast.makeText(feedback.this, "Signature cannot be empty", Toast.LENGTH_LONG).show();
                         //new SUBMIT_INFO().execute();
                         // img_base64
-                    } else if (Str_driver_notes.contentEquals("noid")) {
-                        Toast.makeText(feedback.this, "Driver notes cannot be empty", Toast.LENGTH_LONG).show();
+                    } else if (str_chec_step.contentEquals("1")) {
+                        if (Str_driver_notes.contentEquals("noid")) {
+                            Toast.makeText(feedback.this, "Driver notes cannot be empty", Toast.LENGTH_LONG).show();
+                        }
                     } else {
                         //  Bitmap bitmap = signatureView.getSignatureBitmap();
                         //Str_signature_base_64 = ImageUtil.convert(bitmap);
@@ -888,6 +912,7 @@ public class feedback extends AppCompatActivity {
 
 
         JSONObject jsonnode, json_User;
+        String jsonStr="";
 
 
         @Override
@@ -914,7 +939,7 @@ public class feedback extends AppCompatActivity {
             HttpHandler sh = new HttpHandler();
             // Making a request to url and getting response
             //String url = "http://api.androidhive.info/contacts/";
-            String jsonStr = sh.makeServiceCall("http://112.196.3.42:8298/v1/ProjectSiteCharge/GetProjectSiteChargeIDBinWateType/" + Project_site_id, Access_tocken);
+             jsonStr = sh.makeServiceCall("http://112.196.3.42:8298/v1/ProjectSiteCharge/GetProjectSiteChargeIDBinWateType/" + Project_site_id, Access_tocken);
 
             Log.d("Response: ", "> " + jsonStr);
 
@@ -963,44 +988,49 @@ public class feedback extends AppCompatActivity {
             super.onPostExecute(result);
             // Dismiss the progress dialog
             pDialog.dismiss();
-            try {
-                str_projectsite_chargeid = bin_waste.get(0).getContact_id();
-            } catch (java.lang.IndexOutOfBoundsException e) {
-                e.printStackTrace();
-            }
-
-            ArrayAdapter<waste_value> adapter =
-                    new ArrayAdapter<waste_value>(getApplicationContext(), R.layout.support_simple_spinner_dropdown_item, bin_waste) {
-                        @NonNull
-                        @Override
-                        public View getView(int position, @Nullable View convertView, @NonNull ViewGroup parent) {
-                            convertView = View.inflate(feedback.this, R.layout.support_simple_spinner_dropdown_item, null);
-                            // get view
-                            TextView tvText1 = (TextView) convertView.findViewById(android.R.id.text1);
-                            tvText1.setTextColor(Color.parseColor("#0b813f"));
-
-                            // set content
-                            return super.getView(position, convertView, parent);
-                        }
-                    };
-            adapter.setDropDownViewResource(R.layout.support_simple_spinner_dropdown_item);
-
-            wastetype.setAdapter(adapter);
-            try {
-                char first = bin_waste.get(0).getContact_name().charAt(0);
-                String str = String.valueOf(first);
-
-                if (Strng_bin_number.contentEquals("")) {
-                    Edttxt_bin.setText(str);
-                    str_prefix = str;
-                } else {
-                    //Edttxt_bin.setText(Strng_bin_number);
-                    str_prefix = Strng_bin_number;
+            if (jsonStr == null) {
+                open_loginWindow();
+            } else if (jsonStr.contentEquals("Invalid_Token")) {
+                open_loginWindow();
+            } else {
+                try {
+                    str_projectsite_chargeid = bin_waste.get(0).getContact_id();
+                } catch (java.lang.IndexOutOfBoundsException e) {
+                    e.printStackTrace();
                 }
-            } catch (java.lang.IndexOutOfBoundsException e) {
-                e.printStackTrace();
-            }
 
+                ArrayAdapter<waste_value> adapter =
+                        new ArrayAdapter<waste_value>(getApplicationContext(), R.layout.support_simple_spinner_dropdown_item, bin_waste) {
+                            @NonNull
+                            @Override
+                            public View getView(int position, @Nullable View convertView, @NonNull ViewGroup parent) {
+                                convertView = View.inflate(feedback.this, R.layout.support_simple_spinner_dropdown_item, null);
+                                // get view
+                                TextView tvText1 = (TextView) convertView.findViewById(android.R.id.text1);
+                                tvText1.setTextColor(Color.parseColor("#0b813f"));
+
+                                // set content
+                                return super.getView(position, convertView, parent);
+                            }
+                        };
+                adapter.setDropDownViewResource(R.layout.support_simple_spinner_dropdown_item);
+
+                wastetype.setAdapter(adapter);
+                try {
+                    char first = bin_waste.get(0).getContact_name().charAt(0);
+                    String str = String.valueOf(first);
+
+                    if (Strng_bin_number.contentEquals("")) {
+                        Edttxt_bin.setText(str);
+                        str_prefix = str;
+                    } else {
+                        //Edttxt_bin.setText(Strng_bin_number);
+                        str_prefix = Strng_bin_number;
+                    }
+                } catch (java.lang.IndexOutOfBoundsException e) {
+                    e.printStackTrace();
+                }
+            }
 
         }
 
@@ -1089,23 +1119,29 @@ public class feedback extends AppCompatActivity {
             // Dismiss the progress dialog
             pDialog2.dismiss();
             //String[] str =toStringArray(jsonArray);
+            if (jsonStr_for_collection_method == null) {
+                open_loginWindow();
+            } else if (jsonStr_for_collection_method.contentEquals("Invalid_Token")) {
+                open_loginWindow();
+            } else {
 
-            ArrayAdapter aa = new ArrayAdapter(feedback.this, android.R.layout.simple_spinner_item, options) {
-                @NonNull
-                @Override
-                public View getView(int position, @Nullable View convertView, @NonNull ViewGroup parent) {
-                    convertView = View.inflate(feedback.this, R.layout.support_simple_spinner_dropdown_item, null);
-                    // get view
-                    TextView tvText1 = (TextView) convertView.findViewById(android.R.id.text1);
-                    tvText1.setTextColor(Color.parseColor("#0b813f"));
+                ArrayAdapter aa = new ArrayAdapter(feedback.this, android.R.layout.simple_spinner_item, options) {
+                    @NonNull
+                    @Override
+                    public View getView(int position, @Nullable View convertView, @NonNull ViewGroup parent) {
+                        convertView = View.inflate(feedback.this, R.layout.support_simple_spinner_dropdown_item, null);
+                        // get view
+                        TextView tvText1 = (TextView) convertView.findViewById(android.R.id.text1);
+                        tvText1.setTextColor(Color.parseColor("#0b813f"));
 
-                    // set content
-                    return super.getView(position, convertView, parent);
-                }
-            };
-            aa.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+                        // set content
+                        return super.getView(position, convertView, parent);
+                    }
+                };
+                aa.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
 
-            collection_method.setAdapter(aa);
+                collection_method.setAdapter(aa);
+            }
             //Spinner_.setOnItemSelectedListener(this);
 
 
@@ -1204,23 +1240,30 @@ public class feedback extends AppCompatActivity {
             // Dismiss the progress dialog
             pDialog3.dismiss();
             //String[] str =toStringArray(jsonArray);
+            // jsonStr_for_collection_method
+            if (jsonStr_for_collection_method == null) {
+                open_loginWindow();
+            } else if (jsonStr_for_collection_method.contentEquals("Invalid_Token")) {
+                open_loginWindow();
+            } else {
 
-            ArrayAdapter aa = new ArrayAdapter(feedback.this, android.R.layout.simple_spinner_item, get_driver_notes) {
-                @NonNull
-                @Override
-                public View getView(int position, @Nullable View convertView, @NonNull ViewGroup parent) {
-                    convertView = View.inflate(feedback.this, R.layout.support_simple_spinner_dropdown_item, null);
-                    // get view
-                    TextView tvText1 = (TextView) convertView.findViewById(android.R.id.text1);
-                    tvText1.setTextColor(Color.parseColor("#0b813f"));
+                ArrayAdapter aa = new ArrayAdapter(feedback.this, android.R.layout.simple_spinner_item, get_driver_notes) {
+                    @NonNull
+                    @Override
+                    public View getView(int position, @Nullable View convertView, @NonNull ViewGroup parent) {
+                        convertView = View.inflate(feedback.this, R.layout.support_simple_spinner_dropdown_item, null);
+                        // get view
+                        TextView tvText1 = (TextView) convertView.findViewById(android.R.id.text1);
+                        tvText1.setTextColor(Color.parseColor("#0b813f"));
 
-                    // set content
-                    return super.getView(position, convertView, parent);
-                }
-            };
-            aa.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+                        // set content
+                        return super.getView(position, convertView, parent);
+                    }
+                };
+                aa.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
 
-            Spnr_driver_note.setAdapter(aa);
+                Spnr_driver_note.setAdapter(aa);
+            }
             //Spinner_.setOnItemSelectedListener(this);
 
 
@@ -1322,6 +1365,7 @@ public class feedback extends AppCompatActivity {
 
                     // Bitmap rotated_bitmap = rotateBitmap(reducedSizeBitmap, 90);
                     if (reducedSizeBitmap != null) {
+
                         Img_image.setImageBitmap(reducedSizeBitmap);
                         img_base64 = convertBitmapToString(reducedSizeBitmap);
 
@@ -1584,6 +1628,7 @@ public class feedback extends AppCompatActivity {
 
         JSONObject jsonnode, json_User;
 
+        String jsonStr = "";
 
         @Override
         protected void onPreExecute() {
@@ -1611,7 +1656,7 @@ public class feedback extends AppCompatActivity {
             //String url = "http://api.androidhive.info/contacts/";
             String str_url = "http://112.196.3.42:8298/v1/Job/UpdateJobStatus?JobId=" + Job_id + "&nextstatus=" + Next_status + "&driverid=" + Driver_id + "&currentstatus=" + current_status;
             String newurl = str_url.replaceAll(" ", "%20");
-            String jsonStr = sh.makeServiceCall_post(newurl, Access_tocken);
+            jsonStr = sh.makeServiceCall_post(newurl, Access_tocken);
 
             Log.d("Response: ", "> " + jsonStr);
 
@@ -1642,15 +1687,22 @@ public class feedback extends AppCompatActivity {
             super.onPostExecute(result);
             // Dismiss the progress dialog
             pDialog.dismiss();
-            SharedPreferences shared = getSharedPreferences("Tidy_waste_management", MODE_PRIVATE);
-            SharedPreferences.Editor editor = shared.edit();
+            if (jsonStr == null) {
+                open_loginWindow();
+            } else if (jsonStr.contentEquals("Invalid_Token")) {
+                open_loginWindow();
+            } else {
+                SharedPreferences shared = getSharedPreferences("Tidy_waste_management", MODE_PRIVATE);
+                SharedPreferences.Editor editor = shared.edit();
 
-            editor.putString("Check_screen", "Adapter");
-            editor.putString("Next_status", Next_status);
-            editor.commit();
-            Intent i1 = new Intent(feedback.this, Home_screen.class);
-            startActivity(i1);
-            finish();
+                editor.putString("Check_screen", "Adapter");
+                editor.putString("Next_status", Next_status);
+                editor.commit();
+                Intent i1 = new Intent(feedback.this, Home_screen.class);
+                startActivity(i1);
+                finish();
+            }
+
             //context.f
 
 
@@ -1899,7 +1951,9 @@ public class feedback extends AppCompatActivity {
             tidyfeedback.setJobAdditionalCharges(additional_charges_string_to_send);
         }
         tidyfeedback.setSignedBy(Strng_signedby);
-        tidyfeedback.setRating(Str_rating);
+        if (!str_chec_step.contentEquals("2")) {
+            tidyfeedback.setRating(Str_rating);
+        }
         tidyfeedback.setPaymentCollected(Payment_collected_method);
         tidyfeedback.setCollectionMethod(Str_collection_method);
         tidyfeedback.setAmountCollected(Str_amount_collected);
@@ -1924,10 +1978,14 @@ public class feedback extends AppCompatActivity {
                             new Status_update().execute();
                             // String respose = response.toString();
                             // Toast.makeText(feedback.this,respose,Toast.LENGTH_LONG).show();
+                        }else{
+                            //Toast.makeText(feedback.this,response.toString(),Toast.LENGTH_LONG).show();
+                            open_loginWindow();
                         }
                     } catch (Exception e) {
-                        Toast.makeText(feedback.this, "Server error", Toast.LENGTH_LONG).show();
+                        // Toast.makeText(feedback.this, "Server error", Toast.LENGTH_LONG).show();
                         e.printStackTrace();
+                        open_loginWindow();
                     }
                 }
 
@@ -1935,7 +1993,8 @@ public class feedback extends AppCompatActivity {
                 public void onFailure(Call<String> call, Throwable t) {
                     pdioalog__.dismiss();
                     try {
-                        Toast.makeText(feedback.this, "Server error", Toast.LENGTH_LONG).show();
+                        // Toast.makeText(feedback.this, "Server error", Toast.LENGTH_LONG).show();
+                        open_loginWindow();
                     } catch (Exception e) {
                         e.printStackTrace();
                     }
@@ -1944,6 +2003,25 @@ public class feedback extends AppCompatActivity {
         }
     }
 
+    public void open_loginWindow() {
+        AlertDialog.Builder alertDialogBuilder = new AlertDialog.Builder(this);
+        alertDialogBuilder.setMessage("Your session has expired. Please log in again");
+        alertDialogBuilder.setPositiveButton("ok",
+                new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface arg0, int arg1) {
+                        SharedPreferences settings = getSharedPreferences("Tidy_waste_management", Context.MODE_PRIVATE);
+                        settings.edit().clear().commit();
+                        Intent i1 = new Intent(feedback.this, Login_screen.class);
+                        startActivity(i1);
+                        finish();
+                    }
+                });
+
+
+        AlertDialog alertDialog = alertDialogBuilder.create();
+        alertDialog.show();
+    }
 }
 
 
