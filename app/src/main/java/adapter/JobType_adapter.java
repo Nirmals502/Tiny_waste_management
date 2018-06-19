@@ -12,7 +12,6 @@ import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Build;
 import android.support.annotation.RequiresApi;
-import android.text.TextUtils;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.MotionEvent;
@@ -196,16 +195,39 @@ public class JobType_adapter extends BaseAdapter {
             mViewHolder.Img_phone1.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
+                    String ContactNo1 = jobs_steps.get(position).get("ContactNo");
+                    String str_phone="";
+                    //String job_step_id1 = jobs_steps.get(position).get("job_step_id1");
+                    try {
+                        String[] separated = ContactNo1.split(",,");
+                        str_phone = separated[0];
+
+                    } catch (java.lang.IndexOutOfBoundsException e) {
+                        e.printStackTrace();
+                        str_phone="";
+                    }
                     Intent intent = new Intent(Intent.ACTION_DIAL);
-                    intent.setData(Uri.parse("tel:" + Str_phone1));
+                    intent.setData(Uri.parse("tel:" + str_phone));
                     context.startActivity(intent);
                 }
             });
             mViewHolder.ImgPhone2.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
+                    String ContactNo1 = jobs_steps.get(position).get("ContactNo");
+                    String str_phone="";
+                    //String job_step_id1 = jobs_steps.get(position).get("job_step_id1");
+                    try {
+                        String[] separated = ContactNo1.split(",,");
+                        str_phone = separated[1];
+
+                    } catch (java.lang.IndexOutOfBoundsException e) {
+                        e.printStackTrace();
+                        str_phone="";
+
+                    }
                     Intent intent = new Intent(Intent.ACTION_DIAL);
-                    intent.setData(Uri.parse("tel:" + StrPhone2));
+                    intent.setData(Uri.parse("tel:" + str_phone));
                     context.startActivity(intent);
                 }
             });
@@ -262,7 +284,7 @@ public class JobType_adapter extends BaseAdapter {
                     item.measure(0, 0);
                     ViewGroup.LayoutParams params = mViewHolder.lv_aditional_chargesStep1.getLayoutParams();
                     params.width = ViewGroup.LayoutParams.MATCH_PARENT;
-                    params.height = 1 * item.getMeasuredHeight();
+                    params.height = 2 * item.getMeasuredHeight();
                     mViewHolder.lv_aditional_chargesStep1.setLayoutParams(params);
 
 
@@ -271,7 +293,7 @@ public class JobType_adapter extends BaseAdapter {
                     item.measure(0, 0);
                     ViewGroup.LayoutParams params = mViewHolder.lv_aditional_chargesStep1.getLayoutParams();
                     params.width = ViewGroup.LayoutParams.MATCH_PARENT;
-                    params.height = 2 * item.getMeasuredHeight();
+                    params.height = 3 * item.getMeasuredHeight();
                     mViewHolder.lv_aditional_chargesStep1.setLayoutParams(params);
 
 
@@ -280,7 +302,7 @@ public class JobType_adapter extends BaseAdapter {
                     item.measure(0, 0);
                     ViewGroup.LayoutParams params = mViewHolder.lv_aditional_chargesStep1.getLayoutParams();
                     params.width = ViewGroup.LayoutParams.MATCH_PARENT;
-                    params.height = 3 * item.getMeasuredHeight();
+                    params.height = 4 * item.getMeasuredHeight();
                     mViewHolder.lv_aditional_chargesStep1.setLayoutParams(params);
 
 
@@ -289,33 +311,33 @@ public class JobType_adapter extends BaseAdapter {
                     item.measure(0, 0);
                     ViewGroup.LayoutParams params = mViewHolder.lv_aditional_chargesStep1.getLayoutParams();
                     params.width = ViewGroup.LayoutParams.MATCH_PARENT;
-                    params.height = 3 * item.getMeasuredHeight();
+                    params.height = 4 * item.getMeasuredHeight();
                     mViewHolder.lv_aditional_chargesStep1.setLayoutParams(params);
 
 
                 }
 
-//                    mViewHolder.lv_aditional_chargesStep1.setOnTouchListener(new View.OnTouchListener() {
-//                        @Override
-//                        public boolean onTouch(View view, MotionEvent motionEvent) {
-//                            int action = motionEvent.getAction();
-//                            switch (action) {
-//                                case MotionEvent.ACTION_DOWN:
-//                                    // Disable the scroll view to intercept the touch event
-//                                    view.dis(true);
-//                                    return false;
-//                                case MotionEvent.ACTION_UP:
-//                                    // Allow scroll View to interceot the touch event
-//                                    sv.requestDisallowInterceptTouchEvent(false);
-//                                    return true;
-//                                case MotionEvent.ACTION_MOVE:
-//                                    sv.requestDisallowInterceptTouchEvent(true);
-//                                    return false;
-//                                default:
-//                                    return true;
-//                            }
-//                        }
-//                    });
+                    mViewHolder.lv_aditional_chargesStep1.setOnTouchListener(new View.OnTouchListener() {
+                        @Override
+                        public boolean onTouch(View view, MotionEvent motionEvent) {
+                            int action = motionEvent.getAction();
+                            switch (action) {
+                                case MotionEvent.ACTION_DOWN:
+                                    // Disable the scroll view to intercept the touch event
+                                    view.getParent().requestDisallowInterceptTouchEvent(true);
+                                    return false;
+                                case MotionEvent.ACTION_UP:
+                                    // Allow scroll View to interceot the touch event
+                                    view.getParent().requestDisallowInterceptTouchEvent(false);
+                                    return true;
+                                case MotionEvent.ACTION_MOVE:
+                                    view.getParent().requestDisallowInterceptTouchEvent(true);
+                                    return false;
+                                default:
+                                    return true;
+                            }
+                        }
+                    });
 
                 // additional_charges_string_to_send = TextUtils.join("| ", alstring_to_send);
             } catch (java.lang.NullPointerException e) {
@@ -325,9 +347,11 @@ public class JobType_adapter extends BaseAdapter {
 
 
             if (Status.contentEquals("Assigned")) {
+                mViewHolder.lv_aditional_chargesStep1.setVisibility(View.GONE);
+                mViewHolder.Txt_aditional_charge.setVisibility(View.GONE);
                 mViewHolder.rlv_step1.setBackgroundColor(Color.parseColor("#E4F8EB"));
                 mViewHolder.rlv_step2.setBackgroundColor(Color.parseColor("#fefffe"));
-                mViewHolder.btn_acknowledge.setText("Acknowledge");
+                mViewHolder.btn_acknowledge.setText(R.string.Acknowledge_button_status);
                 mViewHolder.btn_acknowledge.setVisibility(View.VISIBLE);
                 if (Job_type.contentEquals("Exchange")) {
 
@@ -355,9 +379,11 @@ public class JobType_adapter extends BaseAdapter {
                 mViewHolder.rlv_holder1.setVisibility(View.GONE);
                 mViewHolder.Rlvholder2.setVisibility(View.GONE);
             } else if (Status.contentEquals("Acknowledge")) {
+                mViewHolder.lv_aditional_chargesStep1.setVisibility(View.GONE);
+                mViewHolder.Txt_aditional_charge.setVisibility(View.GONE);
                 mViewHolder.rlv_step1.setBackgroundColor(Color.parseColor("#E4F8EB"));
                 mViewHolder.rlv_step2.setBackgroundColor(Color.parseColor("#fefffe"));
-                mViewHolder.btn_acknowledge.setText("Start");
+                mViewHolder.btn_acknowledge.setText(R.string.Start_staus_button);
                 mViewHolder.btn_acknowledge.setVisibility(View.VISIBLE);
                 mViewHolder.personincharge2.setVisibility(View.VISIBLE);
                 mViewHolder.txt_person_in___.setVisibility(View.VISIBLE);
@@ -388,18 +414,20 @@ public class JobType_adapter extends BaseAdapter {
                 mViewHolder.rlv_holder1.setVisibility(View.GONE);
                 mViewHolder.Rlvholder2.setVisibility(View.GONE);
             } else if (Status.contentEquals("In Progress")) {
+                mViewHolder.lv_aditional_chargesStep1.setVisibility(View.GONE);
+                mViewHolder.Txt_aditional_charge.setVisibility(View.GONE);
                 mViewHolder.rlv_step1.setBackgroundColor(Color.parseColor("#E4F8EB"));
                 mViewHolder.rlv_step2.setBackgroundColor(Color.parseColor("#fefffe"));
                 mViewHolder.btn_acknowledge.setVisibility(View.VISIBLE);
                 if (Job_type.contentEquals("Exchange")) {
-                    mViewHolder.btn_acknowledge.setText("Changed");
+                    mViewHolder.btn_acknowledge.setText(R.string.Btn_chnaged_status);
                     mViewHolder.personincharge2.setVisibility(View.GONE);
                     mViewHolder.txt_person_in___.setVisibility(View.GONE);
                     mViewHolder.Txt_contperson.setVisibility(View.INVISIBLE);
                     mViewHolder.contactnumber2.setVisibility(View.INVISIBLE);
                     mViewHolder.ImgPhone2.setVisibility(View.INVISIBLE);
                 } else if (Job_type.contentEquals("Pull")) {
-                    mViewHolder.btn_acknowledge.setText("Pulled");
+                    mViewHolder.btn_acknowledge.setText(R.string.Btn_pulled_status);
                     mViewHolder.personincharge2.setVisibility(View.GONE);
                     mViewHolder.txt_person_in___.setVisibility(View.GONE);
                     mViewHolder.Txt_contperson.setVisibility(View.INVISIBLE);
@@ -407,35 +435,35 @@ public class JobType_adapter extends BaseAdapter {
                     mViewHolder.ImgPhone2.setVisibility(View.INVISIBLE);
 
                 } else if (Job_type.contentEquals("Put")) {
-                    mViewHolder.btn_acknowledge.setText("Completed");
+                    mViewHolder.btn_acknowledge.setText(R.string.btn_completed_status);
                     mViewHolder.personincharge2.setVisibility(View.VISIBLE);
                     mViewHolder.txt_person_in___.setVisibility(View.VISIBLE);
                     mViewHolder.Txt_contperson.setVisibility(View.VISIBLE);
                     mViewHolder.contactnumber2.setVisibility(View.VISIBLE);
                     mViewHolder.ImgPhone2.setVisibility(View.VISIBLE);
                 } else if (Job_type.contentEquals("Shift")) {
-                    mViewHolder.btn_acknowledge.setText("Shifted");
+                    mViewHolder.btn_acknowledge.setText(R.string.Btn_shifted_statuss);
                     mViewHolder.personincharge2.setVisibility(View.VISIBLE);
                     mViewHolder.txt_person_in___.setVisibility(View.VISIBLE);
                     mViewHolder.Txt_contperson.setVisibility(View.VISIBLE);
                     mViewHolder.contactnumber2.setVisibility(View.VISIBLE);
                     mViewHolder.ImgPhone2.setVisibility(View.VISIBLE);
                 } else if (Job_type.contentEquals("Out")) {
-                    mViewHolder.btn_acknowledge.setText("Completed");
+                    mViewHolder.btn_acknowledge.setText(R.string.Btn_completed_status);
                     mViewHolder.personincharge2.setVisibility(View.VISIBLE);
                     mViewHolder.txt_person_in___.setVisibility(View.VISIBLE);
                     mViewHolder.Txt_contperson.setVisibility(View.VISIBLE);
                     mViewHolder.contactnumber2.setVisibility(View.VISIBLE);
                     mViewHolder.ImgPhone2.setVisibility(View.VISIBLE);
                 } else if (Job_type.contentEquals("Throw At Customer Site")) {
-                    mViewHolder.btn_acknowledge.setText("Shifted");
+                    mViewHolder.btn_acknowledge.setText(R.string.Btn_shifted_statuss);
                     mViewHolder.personincharge2.setVisibility(View.VISIBLE);
                     mViewHolder.txt_person_in___.setVisibility(View.VISIBLE);
                     mViewHolder.Txt_contperson.setVisibility(View.VISIBLE);
                     mViewHolder.contactnumber2.setVisibility(View.VISIBLE);
                     mViewHolder.ImgPhone2.setVisibility(View.VISIBLE);
                 } else if (Job_type.contentEquals("Pull Empty Bin")) {
-                    mViewHolder.btn_acknowledge.setText("Completed");
+                    mViewHolder.btn_acknowledge.setText(R.string.Btn_completed_status);
                     mViewHolder.personincharge2.setVisibility(View.VISIBLE);
                     mViewHolder.txt_person_in___.setVisibility(View.VISIBLE);
                     mViewHolder.Txt_contperson.setVisibility(View.VISIBLE);
@@ -445,6 +473,8 @@ public class JobType_adapter extends BaseAdapter {
                 mViewHolder.rlv_holder1.setVisibility(View.GONE);
                 mViewHolder.Rlvholder2.setVisibility(View.GONE);
             } else if (Status.contentEquals("cancelled")) {
+                mViewHolder.lv_aditional_chargesStep1.setVisibility(View.GONE);
+                mViewHolder.Txt_aditional_charge.setVisibility(View.GONE);
                 if (Job_type.contentEquals("Exchange")) {
 
                     mViewHolder.personincharge2.setVisibility(View.GONE);
@@ -455,6 +485,7 @@ public class JobType_adapter extends BaseAdapter {
 
 
                 } else if (Job_type.contentEquals("Pull")) {
+
 
                     mViewHolder.personincharge2.setVisibility(View.GONE);
                     mViewHolder.txt_person_in___.setVisibility(View.GONE);
@@ -471,11 +502,13 @@ public class JobType_adapter extends BaseAdapter {
                 }
                 mViewHolder.rlv_step1.setBackgroundColor(Color.parseColor("#E4F8EB"));
                 mViewHolder.rlv_step2.setBackgroundColor(Color.parseColor("#fefffe"));
-                mViewHolder.btn_acknowledge.setText("Completed");
+                mViewHolder.btn_acknowledge.setText(R.string.Btn_completed_status);
                 mViewHolder.btn_acknowledge.setVisibility(View.INVISIBLE);
                 mViewHolder.rlv_holder1.setVisibility(View.GONE);
                 mViewHolder.Rlvholder2.setVisibility(View.GONE);
             } else if (Status.contentEquals("Changed")) {
+                mViewHolder.lv_aditional_chargesStep1.setVisibility(View.GONE);
+                mViewHolder.Txt_aditional_charge.setVisibility(View.GONE);
                 if (Job_type.contentEquals("Exchange")) {
 
                     mViewHolder.personincharge2.setVisibility(View.GONE);
@@ -501,7 +534,7 @@ public class JobType_adapter extends BaseAdapter {
                 }
                 mViewHolder.rlv_step1.setBackgroundColor(Color.parseColor("#fefffe"));
                 mViewHolder.rlv_step2.setBackgroundColor(Color.parseColor("#E4F8EB"));
-                mViewHolder.btn_acknowledge.setText("Completed");
+                mViewHolder.btn_acknowledge.setText(R.string.Btn_completed_status);
                 mViewHolder.btn_acknowledge.setVisibility(View.VISIBLE);
                 mViewHolder.rlv_holder1.setVisibility(View.GONE);
                 mViewHolder.Rlvholder2.setVisibility(View.GONE);
@@ -532,6 +565,8 @@ public class JobType_adapter extends BaseAdapter {
                     mViewHolder.contactnumber2.setVisibility(View.VISIBLE);
                     mViewHolder.ImgPhone2.setVisibility(View.VISIBLE);
                 }
+                mViewHolder.lv_aditional_chargesStep1.setVisibility(View.VISIBLE);
+                mViewHolder.Txt_aditional_charge.setVisibility(View.VISIBLE);
                 mViewHolder.rlv_step1.setBackgroundColor(Color.parseColor("#E4F8EB"));
                 mViewHolder.rlv_step2.setBackgroundColor(Color.parseColor("#E4F8EB"));
                 //mViewHolder.btn_acknowledge.setText("Proof of Delivery");
@@ -652,6 +687,7 @@ public class JobType_adapter extends BaseAdapter {
 
                     } catch (java.lang.IllegalArgumentException e) {
                         e.printStackTrace();
+
                         Picasso.with(context).load(R.drawable.noimage).error(R.drawable.noimage).memoryPolicy(MemoryPolicy.NO_CACHE).into(mViewHolder.img_signature1);
                         mViewHolder.img_signature1.setEnabled(false);
                     }
@@ -813,6 +849,8 @@ public class JobType_adapter extends BaseAdapter {
 //                img_signature2 = (ImageView)item.findViewById(R.id.imageView66);
 //                photo2 = (ImageView)item.findViewById(R.id.imageView111);
             } else if (Status.contentEquals("pulled")) {
+                mViewHolder.lv_aditional_chargesStep1.setVisibility(View.GONE);
+                mViewHolder.Txt_aditional_charge.setVisibility(View.GONE);
                 if (Job_type.contentEquals("Exchange")) {
 
                     mViewHolder.personincharge2.setVisibility(View.GONE);
@@ -839,11 +877,13 @@ public class JobType_adapter extends BaseAdapter {
                 }
                 mViewHolder.rlv_step1.setBackgroundColor(Color.parseColor("#fefffe"));
                 mViewHolder.rlv_step2.setBackgroundColor(Color.parseColor("#E4F8EB"));
-                mViewHolder.btn_acknowledge.setText("Completed");
+                mViewHolder.btn_acknowledge.setText(R.string.Btn_completed_status);
                 mViewHolder.btn_acknowledge.setVisibility(View.VISIBLE);
                 mViewHolder.rlv_holder1.setVisibility(View.GONE);
                 mViewHolder.Rlvholder2.setVisibility(View.GONE);
             } else if (Status.contentEquals("Shifted")) {
+                mViewHolder.lv_aditional_chargesStep1.setVisibility(View.GONE);
+                mViewHolder.Txt_aditional_charge.setVisibility(View.GONE);
                 if (Job_type.contentEquals("Exchange")) {
 
                     mViewHolder.personincharge2.setVisibility(View.GONE);
@@ -870,7 +910,7 @@ public class JobType_adapter extends BaseAdapter {
                 }
                 mViewHolder.rlv_step1.setBackgroundColor(Color.parseColor("#fefffe"));
                 mViewHolder.rlv_step2.setBackgroundColor(Color.parseColor("#E4F8EB"));
-                mViewHolder.btn_acknowledge.setText("Completed");
+                mViewHolder.btn_acknowledge.setText(R.string.Btn_completed_status);
                 mViewHolder.btn_acknowledge.setVisibility(View.VISIBLE);
                 mViewHolder.rlv_holder1.setVisibility(View.GONE);
                 mViewHolder.Rlvholder2.setVisibility(View.GONE);
@@ -1054,6 +1094,56 @@ public class JobType_adapter extends BaseAdapter {
                 Jobidd = mViewHolder.Jobid;
                 mViewHolder.current_status = subscriptionarray.get(position).get("jobstatus");
                 current_statuss = mViewHolder.current_status;
+                String str_bintype = jobs_steps.get(position).get("bin_type_name");
+                String Str_WasteType1 = jobs_steps.get(position).get("wastetype_name");
+                String step1_bintype = "";
+                String step2_bintype = "";
+                String step1_waste_type = "";
+                String step2_wastetype = "";
+                try {
+                    String[] separated3 = str_bintype.split(",,");
+
+                    step1_bintype = separated3[0];
+
+                } catch (java.lang.IndexOutOfBoundsException e) {
+                    e.printStackTrace();
+                    step1_bintype="";
+
+                }
+                try {
+                    String[] separated3 = str_bintype.split(",,");
+
+                    step2_bintype = separated3[1];
+
+                } catch (java.lang.IndexOutOfBoundsException e) {
+                    e.printStackTrace();
+                    step2_bintype="";
+
+                }
+
+                try {
+                    String[] separated3 = Str_WasteType1.split(",,");
+
+                    step1_waste_type = separated3[0];
+
+                } catch (java.lang.IndexOutOfBoundsException e) {
+                    e.printStackTrace();
+                    step1_waste_type="";
+
+                }
+                try {
+                    String[] separated3 = Str_WasteType1.split(",,");
+
+                    step2_wastetype = separated3[1];
+
+                } catch (java.lang.IndexOutOfBoundsException e) {
+                    e.printStackTrace();
+                    step2_wastetype="";
+
+                }
+
+                step1_bintype = step1_bintype+"-"+step1_waste_type;
+                step2_bintype = step2_bintype+"-"+step2_wastetype;
                 String job_step_id1 = jobs_steps.get(position).get("job_step_id1");
                 try {
                     String[] separated = job_step_id1.split(",,");
@@ -1097,6 +1187,7 @@ public class JobType_adapter extends BaseAdapter {
                     i1.putExtra("Bin_number", bin_numberr);
                     i1.putExtra("payment_term", payment_term);
                     i1.putExtra("Project_site", Project_site);
+                    i1.putExtra("Bin_type", step1_bintype);
 
                     i1.putExtra("Collect_payment", collect_paymenttt);
                     i1.putExtra("Check_step", "1");
@@ -1139,6 +1230,7 @@ public class JobType_adapter extends BaseAdapter {
                     i1.putExtra("Project_site", Project_site);
                     i1.putExtra("Collect_payment", collect_paymenttt);
                     i1.putExtra("Check_step", "2");
+                    i1.putExtra("Bin_type", step2_bintype);
 
                     context.startActivity(i1);
                     ((Activity) context).finish();
@@ -1177,6 +1269,7 @@ public class JobType_adapter extends BaseAdapter {
                     i1.putExtra("Project_site", Project_site);
                     i1.putExtra("Collect_payment", collect_paymenttt);
                     i1.putExtra("Check_step", "2");
+                    i1.putExtra("Bin_type", step2_bintype);
 
                     context.startActivity(i1);
                     ((Activity) context).finish();
@@ -1215,6 +1308,7 @@ public class JobType_adapter extends BaseAdapter {
                     i1.putExtra("Project_site", Project_site);
                     i1.putExtra("Collect_payment", collect_paymenttt);
                     i1.putExtra("Check_step", "2");
+                    i1.putExtra("Bin_type", step2_bintype);
 
                     context.startActivity(i1);
                     ((Activity) context).finish();
@@ -1231,7 +1325,7 @@ public class JobType_adapter extends BaseAdapter {
     }
 
     private class MyViewHolder {
-        TextView Additionalremarks, job_number, txt_datetime, txt_jobtype, amounttocollected, customername, personincharge, contactnumber, siteadess, bintype, wastetype, remarksforstep, personincharge2, txt_person_in___, contactnumber2, siteadess2, bintype2, wastetype2, remarksforstep2, Txt_contperson, Rating;
+        TextView Additionalremarks, job_number,Txt_aditional_charge,txt_datetime, txt_jobtype, amounttocollected, customername, personincharge, contactnumber, siteadess, bintype, wastetype, remarksforstep, personincharge2, txt_person_in___, contactnumber2, siteadess2, bintype2, wastetype2, remarksforstep2, Txt_contperson, Rating;
         ImageView img_signature1, photo1, img_signature2, photo2;
         ;
         TextView collection_method1, amountcollected1, drivernotes1, completedtime1, collection_method2, amountcollected2, drivernotes2, completedtime2, Signedby1, signedby2;
@@ -1292,6 +1386,7 @@ public class JobType_adapter extends BaseAdapter {
             Signedby1 = (TextView) item.findViewById(R.id.textView36);
             signedby2 = (TextView) item.findViewById(R.id.textView51);
             lv_aditional_chargesStep1 = (ListView) item.findViewById(R.id.LV_dynamic);
+            Txt_aditional_charge = (TextView) item.findViewById(R.id.textView56);
             Rating = (TextView) item.findViewById(R.id.textView40);
             //lv_aditional_chargesstep2 = (ListView)item.findViewById(R.id.textView53);
             //  collection_method1 = ()

@@ -42,6 +42,7 @@ public class NotificationUtils {
 
     private Context mContext;
 
+
     public NotificationUtils(Context mContext) {
         this.mContext = mContext;
     }
@@ -57,7 +58,7 @@ public class NotificationUtils {
 
 
         // notification icon
-        final int icon = R.mipmap.ic_launcher;
+        final int icon = R.drawable.newlogo;
 
         intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_SINGLE_TOP);
         final PendingIntent resultPendingIntent =
@@ -72,7 +73,7 @@ public class NotificationUtils {
                 mContext);
 
         final Uri alarmSound = Uri.parse(ContentResolver.SCHEME_ANDROID_RESOURCE
-                + "://" + mContext.getPackageName() + "/raw/notification");
+                + "://" + mContext.getPackageName() + "/raw/openended");
 
         if (!TextUtils.isEmpty(imageUrl)) {
 
@@ -107,7 +108,7 @@ public class NotificationUtils {
                 .setSound(alarmSound)
                 .setStyle(inboxStyle)
                 .setWhen(getTimeMilliSec(timeStamp))
-                .setSmallIcon(R.mipmap.ic_launcher)
+                .setSmallIcon(R.drawable.newlogo)
                 .setLargeIcon(BitmapFactory.decodeResource(mContext.getResources(), icon))
                 .setContentText(message)
                 .build();
@@ -129,7 +130,7 @@ public class NotificationUtils {
                 .setSound(alarmSound)
                 .setStyle(bigPictureStyle)
                 .setWhen(getTimeMilliSec(timeStamp))
-                .setSmallIcon(R.mipmap.ic_launcher)
+                .setSmallIcon(R.drawable.newlogo)
                 .setLargeIcon(BitmapFactory.decodeResource(mContext.getResources(), icon))
                 .setContentText(message)
                 .build();

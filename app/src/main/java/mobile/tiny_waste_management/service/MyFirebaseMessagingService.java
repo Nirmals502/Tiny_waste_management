@@ -20,12 +20,13 @@ import java.util.Map;
 import java.util.Set;
 
 import mobile.tiny_waste_management.Home_screen;
+import mobile.tiny_waste_management.Login_screen;
 import mobile.tiny_waste_management.app.Config;
 import util.NotificationUtils;
 
 
 /**
- * Created by Ravi Tamada on 08/08/16.
+ * Created by Nirmal singh on 08/08/16.
  * www.androidhive.info
  */
 public class MyFirebaseMessagingService extends FirebaseMessagingService {
@@ -52,8 +53,9 @@ public class MyFirebaseMessagingService extends FirebaseMessagingService {
             Log.e(TAG, "Data Payload: " + remoteMessage.getData().toString());
 
             try {
-                JSONObject json = new JSONObject(remoteMessage.getData().toString());
-                handleDataMessage(json);
+                Map<String, String> data = remoteMessage.getData();
+                //JSONObject json = new JSONObject(remoteMessage.getData().toString());
+                handleDataMessage(data);
             } catch (Exception e) {
                 Log.e(TAG, "Exception: " + e.getMessage());
             }
@@ -71,76 +73,36 @@ public class MyFirebaseMessagingService extends FirebaseMessagingService {
             NotificationUtils notificationUtils = new NotificationUtils(getApplicationContext());
             notificationUtils.playNotificationSound();
         } else if (NotificationUtils.isAppIsInBackground(getApplicationContext())) {
-            ArrayList<String> arrPackage = new ArrayList<>();
-            Set<String> set = new HashSet<String>();
-            SharedPreferences pref = getApplicationContext().getSharedPreferences(Config.SHARED_PREF, 0);
-            set = pref.getStringSet("Notification_LIST", null);
+            Intent pushNotification = new Intent(Config.PUSH_NOTIFICATION);
+            pushNotification.putExtra("message", message);
+            LocalBroadcastManager.getInstance(this).sendBroadcast(pushNotification);
 
-
-            try {
-                if (set.size() != 0) {
-                    arrPackage.addAll(set);
-                    arrPackage.add(message);
-                } else {
-                    arrPackage.add(message);
-                }
-            } catch (java.lang.NullPointerException e) {
-                e.printStackTrace();
-                arrPackage.add(message);
-            }
-            SharedPreferences.Editor editor = pref.edit();
-
-            //set.addAll(arrPackage);
-            editor.putStringSet("Notification_LIST", set);
-            editor.apply();
-        }
-
-        else {
-            ArrayList<String> arrPackage = new ArrayList<>();
-            Set<String> set = new HashSet<String>();
-            SharedPreferences pref = getApplicationContext().getSharedPreferences(Config.SHARED_PREF, 0);
-            set = pref.getStringSet("Notification_LIST", null);
-
-
-            try {
-                if (set.size() != 0) {
-                    arrPackage.addAll(set);
-                    arrPackage.add(message);
-                } else {
-                    arrPackage.add(message);
-                }
-            } catch (java.lang.NullPointerException e) {
-                e.printStackTrace();
-                arrPackage.add(message);
-            }
-            SharedPreferences.Editor editor = pref.edit();
-
-            //set.addAll(arrPackage);
-            editor.putStringSet("Notification_LIST", set);
-            editor.apply();
-            // If the app is in background, firebase itself handles the notification
+            // play notification sound
+            NotificationUtils notificationUtils = new NotificationUtils(getApplicationContext());
+            notificationUtils.playNotificationSound();
+//
         }
     }
 
-    private void handleDataMessage(JSONObject json) {
-        Log.e(TAG, "push json: " + json.toString());
+    private void handleDataMessage(Map<String, String> data) {
+       // Log.e(TAG, "push json: " + json.toString());
 
         try {
-            JSONObject data = json.getJSONObject("data");
+            //JSONObject data = json.getJSONObject("data");
 
-            String title = data.getString("title");
-            String message = data.getString("message");
-            boolean isBackground = data.getBoolean("is_background");
-            String imageUrl = data.getString("image");
-            String timestamp = data.getString("timestamp");
-            JSONObject payload = data.getJSONObject("payload");
+            String title = data.get("title");
+            String message = data.get("body");
+//            boolean isBackground = data.getBoolean("is_background");
+//            String imageUrl = data.getString("image");
+//            String timestamp = data.getString("timestamp");
+//            JSONObject payload = data.getJSONObject("payload");
 
             Log.e(TAG, "title: " + title);
             Log.e(TAG, "message: " + message);
-            Log.e(TAG, "isBackground: " + isBackground);
-            Log.e(TAG, "payload: " + payload.toString());
-            Log.e(TAG, "imageUrl: " + imageUrl);
-            Log.e(TAG, "timestamp: " + timestamp);
+//            Log.e(TAG, "isBackground: " + isBackground);
+//            Log.e(TAG, "payload: " + payload.toString());
+//            Log.e(TAG, "imageUrl: " + imageUrl);
+//            Log.e(TAG, "timestamp: " + timestamp);
 
 
             if (!NotificationUtils.isAppIsInBackground(getApplicationContext())) {
@@ -154,22 +116,48 @@ public class MyFirebaseMessagingService extends FirebaseMessagingService {
                 notificationUtils.playNotificationSound();
             } else {
                 // app is in background, show the notification in notification tray
-                Intent resultIntent = new Intent(getApplicationContext(), Home_screen.class);
+                Intent resultIntent = new Intent(getApplicationContext(), Login_screen.class);
                 resultIntent.putExtra("message", message);
+                if (message != null) {
+                    ArrayList<String> arrPackage = new ArrayList<>();
+                    Set<String> set = new HashSet<String>();
+                    SharedPreferences pref = getApplicationContext().getSharedPreferences(Config.SHARED_PREF, 0);
+                    set = pref.getStringSet("Notification_LIST", null);
+//
+//
+                    try {
+                        if (set== null) {
+                            set = new HashSet<String>();
+                            set.add(message);
+                        } else {
+                            if(!set.contains(message)) {
+                                set.add(message);
+                            }
+                        }
+                        //set.add(value);
+                    } catch (java.lang.NullPointerException e) {
+                        e.printStackTrace();
+                        //arrPackage.add(value);
+                    }
+                    SharedPreferences.Editor editor = pref.edit();
+
+                    //set.addAll(arrPackage);
+                    editor.putStringSet("Notification_LIST", set);
+                    editor.apply();
+                }
 
                 // check for image attachment
-                if (TextUtils.isEmpty(imageUrl)) {
-                    showNotificationMessage(getApplicationContext(), title, message, timestamp, resultIntent);
-                } else {
+//                if (TextUtils.isEmpty(imageUrl)) {
+                    showNotificationMessage(getApplicationContext(), title, message, "", resultIntent);
+//                } else {
                     // image is present, show notification with image
-                    showNotificationMessageWithBigImage(getApplicationContext(), title, message, timestamp, resultIntent, imageUrl);
-                }
+                    //showNotificationMessageWithBigImage(getApplicationContext(), title, message, timestamp, resultIntent, imageUrl);
+//                }
             }
-        } catch (JSONException e) {
-            Log.e(TAG, "Json Exception: " + e.getMessage());
         } catch (Exception e) {
-            Log.e(TAG, "Exception: " + e.getMessage());
+            Log.e(TAG, "Json Exception: " + e.getMessage());
         }
+
     }
 
     /**

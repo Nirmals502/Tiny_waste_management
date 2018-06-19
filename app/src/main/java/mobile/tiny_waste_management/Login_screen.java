@@ -20,13 +20,17 @@ import android.widget.EditText;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.google.firebase.iid.FirebaseInstanceId;
+
 import org.apache.http.NameValuePair;
 import org.apache.http.message.BasicNameValuePair;
 import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 import Service_handler.SERVER;
 import Service_handler.ServiceHandler;
@@ -54,8 +58,63 @@ public class Login_screen extends AppCompatActivity {
 
         final SharedPreferences shared = getSharedPreferences("Tidy_waste_management", MODE_PRIVATE);
         Acess_tocken = (shared.getString("Acess_tocken", "nodata"));
+//
+        if (getIntent() != null) {
+//            for (String key : getIntent().getExtras().keySet()) {
+            try {
+                String value = getIntent().getExtras().getString("message");
+//                if (value != null) {
+//                    ArrayList<String> arrPackage = new ArrayList<>();
+//                    Set<String> set = new HashSet<String>();
+//                    SharedPreferences pref = getApplicationContext().getSharedPreferences(Config.SHARED_PREF, 0);
+//                    set = pref.getStringSet("Notification_LIST", null);
+////
+////
+//                    try {
+//                        if (set== null) {
+//                            set = new HashSet<String>();
+//                            set.add(value);
+//                        } else {
+//                            set.add(value);
+//                        }
+//                        //set.add(value);
+//                    } catch (java.lang.NullPointerException e) {
+//                        e.printStackTrace();
+//                        //arrPackage.add(value);
+//                    }
+//                    SharedPreferences.Editor editor = pref.edit();
+//
+//                    //set.addAll(arrPackage);
+//                    editor.putStringSet("Notification_LIST", set);
+//                    editor.apply();
+//                }
 
-        if (!Acess_tocken.contentEquals("nodata")) {
+                //System.out.println(".............." + value);
+            } catch (NullPointerException e) {
+                e.printStackTrace();
+            }
+//
+//                if (key.equals("chirag")) {
+//                    //Intent intent = new Intent(this, AnotherActivity.class);
+//                    //intent.putExtra("value", value);
+//                    //startActivity(intent);
+//                    //finish();
+//                    //txtMsg.setText(value+" :- this is notification .");
+//
+//                }
+//
+//            }
+        } else
+
+        {
+
+
+        }
+
+
+        if (!Acess_tocken.contentEquals("nodata"))
+
+        {
 //            SharedPreferences.Editor editor = shared.edit();
 //
 //            editor.putString("Check_screen", "Login");
@@ -74,7 +133,9 @@ public class Login_screen extends AppCompatActivity {
 //
 //                    finish();
 //                }
-        Txt_show.setOnClickListener(new View.OnClickListener() {
+        Txt_show.setOnClickListener(new View.OnClickListener()
+
+        {
             @Override
             public void onClick(View view) {
                 if (Txt_show.getText().toString().contentEquals("Show")) {
@@ -90,14 +151,32 @@ public class Login_screen extends AppCompatActivity {
 
             }
         });
-        Btn_login.setOnClickListener(new View.OnClickListener() {
+        Btn_login.setOnClickListener(new View.OnClickListener()
+
+        {
             @Override
             public void onClick(View view) {
                 //  Intent i1 = new Intent(Login_screen.this, Home_screen.class);
                 //  startActivity(i1);
+                // String_device_tocken = FirebaseInstanceId.getInstance().getToken();
                 SharedPreferences pref = getApplicationContext().getSharedPreferences(Config.SHARED_PREF, 0);
                 String_device_tocken = pref.getString("regId", "");
-             //   if (!String_device_tocken.contentEquals("nodata")) {
+                if (!String_device_tocken.contentEquals("")) {
+                    if (Edt_txt_username.getText().toString().contentEquals("")) {
+                        Animation anm = Shake_Animation();
+                        Edt_txt_username.startAnimation(anm);
+                    } else if (Edt_password.getText().toString().contentEquals("")) {
+                        Animation anm = Shake_Animation();
+                        Edt_password.startAnimation(anm);
+                    } else {
+
+
+                        str_email = Edt_txt_username.getText().toString();
+                        Str_password = Edt_password.getText().toString();
+                        new Login().execute();
+                    }
+                } else {
+                    String_device_tocken = FirebaseInstanceId.getInstance().getToken();
                     if (Edt_txt_username.getText().toString().contentEquals("")) {
                         Animation anm = Shake_Animation();
                         Edt_txt_username.startAnimation(anm);
@@ -113,7 +192,7 @@ public class Login_screen extends AppCompatActivity {
                     }
                 }
                 //new Login().execute();
-           // }
+            }
         });
     }
 
@@ -125,6 +204,7 @@ public class Login_screen extends AppCompatActivity {
 
         return shake;
     }
+
 
     private class Login extends AsyncTask<Void, String, Void> implements DialogInterface.OnCancelListener {
 
@@ -139,7 +219,7 @@ public class Login_screen extends AppCompatActivity {
             // mProgressHUD = ProgressHUD.show(Login_Screen.this, "Connecting", true, true, this);
             // Showing progress dialog
             pDialog = new ProgressDialog(Login_screen.this);
-            pDialog.setMessage("Please wait...");
+            pDialog.setMessage(getString(R.string.please_wait));
             pDialog.setCancelable(false);
             pDialog.show();
 
@@ -232,7 +312,7 @@ public class Login_screen extends AppCompatActivity {
                 startActivity(i1);
                 finish();
             } else if (status.contentEquals("")) {
-                Toast.makeText(Login_screen.this, "Invalid Username or Password", Toast.LENGTH_LONG).show();
+                Toast.makeText(Login_screen.this, R.string.invalid_username_password, Toast.LENGTH_LONG).show();
             }
 
         }
@@ -241,6 +321,7 @@ public class Login_screen extends AppCompatActivity {
         public void onCancel(DialogInterface dialog) {
 
         }
+
     }
 
     public String getDeviceId(Context context) {

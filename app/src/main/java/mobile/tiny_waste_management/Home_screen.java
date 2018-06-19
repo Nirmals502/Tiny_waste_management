@@ -18,6 +18,7 @@ import android.os.Bundle;
 import android.os.Handler;
 import android.provider.Settings;
 import android.support.annotation.NonNull;
+import android.support.annotation.Nullable;
 import android.support.annotation.RequiresApi;
 import android.support.design.widget.AppBarLayout;
 import android.support.design.widget.CoordinatorLayout;
@@ -46,6 +47,7 @@ import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.view.ViewGroup;
 import android.view.ViewTreeObserver;
 import android.view.animation.Animation;
 import android.view.animation.AnimationUtils;
@@ -53,6 +55,7 @@ import android.view.animation.DecelerateInterpolator;
 import android.view.animation.ScaleAnimation;
 import android.view.animation.TranslateAnimation;
 import android.widget.AdapterView;
+import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.CalendarView;
 import android.widget.EditText;
@@ -112,8 +115,9 @@ public class Home_screen extends AppCompatActivity
         implements NavigationView.OnNavigationItemSelectedListener {
     private ViewPager viewPager;
     private TabLayout tabLayout;
+    AppBarLayout apblayout;
     ImageView img_Calender;
-    RelativeLayout Rlv_Content;
+    RelativeLayout Rlv_Content, Rlv_date_holder, Rlv_version_;
     boolean isUp;
     AppBarLayout app_bar_layout;
     private ProgressDialog pDialog;
@@ -149,6 +153,7 @@ public class Home_screen extends AppCompatActivity
     String jsonStr = "";
     EditText EdtTxt_job_number;
     NavigationView navigationView;
+    String Device_id = "";
     //CalendarView Calender;
 
     @Override
@@ -163,6 +168,9 @@ public class Home_screen extends AppCompatActivity
         BTn_search = (Button) findViewById(R.id.button3);
         EdtTxt_job_number = (EditText) findViewById(R.id.editText3);
         navigationView = (NavigationView) findViewById(R.id.nav_view);
+        Rlv_date_holder = (RelativeLayout) findViewById(R.id.rlv_date_holder);
+        Rlv_version_ = (RelativeLayout) findViewById(R.id.rlv_version_holder);
+        apblayout = (AppBarLayout) findViewById(R.id.appbar);
         Format formatter = new SimpleDateFormat("dd MMMM yyyy");
         String today = formatter.format(new Date());
         //String date = new SimpleDateFormat("yyyy-MM-dd", Locale.getDefault()).format(new Date());
@@ -170,6 +178,8 @@ public class Home_screen extends AppCompatActivity
 
         formatter = new SimpleDateFormat("dd-MM-yyyy");
         today = formatter.format(new Date());
+
+
 //        String android_id = Settings.Secure.getString(Home_screen.this.getContentResolver(),
 //                Settings.Secure.ANDROID_ID);
 //        TelephonyManager telephonyManager = (TelephonyManager)getSystemService(Context.TELEPHONY_SERVICE);
@@ -226,6 +236,7 @@ public class Home_screen extends AppCompatActivity
         Driver_id = (shared.getString("Driver_id", "nologin"));
         Check_screen = (shared.getString("Check_screen", "nologin"));
         Next_status = (shared.getString("Next_status", "null"));
+        Device_id = (shared.getString("DeviceId", "null"));
         Menu menuNav = navigationView.getMenu();
         MenuItem element = menuNav.findItem(R.id.alerts);
         String before = element.getTitle().toString();
@@ -251,6 +262,45 @@ public class Home_screen extends AppCompatActivity
 
 
         element.setTitle(sColored);
+
+
+        try {
+            Bundle extras = getIntent().getExtras();
+
+            String extraStr = extras.getString("Job_numberrrr");
+
+            if (extraStr != null) {
+                Next_status = "null";
+                Check_screen = "";
+                String message = extraStr;
+
+                String[] separated = message.split(":");
+
+                message = separated[1];
+                message = message.replaceAll("\\s+", "");
+                fist_date = "";
+                last_date = "";
+                EdtTxt_job_number.setText(message);
+                Search_withjob_number = EdtTxt_job_number.getText().toString();
+                date_now.setText(Search_withjob_number);
+//                    if (Rlv_Content.getVisibility() == View.VISIBLE) {
+//                        showView_slideup();
+//                    } else if (Rlv_Content.getVisibility() == View.GONE) {
+//                        showView();
+//                    }
+                SharedPreferences.Editor editor = shared.edit();
+                editor.putString("First_date", "");
+                editor.putString("Last_date", "");
+                editor.putString("Job_number", Search_withjob_number);
+
+                editor.commit();
+                new Search().execute();
+            }
+        } catch (RuntimeException e) {
+            e.printStackTrace();
+        }
+
+
         img_refresh.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -329,7 +379,7 @@ public class Home_screen extends AppCompatActivity
 
         tabLayout = (TabLayout) findViewById(R.id.tabs);
         tabLayout.setupWithViewPager(viewPager);
-        viewPager.setCurrentItem(3);
+        // viewPager.setCurrentItem(3);
         isUp = false;
         img_Calender.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -521,21 +571,53 @@ public class Home_screen extends AppCompatActivity
         int id = item.getItemId();
 
         if (id == R.id.nav_camera) {
-            Intent i1 = new Intent(Home_screen.this, Login_screen.class);
-            startActivity(i1);
-            finish();
+//            Intent i1 = new Intent(Home_screen.this, Login_screen.class);
+//            startActivity(i1);
+//            finish();
             // Handle the camera action
+            viewPager.setVisibility(View.VISIBLE);
+            tabLayout.setVisibility(View.VISIBLE);
+
+            Rlv_date_holder.setVisibility(View.VISIBLE);
+            Rlv_version_.setVisibility(View.GONE);
+            apblayout.setVisibility(View.VISIBLE);
         } else if (id == R.id.alerts) {
+            viewPager.setVisibility(View.VISIBLE);
+            tabLayout.setVisibility(View.VISIBLE);
+
+            Rlv_date_holder.setVisibility(View.VISIBLE);
+            Rlv_version_.setVisibility(View.GONE);
+            apblayout.setVisibility(View.VISIBLE);
             Intent i1 = new Intent(Home_screen.this, notification_listt.class);
             startActivity(i1);
             finish();
         } else if (id == R.id.nav_slideshow) {
-            SharedPreferences settings = getSharedPreferences("Tidy_waste_management", Context.MODE_PRIVATE);
-            settings.edit().clear().commit();
-            Intent i1 = new Intent(Home_screen.this, Login_screen.class);
-            startActivity(i1);
-            finish();
+            viewPager.setVisibility(View.VISIBLE);
+            tabLayout.setVisibility(View.VISIBLE);
 
+            Rlv_date_holder.setVisibility(View.VISIBLE);
+            Rlv_version_.setVisibility(View.GONE);
+            apblayout.setVisibility(View.VISIBLE);
+            new AlertDialog.Builder(this)
+                    .setMessage("Are you sure you want to Logout?")
+                    .setCancelable(false)
+                    .setPositiveButton("Yes", new DialogInterface.OnClickListener() {
+                        public void onClick(DialogInterface dialog, int id) {
+                            new Logout().execute();
+                        }
+                    })
+                    .setNegativeButton("No", null)
+                    .show();
+
+
+        } else if (id == R.id.nav_gallery) {
+            //new Logout().execute();
+            viewPager.setVisibility(View.INVISIBLE);
+            tabLayout.setVisibility(View.INVISIBLE);
+
+            Rlv_date_holder.setVisibility(View.INVISIBLE);
+            Rlv_version_.setVisibility(View.VISIBLE);
+            apblayout.setVisibility(View.GONE);
         }
 
         DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
@@ -549,14 +631,14 @@ public class Home_screen extends AppCompatActivity
     private void setupViewPager(ViewPager viewPager, int pos, int size) {
         //  String str_count = String.valueOf(size);
         ViewPagerAdapter adapter = new ViewPagerAdapter(getSupportFragmentManager());
-        adapter.addFrag(new fragment(Arraylist_for_Search_assigned1, Arraylist_for_Search_assigned2, Status), "Assigned (" + Arraylist_for_Search_assigned1.size() + ")");
-        adapter.addFrag(new acknowledge_fragment(Arraylist_for_Search_acknowledge1, Arraylist_for_Search_acknowledge2, Status), "Acknowledged (" + Arraylist_for_Search_acknowledge1.size() + ")");
-        adapter.addFrag(new inpro(Arraylist_for_Search_inprogress1, Arraylist_for_Search_inprogress2, Status), "In Progress (" + Arraylist_for_Search_inprogress1.size() + ")");
-        adapter.addFrag(new pulled(Arraylist_for_Search_pulled1, Arraylist_for_Search_pulled2, Status), "Pulled (" + Arraylist_for_Search_pulled1.size() + ")");
-        adapter.addFrag(new changed(Arraylist_for_Search_changed1, Arraylist_for_Search_changed2, Status), "Changed (" + Arraylist_for_Search_changed1.size() + ")");
-        adapter.addFrag(new shifted(Arraylist_for_Search_shifted1, Arraylist_for_Search_shifted2, Status), "Shifted (" + Arraylist_for_Search_shifted1.size() + ")");
-        adapter.addFrag(new completed(Arraylist_for_Search_completed1, Arraylist_for_Search_competed2, Status), "Completed (" + Arraylist_for_Search_completed1.size() + ")");
-        adapter.addFrag(new cancelled(Arraylist_for_Search_cancelled1, Arraylist_for_Search_cancelled2, Status), "Cancelled (" + Arraylist_for_Search_cancelled1.size() + ")");
+        adapter.addFrag(new fragment(Arraylist_for_Search_assigned1, Arraylist_for_Search_assigned2, Status), getString(R.string.assigned_tab) + Arraylist_for_Search_assigned1.size() + ")");
+        adapter.addFrag(new acknowledge_fragment(Arraylist_for_Search_acknowledge1, Arraylist_for_Search_acknowledge2, Status), getString(R.string.acknowledge_tab_tittle) + Arraylist_for_Search_acknowledge1.size() + ")");
+        adapter.addFrag(new inpro(Arraylist_for_Search_inprogress1, Arraylist_for_Search_inprogress2, Status), getString(R.string.inprogres_tittle) + Arraylist_for_Search_inprogress1.size() + ")");
+        adapter.addFrag(new pulled(Arraylist_for_Search_pulled1, Arraylist_for_Search_pulled2, Status), getString(R.string.pulled_tab_tittle) + Arraylist_for_Search_pulled1.size() + ")");
+        adapter.addFrag(new changed(Arraylist_for_Search_changed1, Arraylist_for_Search_changed2, Status), getString(R.string.changed_tab_tittle) + Arraylist_for_Search_changed1.size() + ")");
+        adapter.addFrag(new shifted(Arraylist_for_Search_shifted1, Arraylist_for_Search_shifted2, Status), getString(R.string.Shifted_tab_tittle) + Arraylist_for_Search_shifted1.size() + ")");
+        adapter.addFrag(new completed(Arraylist_for_Search_completed1, Arraylist_for_Search_competed2, Status), getString(R.string.completed_tab_tittle) + Arraylist_for_Search_completed1.size() + ")");
+        adapter.addFrag(new cancelled(Arraylist_for_Search_cancelled1, Arraylist_for_Search_cancelled2, Status), getString(R.string.canceled_tab_tittle) + Arraylist_for_Search_cancelled1.size() + ")");
 
 
         viewPager.setAdapter(adapter);
@@ -775,6 +857,7 @@ public class Home_screen extends AppCompatActivity
                             String JobDate = jsonObjj.getString("JobDateShort") + " " + jsonObjj.getString("JobTime");
                             String Nextstatus = jsonObjj.getString("Nextstatus");
                             String Job_additional_charges = jsonObjj.getString("JobAdditionalCharges");
+                            String Rating = jsonObjj.getString("Rating");
                             // String ProjectSiteCharges = jsonObjj.getString("ProjectSiteCharges");
 
                             String DriverRemark = jsonObjj.getString("DriverRemark");
@@ -833,7 +916,7 @@ public class Home_screen extends AppCompatActivity
                                         String CustomerSignature = jsonObj_steps.getString("CustomerSignature");
                                         String PhotoFile = jsonObj_steps.getString("PhotoFile");
                                         String signed_by = jsonObj_steps.getString("SignedBy");
-                                        String DriverNotes="";
+                                        String DriverNotes = "";
                                         try {
                                             JSONObject Json_object = null;
                                             Json_object = new JSONObject(driverjsonobjectnode);
@@ -1032,6 +1115,7 @@ public class Home_screen extends AppCompatActivity
                             Search_result.put("Jobnumber", JobNumber);
                             Search_result.put("Job_additional_charges", Job_additional_charges);
                             Search_result.put("Project_site_id", Project_site_id);
+                            Search_result.put("Rating", Rating);
 
                             //Job_additional_charges
                             Search_result.put("id", id);
@@ -1279,6 +1363,97 @@ public class Home_screen extends AppCompatActivity
         else
             Toast.makeText(getApplicationContext(), "Firebase Reg Id is not received yet!", Toast.LENGTH_LONG).show();
         //txtRegId.setText("Firebase Reg Id is not received yet!");
+    }
+
+    private class Logout extends AsyncTask<Void, String, Void> implements DialogInterface.OnCancelListener {
+
+
+        JSONObject jsonnode, json_User;
+        String jsonStr = "";
+
+
+        @Override
+        protected void onPreExecute() {
+            super.onPreExecute();
+
+            // mProgressHUD = ProgressHUD.show(Login_Screen.this, "Connecting", true, true, this);
+            // Showing progress dialog
+            pDialog = new ProgressDialog(Home_screen.this);
+            pDialog.setMessage("Please wait...");
+            pDialog.setCancelable(false);
+            pDialog.show();
+
+
+        }
+
+        @RequiresApi(api = Build.VERSION_CODES.O)
+        @Override
+        protected Void doInBackground(Void... arg0) {
+            // Creating service handler class instance
+            publishProgress("Please wait...");
+
+
+            HttpHandler sh = new HttpHandler();
+            // Making a request to url and getting response
+            //String url = "http://api.androidhive.info/contacts/";
+            // jsonStr = sh.makeServiceCall("http://112.196.3.42:8298/v1/ProjectSiteCharge/GetProjectSiteChargeIDBinWateType/" + Project_site_id, Access_tocken);
+            jsonStr = sh.makeServiceCall_post("http://112.196.3.42:8298/v1/Users/Logout?DriverID=" + Driver_id + "&deviceId=" + Device_id, Access_tocken);
+            Log.d("Response: ", "> " + jsonStr);
+
+            if (jsonStr != null) {
+                JSONObject jsonObj = null;
+                JSONObject Json_category = null;
+
+//                try {
+//                    jsonObj = new JSONObject(jsonStr);
+//                } catch (JSONException e) {
+//                    e.printStackTrace();
+//                }
+                JSONArray jArr = null;
+                try {
+                    //String Str_response = jsonObj.getString("data");
+//                    Json_category = new JSONObject(Str_response);
+//                    Str_response = Json_category.getString("categories");
+                    jArr = new JSONArray(jsonStr);
+
+                } catch (JSONException e) {
+                    e.printStackTrace();
+                }
+//
+
+                // Getting JSON Array node
+                // JSONArray array1 = null;
+
+            }
+
+
+            return null;
+        }
+
+        @Override
+        protected void onPostExecute(Void result) {
+            super.onPostExecute(result);
+            // Dismiss the progress dialog
+            pDialog.dismiss();
+//            if (jsonStr == null) {
+//                open_loginWindow();
+//            } else if (jsonStr.contentEquals("Invalid_Token")) {
+//                open_loginWindow();
+//
+//            }
+            SharedPreferences settings = getSharedPreferences("Tidy_waste_management", Context.MODE_PRIVATE);
+            settings.edit().clear().commit();
+            Intent i1 = new Intent(Home_screen.this, Login_screen.class);
+            startActivity(i1);
+            finish();
+
+
+        }
+
+        @Override
+        public void onCancel(DialogInterface dialog) {
+
+        }
     }
 
 }

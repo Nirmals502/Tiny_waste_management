@@ -33,7 +33,7 @@
                     android:layout_height="wrap_content"
                     android:layout_below="@+id/textView26"
                     android:layout_marginTop="5dp"
-                    android:visibility="visible">
+                    android:visibility="gone">
 
                     <TextView
                         android:id="@+id/textView8"
@@ -43,7 +43,7 @@
 
                         android:layout_marginLeft="5dp"
 
-                        android:text="Collection Method"
+                        android:text="@string/collection_method__"
                         android:textColor="#7d7b7b" />
 
                     <TextView
@@ -63,7 +63,7 @@
                         android:layout_alignStart="@+id/textView8"
                         android:layout_below="@+id/textView8"
                         android:layout_marginTop="5dp"
-                        android:text="Amount Collected"
+                        android:text="@string/amount_collected___"
                         android:textColor="#7d7b7b" />
 
                     <TextView
@@ -83,7 +83,7 @@
                         android:layout_alignStart="@+id/textView8"
                         android:layout_below="@+id/textView42"
                         android:layout_marginTop="5dp"
-                        android:text="Driver Notes"
+                        android:text="@string/driver_notes___"
                         android:textColor="#7d7b7b"
                         tools:ignore="RtlCompat" />
 
@@ -102,9 +102,9 @@
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:layout_alignStart="@+id/textView8"
-                        android:layout_below="@+id/textView44"
+                        android:layout_below="@+id/textView45"
                         android:layout_marginTop="5dp"
-                        android:text="Completed Time"
+                        android:text="@string/completed_time___"
                         android:textColor="#7d7b7b"
                         tools:ignore="RtlCompat" />
 
@@ -113,7 +113,7 @@
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:layout_alignStart="@+id/textView41"
-                        android:layout_below="@+id/textView44"
+                        android:layout_below="@+id/textView45"
                         android:layout_marginTop="5dp"
                         android:textColor="#7d7b7b"
                         tools:ignore="RtlCompat" />
@@ -125,7 +125,7 @@
                         android:layout_alignStart="@+id/textView8"
                         android:layout_below="@+id/textView46"
                         android:layout_marginTop="20dp"
-                        android:text="Signature"
+                        android:text="@string/signature___"
                         android:textColor="#7d7b7b"
                         tools:ignore="RtlCompat" />
 
@@ -148,7 +148,7 @@
                         android:layout_alignStart="@+id/textView8"
                         android:layout_below="@+id/textView48"
                         android:layout_marginTop="50dp"
-                        android:text="Uploaded Photo"
+                        android:text="@string/uploaded_photo___"
                         android:textColor="#7d7b7b"
                         tools:ignore="RtlCompat" />
 
@@ -170,7 +170,7 @@
                         android:layout_alignStart="@+id/textView8"
                         android:layout_below="@+id/textView49"
                         android:layout_marginTop="25dp"
-                        android:text="Signed By"
+                        android:text="@string/signed_by___"
                         android:textColor="#7d7b7b" />
 
                     <TextView
@@ -189,7 +189,8 @@
                         android:layout_below="@+id/textView12"
                         android:layout_marginTop="5dp"
                         android:text="Additional Charges selected "
-                        android:textColor="#7d7b7b" />
+                        android:textColor="#7d7b7b"
+                        android:visibility="gone" />
 
                     <TextView
                         android:id="@+id/textView38"
@@ -198,7 +199,9 @@
                         android:layout_alignTop="@+id/textView37"
                         android:layout_marginLeft="10dp"
                         android:layout_toEndOf="@+id/textView37"
-                        android:textColor="#7d7b7b" />
+                        android:text="gfgfgfgf"
+                        android:textColor="#7d7b7b"
+                        android:visibility="gone" />
 
                     <TextView
                         android:id="@+id/textView39"
@@ -206,8 +209,9 @@
                         android:layout_height="wrap_content"
                         android:layout_alignStart="@+id/textView8"
                         android:layout_below="@+id/textView37"
+                        android:layout_marginBottom="10dp"
                         android:layout_marginTop="5dp"
-                        android:text="Rating"
+                        android:text="@string/rating___"
                         android:textColor="#7d7b7b" />
 
                     <TextView
@@ -228,7 +232,7 @@
                     android:layout_alignParentTop="true"
                     android:layout_marginLeft="5dp"
                     android:layout_marginTop="5dp"
-                    android:text="Step 1"
+                    android:text="@string/step_1__"
                     android:textColor="@android:color/black" />
 
                 <RelativeLayout
@@ -252,7 +256,7 @@
                     android:layout_alignStart="@+id/footer"
                     android:layout_below="@+id/footer"
                     android:layout_marginTop="5dp"
-                    android:text="Person in Charge"
+                    android:text="@string/person_in_charge__"
                     android:textColor="#7d7b7b" />
 
                 <TextView
@@ -275,7 +279,7 @@
                     android:layout_alignStart="@+id/textView17"
                     android:layout_below="@+id/textView17"
                     android:layout_marginTop="5dp"
-                    android:text="Contact Number"
+                    android:text="@string/contact_number__"
                     android:textColor="#7d7b7b" />
 
                 <TextView
@@ -308,7 +312,7 @@
                     android:layout_alignStart="@+id/textView19"
                     android:layout_below="@+id/textView19"
                     android:layout_marginTop="5dp"
-                    android:text="Yard Address"
+                    android:text="@string/site_address__"
                     android:textColor="#7d7b7b" />
 
                 <ImageView
@@ -337,7 +341,7 @@
                     android:layout_alignStart="@+id/textView16"
                     android:layout_below="@+id/textView22"
                     android:layout_marginTop="5dp"
-                    android:text="Bin type"
+                    android:text="@string/bin_type__"
                     android:textColor="#7d7b7b" />
 
                 <TextView
@@ -357,7 +361,7 @@
                     android:layout_alignStart="@+id/textView16"
                     android:layout_below="@+id/textView23"
                     android:layout_marginTop="5dp"
-                    android:text="Waste Type"
+                    android:text="@string/waste_type__"
                     android:textColor="#7d7b7b" />
 
                 <TextView
@@ -378,7 +382,7 @@
                     android:layout_below="@+id/textView25"
                     android:layout_marginBottom="5dp"
                     android:layout_marginTop="5dp"
-                    android:text="Remarks"
+                    android:text="@string/remarks__"
                     android:textColor="#7d7b7b" />
 
                 <TextView
@@ -446,8 +450,8 @@
                     android:layout_alignLeft="@+id/text_date_time"
                     android:layout_alignStart="@+id/text_date_time"
                     android:layout_below="@+id/text_date_time"
-                    android:layout_marginTop="5dp"
-                    android:text="Job Type"
+                    android:layout_marginTop="14dp"
+                    android:text="@string/job_type__"
                     android:textColor="#979393" />
 
                 <TextView
@@ -468,6 +472,7 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_alignTop="@+id/textView9"
+                    android:layout_below="@+id/textView7"
                     android:layout_marginLeft="20dp"
                     android:layout_toEndOf="@+id/textView10"
                     android:textColor="#979393" />
@@ -480,7 +485,7 @@
                     android:layout_alignStart="@+id/textView9"
                     android:layout_below="@+id/textView11"
                     android:layout_marginTop="5dp"
-                    android:text="Customer :"
+                    android:text="@string/customer__"
                     android:textColor="#979393" />
 
                 <TextView
@@ -490,6 +495,7 @@
                     android:layout_alignLeft="@+id/textView10"
                     android:layout_alignStart="@+id/textView10"
                     android:layout_alignTop="@+id/textView13"
+                    android:layout_marginLeft="5dp"
                     android:text="Condomini"
                     android:textColor="@android:color/black" />
 
@@ -499,9 +505,9 @@
                     android:layout_height="wrap_content"
                     android:layout_alignLeft="@+id/textView13"
                     android:layout_alignStart="@+id/textView13"
-                    android:layout_below="@+id/textView13"
+                    android:layout_below="@+id/textView14"
                     android:layout_marginTop="5dp"
-                    android:text="Additional remarks appears here"
+                    android:text="@string/additional_remarks_appears_here__"
                     android:textColor="#979393" />
 
                 <TextView
@@ -511,13 +517,13 @@
                     android:layout_alignStart="@+id/text_date_time"
                     android:layout_below="@+id/textView15"
                     android:layout_marginTop="10dp"
-                    android:text="Additional Charges selected "
+                    android:text="@string/additional_charges_selected__"
                     android:textColor="#979393" />
 
                 <ListView
                     android:id="@+id/LV_dynamic"
-                    android:layout_width="113dp"
-                    android:layout_height="50dp"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
                     android:layout_alignTop="@+id/textView56"
                     android:layout_marginBottom="5dp"
                     android:layout_marginLeft="5dp"
@@ -555,7 +561,7 @@
                     android:layout_below="@+id/textView26"
                     android:layout_marginLeft="5dp"
                     android:layout_marginTop="5dp"
-                    android:visibility="visible">
+                    android:visibility="gone">
 
                     <TextView
                         android:id="@+id/textView55"
@@ -615,7 +621,7 @@
                         android:layout_alignStart="@+id/textView8"
                         android:layout_below="@+id/textView49"
                         android:layout_marginTop="25dp"
-                        android:text="Signed By"
+                        android:text="@string/signed_by____"
                         android:textColor="#7d7b7b" />
 
                     <TextView
@@ -670,7 +676,7 @@
                         android:layout_alignStart="@+id/textView8"
                         android:layout_below="@+id/textView42"
                         android:layout_marginTop="5dp"
-                        android:text="Driver Notes"
+                        android:text="@string/driver_notes______"
                         android:textColor="#7d7b7b"
                         tools:ignore="RtlCompat" />
 
@@ -689,9 +695,9 @@
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:layout_alignStart="@+id/textView8"
-                        android:layout_below="@+id/textView44"
+                        android:layout_below="@+id/textView455"
                         android:layout_marginTop="5dp"
-                        android:text="Completed Time"
+                        android:text="@string/completed_time____"
                         android:textColor="#7d7b7b"
                         tools:ignore="RtlCompat" />
 
@@ -712,7 +718,7 @@
                         android:layout_alignStart="@+id/textView8"
                         android:layout_below="@+id/textView46"
                         android:layout_marginTop="20dp"
-                        android:text="Signature"
+                        android:text="@string/signature____"
                         android:textColor="#7d7b7b"
                         tools:ignore="RtlCompat" />
 
@@ -722,7 +728,7 @@
                         android:layout_height="50dp"
 
 
-                        android:layout_below="@+id/textView46"
+                        android:layout_below="@+id/textView477"
                         android:layout_marginTop="5dp"
                         android:layout_toStartOf="@+id/textView53"
                         app:srcCompat="@drawable/noimage" />
@@ -733,8 +739,8 @@
                         android:layout_height="wrap_content"
                         android:layout_alignStart="@+id/textView8"
                         android:layout_below="@+id/textView48"
-                        android:layout_marginTop="50dp"
-                        android:text="Uploaded Photo"
+                        android:layout_marginTop="49dp"
+                        android:text="@string/uploaded_photo____"
                         android:textColor="#7d7b7b"
                         tools:ignore="RtlCompat" />
 
@@ -757,7 +763,7 @@
                     android:layout_alignParentTop="true"
                     android:layout_marginLeft="5dp"
                     android:layout_marginTop="5dp"
-                    android:text="Step 2"
+                    android:text="@string/step_2__"
                     android:textColor="@android:color/black" />
 
                 <RelativeLayout
@@ -781,7 +787,7 @@
                     android:layout_alignStart="@+id/footer"
                     android:layout_below="@+id/footer"
                     android:layout_marginTop="5dp"
-                    android:text="Person in Charge"
+                    android:text="@string/person_in_charge___"
                     android:textColor="#7d7b7b" />
 
                 <TextView
@@ -806,7 +812,7 @@
                     android:layout_alignStart="@+id/textView17p"
                     android:layout_below="@+id/textView17p"
                     android:layout_marginTop="5dp"
-                    android:text="Contact Number"
+                    android:text="@string/contact_number___"
                     android:textColor="#7d7b7b" />
 
                 <TextView
@@ -838,7 +844,7 @@
                     android:layout_alignStart="@+id/textView19p"
                     android:layout_below="@+id/textView19p"
                     android:layout_marginTop="5dp"
-                    android:text="Yard Address"
+                    android:text="@string/yard_address___"
                     android:textColor="#7d7b7b" />
 
                 <ImageView
@@ -869,7 +875,7 @@
                     android:layout_alignStart="@+id/textView16"
                     android:layout_below="@+id/textView222"
                     android:layout_marginTop="5dp"
-                    android:text="Bin type"
+                    android:text="@string/bin_type___"
                     android:textColor="#7d7b7b" />
 
                 <TextView
@@ -889,7 +895,7 @@
                     android:layout_alignStart="@+id/textView16"
                     android:layout_below="@+id/textView233"
                     android:layout_marginTop="5dp"
-                    android:text="Waste Type"
+                    android:text="@string/waste_type___"
                     android:textColor="#7d7b7b" />
 
                 <TextView
@@ -910,7 +916,7 @@
                     android:layout_below="@+id/textView255"
                     android:layout_marginBottom="5dp"
                     android:layout_marginTop="5dp"
-                    android:text="Remarks"
+                    android:text="@string/remarks___"
                     android:textColor="#7d7b7b" />
 
                 <TextView
@@ -933,7 +939,7 @@
                 android:layout_marginBottom="10dp"
                 android:layout_marginTop="5dp"
                 android:background="@drawable/btn_round"
-                android:text="Acknowledge"
+                android:text="@string/acknowledge___"
                 android:textAllCaps="false" />
         </RelativeLayout>
     </ScrollView>

@@ -38,6 +38,7 @@ import android.widget.CheckBox;
 import android.widget.CompoundButton;
 import android.widget.EditText;
 import android.widget.ImageView;
+import android.widget.ListAdapter;
 import android.widget.ListView;
 import android.widget.RadioButton;
 import android.widget.RatingBar;
@@ -56,6 +57,7 @@ import com.android.volley.VolleyError;
 import com.android.volley.toolbox.StringRequest;
 import com.android.volley.toolbox.Volley;
 import com.kyanogen.signatureview.SignatureView;
+import com.mindorks.paracamera.Camera;
 
 import org.apache.http.HttpEntity;
 import org.apache.http.HttpResponse;
@@ -87,6 +89,9 @@ import java.util.Map;
 
 import Multipart_enttity.AndroidMultiPartEntity;
 import Service_handler.APIInterface;
+import Service_handler.BitmapHelper;
+import Service_handler.CameraIntentHelper;
+import Service_handler.CameraIntentHelperCallback;
 import Service_handler.Tidy_feedback;
 import Service_handler.ApiClient;
 import Service_handler.Base64;
@@ -135,15 +140,23 @@ public class feedback extends AppCompatActivity {
     TextView txt_collectionmethod;
     String str_chec_step = "";
     ConstraintLayout cs_lv;
-
+    String Check_bin_type = "";
+    Camera camera;
+    Bitmap bitmap = null;
+    CameraIntentHelper mCameraIntentHelper;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        Thread.setDefaultUncaughtExceptionHandler(new Thread.UncaughtExceptionHandler() {
+            public void uncaughtException(Thread paramThread, Throwable paramThrowable) {
+                Log.e("Error" + Thread.currentThread().getStackTrace()[2], paramThrowable.getLocalizedMessage());
+            }
+        });
         setContentView(R.layout.feed_back_layout);
         img_back = (ImageView) findViewById(R.id.imageView9);
         Txt_job_number = (TextView) findViewById(R.id.textView7);
-        checkbox1 = (CheckBox) findViewById(R.id.checkBox2);
+        //checkbox1 = (CheckBox) findViewById(R.id.checkBox2);
         checkbox2 = (CheckBox) findViewById(R.id.checkBox3);
         checkbox3 = (CheckBox) findViewById(R.id.checkBox4);
         checkbox4 = (CheckBox) findViewById(R.id.checkBox5);
@@ -171,7 +184,11 @@ public class feedback extends AppCompatActivity {
         Access_tocken = (shared.getString("Acess_tocken", "nologin"));
         Driver_id = (shared.getString("Driver_id", "nologin"));
         rtingbar.setVisibility(View.GONE);
+        rtingbar.setNumStars(5);
         Text_rating__.setVisibility(View.GONE);
+        Lv_aditional_charges.bringToFront();
+
+
         if (Build.VERSION.SDK_INT >= 24) {
             try {
                 Method m = StrictMode.class.getMethod("disableDeathOnFileUriExposure");
@@ -195,6 +212,7 @@ public class feedback extends AppCompatActivity {
                 Payment_term = null;
                 project_site_array = null;
                 str_chec_step = null;
+                Check_bin_type = null;
             } else {
                 Job_number = extras.getString("Job_number");
                 Job_additional_charge = extras.getString("Job_additional_charge");
@@ -208,6 +226,7 @@ public class feedback extends AppCompatActivity {
                 Payment_term = extras.getString("payment_term");
                 project_site_array = extras.getString("Project_site");
                 str_chec_step = extras.getString("Check_step");
+                Check_bin_type = extras.getString("Bin_type");
             }
         } else {
             Job_number = (String) savedInstanceState.getSerializable("Job_number");
@@ -222,6 +241,7 @@ public class feedback extends AppCompatActivity {
             Payment_term = (String) savedInstanceState.getSerializable("payment_term");
             project_site_array = (String) savedInstanceState.getSerializable("Project_site");
             str_chec_step = (String) savedInstanceState.getSerializable("Check_step");
+            Check_bin_type = (String) savedInstanceState.getSerializable("Bin_type");
         }
         if (Strng_bin_number.contentEquals("null")) {
             Strng_bin_number = "";
@@ -413,81 +433,197 @@ public class feedback extends AppCompatActivity {
 //                        }
             }
         });
-        if (adapter.getCount() == 0) {
-            txt_additional_charges.setVisibility(View.GONE);
-        }
-        if (adapter.getCount() == 1) {
-            View item = adapter.getView(0, null, Lv_aditional_charges);
-            item.measure(0, 0);
-            ViewGroup.LayoutParams params = Lv_aditional_charges.getLayoutParams();
-            params.width = ViewGroup.LayoutParams.MATCH_PARENT;
-            params.height = 1 * item.getMeasuredHeight();
-            Lv_aditional_charges.setLayoutParams(params);
+//        if (adapter.getCount() == 0) {
+//            txt_additional_charges.setVisibility(View.GONE);
+//        }
+//        if (adapter.getCount() == 1) {
+//            View item = adapter.getView(0, null, Lv_aditional_charges);
+//            item.measure(0, 0);
+//            ViewGroup.LayoutParams params = Lv_aditional_charges.getLayoutParams();
+//            params.width = ViewGroup.LayoutParams.MATCH_PARENT;
+//            params.height = 1 * item.getMeasuredHeight();
+//            Lv_aditional_charges.setLayoutParams(params);
+//
+//
+//        } else if (adapter.getCount() == 2) {
+//            View item = adapter.getView(0, null, Lv_aditional_charges);
+//            item.measure(0, 0);
+//            ViewGroup.LayoutParams params = Lv_aditional_charges.getLayoutParams();
+//            params.width = ViewGroup.LayoutParams.MATCH_PARENT;
+//            params.height = 2 * item.getMeasuredHeight();
+//            Lv_aditional_charges.setLayoutParams(params);
+//
+//
+//        } else if (adapter.getCount() == 3) {
+//            View item = adapter.getView(0, null, Lv_aditional_charges);
+//            item.measure(0, 0);
+//            ViewGroup.LayoutParams params = Lv_aditional_charges.getLayoutParams();
+//            params.width = ViewGroup.LayoutParams.MATCH_PARENT;
+//            params.height = 3 * item.getMeasuredHeight();
+//            Lv_aditional_charges.setLayoutParams(params);
+//
+//
+//        } else if (adapter.getCount() > 3) {
+//            View item = adapter.getView(0, null, Lv_aditional_charges);
+//            item.measure(0, 0);
+//            ViewGroup.LayoutParams params = Lv_aditional_charges.getLayoutParams();
+//            params.width = ViewGroup.LayoutParams.MATCH_PARENT;
+//            params.height = 4 * item.getMeasuredHeight();
+//            Lv_aditional_charges.setLayoutParams(params);
+//
+//
+//        }
+//
+//        Lv_aditional_charges.setOnTouchListener(new View.OnTouchListener() {
+//            @Override
+//            public boolean onTouch(View v, MotionEvent event) {
+//
+//// Disallow the touch request for parent scroll on touch of child view
+//                sv.requestDisallowInterceptTouchEvent(true);
+//
+//                int action = event.getActionMasked();
+//                switch (action) {
+//                    case MotionEvent.ACTION_UP:
+//                        sv.requestDisallowInterceptTouchEvent(false);
+//                        break;
+//                }
+//                return false;
+//            }
+//        });
+        setListViewHeightBasedOnItems(Lv_aditional_charges);
 
+//        Lv_aditional_charges.setOnTouchListener(new ListView.OnTouchListener() {
+//            @Override
+//            public boolean onTouch(View v, MotionEvent event) {
+//                int action = event.getAction();
+//                switch (action) {
+//                    case MotionEvent.ACTION_DOWN:
+//                        // Disallow ScrollView to intercept touch events.
+//                        v.getParent().requestDisallowInterceptTouchEvent(true);
+//                        break;
+//
+//                    case MotionEvent.ACTION_UP:
+//                        // Allow ScrollView to intercept touch events.
+//                        v.getParent().requestDisallowInterceptTouchEvent(false);
+//                        break;
+//                }
+//
+//                // Handle ListView touch events.
+//                v.onTouchEvent(event);
+//                return true;
+//            }
+//        });
 
-        } else if (adapter.getCount() == 2) {
-            View item = adapter.getView(0, null, Lv_aditional_charges);
-            item.measure(0, 0);
-            ViewGroup.LayoutParams params = Lv_aditional_charges.getLayoutParams();
-            params.width = ViewGroup.LayoutParams.MATCH_PARENT;
-            params.height = 2 * item.getMeasuredHeight();
-            Lv_aditional_charges.setLayoutParams(params);
-
-
-        } else if (adapter.getCount() == 3) {
-            View item = adapter.getView(0, null, Lv_aditional_charges);
-            item.measure(0, 0);
-            ViewGroup.LayoutParams params = Lv_aditional_charges.getLayoutParams();
-            params.width = ViewGroup.LayoutParams.MATCH_PARENT;
-            params.height = 3 * item.getMeasuredHeight();
-            Lv_aditional_charges.setLayoutParams(params);
-
-
-        } else if (adapter.getCount() > 3) {
-            View item = adapter.getView(0, null, Lv_aditional_charges);
-            item.measure(0, 0);
-            ViewGroup.LayoutParams params = Lv_aditional_charges.getLayoutParams();
-            params.width = ViewGroup.LayoutParams.MATCH_PARENT;
-            params.height = 3 * item.getMeasuredHeight();
-            Lv_aditional_charges.setLayoutParams(params);
-
-
-        }
-
+//        sv.setOnTouchListener(new View.OnTouchListener()
+//        {
+//
+//            @Override
+//            public boolean onTouch(View v, MotionEvent event)
+//            {
+//                int arr[] = new int[] { 1, 2 };
+//                Lv_aditional_charges.getLocationOnScreen(arr);
+//
+//                /* Get bounds of child Listview*/
+//                int lstvTop = arr[0];
+//                int lstvBottom = arr[1] + Lv_aditional_charges.getHeight();
+//                int lstvLeft = arr[1];
+//                int lstvRight = arr[0] + Lv_aditional_charges.getWidth();
+//
+//                float x = event.getRawX();
+//                float y = event.getRawY();
+//
+//                if (event.getAction() == MotionEvent.ACTION_DOWN)
+//                {
+//                    /*check if child ListView bounds are touched*/
+//                    if (x > lstvTop && x < lstvBottom && y > lstvLeft && y < lstvRight)
+//                    {
+//                        sv.clearFocus();
+//                        /*This statement tells the ScrollView to do not handle this touch event, so the child Listview will handle this touch event and will scroll */
+//                        sv.requestDisallowInterceptTouchEvent(true);
+//                        /*The child Listview isFocusable attribute must be set to true otherwise it will not work*/
+//                        Lv_aditional_charges.requestFocus();
+//                        return true;
+//                    } else
+//                        return false;
+//                } else if (event.getAction() == MotionEvent.ACTION_MOVE)
+//                {
+//
+//                    if (x > lstvTop && x < lstvBottom && y > lstvLeft && y < lstvRight)
+//                    {
+//                        sv.clearFocus();
+//                        sv.requestDisallowInterceptTouchEvent(true);
+//                        Lv_aditional_charges.requestFocus();
+//                        return true;
+//                    } else
+//                        return false;
+//                } else if (event.getAction() == MotionEvent.ACTION_UP)
+//                {
+//                    sv.clearFocus();
+//                    sv.requestDisallowInterceptTouchEvent(true);
+//                    Lv_aditional_charges.requestFocus();
+//                    return false;
+//                } else
+//                {
+//                    return false;
+//                }
+//            }
+//        });
+//        Lv_aditional_charges.setOnTouchListener(new View.OnTouchListener() {
+//            @Override
+//            public boolean onTouch(View view, MotionEvent motionEvent) {
+//                int action = motionEvent.getAction();
+//                switch (action) {
+//                    case MotionEvent.ACTION_DOWN:
+//                        // Disable the scroll view to intercept the touch event
+//                        sv.requestDisallowInterceptTouchEvent(true);
+//                        return false;
+//                    case MotionEvent.ACTION_UP:
+//                        // Allow scroll View to interceot the touch event
+//                        sv.requestDisallowInterceptTouchEvent(false);
+//                        return true;
+//                    case MotionEvent.ACTION_MOVE:
+//                        sv.requestDisallowInterceptTouchEvent(true);
+//                        return false;
+//                    default:
+//                        return true;
+//                }
+//            }
+//        });
 
 //
 
 
-        try {
-            jArr_jobs_steps = new JSONArray(Job_additional_charge);
-            if (jArr_jobs_steps.length() == 1) {
-                checkbox1.setChecked(true);
-                checkbox2.setChecked(false);
-                checkbox3.setChecked(false);
-                checkbox4.setChecked(false);
-            } else if (jArr_jobs_steps.length() == 2) {
-                checkbox1.setChecked(true);
-                checkbox2.setChecked(true);
-                checkbox3.setChecked(false);
-                checkbox4.setChecked(false);
-            } else if (jArr_jobs_steps.length() == 3) {
-                checkbox1.setChecked(true);
-                checkbox2.setChecked(true);
-                checkbox3.setChecked(true);
-                checkbox4.setChecked(false);
-            } else if (jArr_jobs_steps.length() == 4) {
-                checkbox1.setChecked(true);
-                checkbox2.setChecked(true);
-                checkbox3.setChecked(true);
-                checkbox4.setChecked(true);
-            }
-            {
-
-            }
-        } catch (JSONException e) {
-            e.printStackTrace();
-        }
+//        try {
+//            jArr_jobs_steps = new JSONArray(Job_additional_charge);
+//            if (jArr_jobs_steps.length() == 1) {
+//                checkbox1.setChecked(true);
+//                checkbox2.setChecked(false);
+//                checkbox3.setChecked(false);
+//                checkbox4.setChecked(false);
+//            } else if (jArr_jobs_steps.length() == 2) {
+//                checkbox1.setChecked(true);
+//                checkbox2.setChecked(true);
+//                checkbox3.setChecked(false);
+//                checkbox4.setChecked(false);
+//            } else if (jArr_jobs_steps.length() == 3) {
+//                checkbox1.setChecked(true);
+//                checkbox2.setChecked(true);
+//                checkbox3.setChecked(true);
+//                checkbox4.setChecked(false);
+//            } else if (jArr_jobs_steps.length() == 4) {
+//                checkbox1.setChecked(true);
+//                checkbox2.setChecked(true);
+//                checkbox3.setChecked(true);
+//                checkbox4.setChecked(true);
+//            }
+//            {
+//
+//            }
+//        } catch (JSONException e) {
+//            e.printStackTrace();
+//        }
         rtingbar.setRating(0.0f);
+        setupCameraIntentHelper();
         // Text_rating__
         img_back.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -535,34 +671,34 @@ public class feedback extends AppCompatActivity {
                 }
             }
         });
-        Lv_aditional_charges.setOnTouchListener(new View.OnTouchListener() {
-            @Override
-            public boolean onTouch(View view, MotionEvent motionEvent) {
-                int action = motionEvent.getAction();
-                switch (action) {
-                    case MotionEvent.ACTION_DOWN:
-                        // Disable the scroll view to intercept the touch event
-                        sv.requestDisallowInterceptTouchEvent(true);
-                        return false;
-                    case MotionEvent.ACTION_UP:
-                        // Allow scroll View to interceot the touch event
-                        sv.requestDisallowInterceptTouchEvent(false);
-                        return true;
-                    case MotionEvent.ACTION_MOVE:
-                        sv.requestDisallowInterceptTouchEvent(true);
-                        return false;
-                    default:
-                        return true;
-                }
-            }
-        });
+
         img_click_photo.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 boolean result = Utility.checkPermission(feedback.this);
 
                 if (result = true) {
-                    selectImage_new();
+//                    if (mCameraIntentHelper != null) {
+//                        mCameraIntentHelper.startCameraIntent();
+//                    }
+
+                    camera = new Camera.Builder()
+                            .resetToCorrectOrientation(true)// it will rotate the camera bitmap to the correct orientation from meta data
+                            .setTakePhotoRequestCode(1)
+                            .setDirectory("pics")
+                            .setName("ali_" + System.currentTimeMillis())
+                            .setImageFormat(Camera.IMAGE_JPEG)
+                            .setCompression(75)
+                            .setImageHeight(1000)// it will try to achieve this height as close as possible maintaining the aspect ratio;
+                            .build(feedback.this);
+                    try {
+
+                        camera.takePicture();
+                    } catch (Exception e) {
+                        e.printStackTrace();
+                    }
+
+                    //  selectImage_new();
 
                     //galleryIntent();
                 }
@@ -681,7 +817,7 @@ public class feedback extends AppCompatActivity {
                     Edt_txt_amount_collected.setText("0");
                     Edt_txt_amount_collected.setEnabled(false);
                     List<String> list = new ArrayList<String>();
-                    list.add("Select Collection method");
+                    list.add(getString(R.string.select_collectionm_feed));
                     options = list.toArray(new String[list.size()]);
                     ArrayAdapter aa = new ArrayAdapter(feedback.this, android.R.layout.simple_spinner_item, options) {
                         @NonNull
@@ -750,36 +886,39 @@ public class feedback extends AppCompatActivity {
                     Str_amount_collected = Edt_txt_amount_collected.getText().toString();
                     Str_bin = Edttxt_bin.getText().toString();
                     String Str_check = "";
+
                     if (!Str_bin.contentEquals("")) {
                         // String test = "StackOverflow";
                         char first = Str_bin.charAt(0);
                         Str_check = String.valueOf(first);
                     }
-                    //Edttxt_bin
-                    if (Str_bin.contentEquals("")) {
-                        Toast.makeText(feedback.this, "Bin number cannot be empty", Toast.LENGTH_LONG).show();
-                        //new SUBMIT_INFO().execute();
+                    if (str_projectsite_chargeid.contentEquals("noid")) {
+                        Toast.makeText(feedback.this, R.string.Select_Binwaste_type__, Toast.LENGTH_LONG).show();
                     }
-                    if (!str_prefix.contentEquals(Str_check)) {
-                        Toast.makeText(feedback.this, "First Character of Bin number should start from " + str_prefix, Toast.LENGTH_LONG).show();
+                    //Edttxt_bin
+                    else if (Str_bin.contentEquals("")) {
+                        Toast.makeText(feedback.this, R.string.bin_toast, Toast.LENGTH_LONG).show();
+                        //new SUBMIT_INFO().execute();
+                    } else if (!str_prefix.contentEquals(Str_check)) {
+                        Toast.makeText(feedback.this, getString(R.string.first_character_toast) + str_prefix, Toast.LENGTH_LONG).show();
                         //new SUBMIT_INFO().execute();
                         // Str_collection_method
                     } else if (Str_collection_method.contentEquals("Select Collection method")) {
-                        Toast.makeText(feedback.this, "Select Collection method", Toast.LENGTH_LONG).show();
+                        Toast.makeText(feedback.this, R.string.collection_toast, Toast.LENGTH_LONG).show();
                         //new SUBMIT_INFO().execute();
                     } else if (Str_collection_method.contentEquals("")) {
-                        Toast.makeText(feedback.this, "Select Collection method", Toast.LENGTH_LONG).show();
+                        Toast.makeText(feedback.this, R.string.collection_toast, Toast.LENGTH_LONG).show();
                         //new SUBMIT_INFO().execute();
                     } else if (Str_amount_collected.contentEquals("")) {
-                        Toast.makeText(feedback.this, "Amount collected cannot be empty", Toast.LENGTH_LONG).show();
+                        Toast.makeText(feedback.this, R.string.Amount_toast, Toast.LENGTH_LONG).show();
                         //new SUBMIT_INFO().execute();
                     } else if (img_base64.contentEquals("")) {
-                        Toast.makeText(feedback.this, "Picture cannot be empty", Toast.LENGTH_LONG).show();
+                        Toast.makeText(feedback.this, R.string.image_toast, Toast.LENGTH_LONG).show();
                         //new SUBMIT_INFO().execute();
                         // img_base64
                     } else if (!signatureView.isBitmapEmpty()) {
                         if (Strng_signedby.contentEquals("")) {
-                            Toast.makeText(feedback.this, "Signed By cannot be empty", Toast.LENGTH_LONG).show();
+                            Toast.makeText(feedback.this, R.string.signed_by_toast, Toast.LENGTH_LONG).show();
                             //new SUBMIT_INFO().execute();
                             // img_base64
                         } else {
@@ -798,7 +937,7 @@ public class feedback extends AppCompatActivity {
                         // img_base64
                     } else if (signatureView.isBitmapEmpty()) {
                         if (Str_driver_notes.contentEquals("noid")) {
-                            Toast.makeText(feedback.this, "Driver notes cannot be empty", Toast.LENGTH_LONG).show();
+                            Toast.makeText(feedback.this, R.string.driver_toast, Toast.LENGTH_LONG).show();
                         } else {
                             UPDATE_FEEDBACK();
                         }
@@ -821,6 +960,7 @@ public class feedback extends AppCompatActivity {
                 } else if (Payment_collected_method.contentEquals("false")) {
                     Strng_signedby = Signedby.getText().toString();
                     Str_amount_collected = Edt_txt_amount_collected.getText().toString();
+                    Str_collection_method = "";
                     Str_bin = Edttxt_bin.getText().toString();
                     String Str_check = "";
                     if (!Str_bin.contentEquals("")) {
@@ -829,27 +969,41 @@ public class feedback extends AppCompatActivity {
                         Str_check = String.valueOf(first);
                     }
                     //Edttxt_bin
-                    if (Str_bin.contentEquals("")) {
-                        Toast.makeText(feedback.this, "Bin number cannot be empty", Toast.LENGTH_LONG).show();
+                    if (str_projectsite_chargeid.contentEquals("noid")) {
+                        Toast.makeText(feedback.this, R.string.Select_Binwaste_type__, Toast.LENGTH_LONG).show();
+                    } else if (Str_bin.contentEquals("")) {
+                        Toast.makeText(feedback.this, R.string.bin_toast, Toast.LENGTH_LONG).show();
                         //new SUBMIT_INFO().execute();
-                    }
-                    if (!str_prefix.contentEquals(Str_check)) {
-                        Toast.makeText(feedback.this, "First Chracter of Bin number should start from " + str_prefix, Toast.LENGTH_LONG).show();
+                    } else if (!str_prefix.contentEquals(Str_check)) {
+                        Toast.makeText(feedback.this, getString(R.string.first_character_toast) + str_prefix, Toast.LENGTH_LONG).show();
                         //new SUBMIT_INFO().execute();
                     } else if (img_base64.contentEquals("")) {
-                        Toast.makeText(feedback.this, "Picture cannot be empty", Toast.LENGTH_LONG).show();
+                        Toast.makeText(feedback.this, R.string.image_toast, Toast.LENGTH_LONG).show();
                         //new SUBMIT_INFO().execute();
                         // img_base64
                     } else if (!signatureView.isBitmapEmpty()) {
                         if (Strng_signedby.contentEquals("")) {
-                            Toast.makeText(feedback.this, "Signed By cannot be empty", Toast.LENGTH_LONG).show();
+                            Toast.makeText(feedback.this, R.string.signed_by_toast, Toast.LENGTH_LONG).show();
                             //new SUBMIT_INFO().execute();
                             // img_base64
 
                         } else if (str_chec_step.contentEquals("1")) {
-                            // Payment_collected_method = "false";
-                            if (Str_driver_notes.contentEquals("noid")) {
-                                Toast.makeText(feedback.this, "Driver notes cannot be empty", Toast.LENGTH_LONG).show();
+                            if (Str_collect_payment.contentEquals("true")) {
+                                // Payment_collected_method = "false";
+                                if (Str_driver_notes.contentEquals("noid")) {
+                                    Toast.makeText(feedback.this, R.string.driver_toast, Toast.LENGTH_LONG).show();
+                                } else {
+                                    Bitmap bitmap = signatureView.getSignatureBitmap();
+                                    //Str_signature_base_64 = ImageUtil.convert(bitmap);
+                                    Str_signature_base_64 = convertBitmapToString(bitmap);
+                                    if (!Str_signature_base_64.contentEquals("")) {
+                                        // new SUBMIT_INFO().execute();
+                                        //Submit_Update();
+                                        //new Submit_Task().execute();
+                                        UPDATE_FEEDBACK();
+
+                                    }
+                                }
                             } else {
                                 Bitmap bitmap = signatureView.getSignatureBitmap();
                                 //Str_signature_base_64 = ImageUtil.convert(bitmap);
@@ -862,6 +1016,7 @@ public class feedback extends AppCompatActivity {
 
                                 }
                             }
+
                         } else {
                             Bitmap bitmap = signatureView.getSignatureBitmap();
                             //Str_signature_base_64 = ImageUtil.convert(bitmap);
@@ -877,9 +1032,17 @@ public class feedback extends AppCompatActivity {
                         // Toast.makeText(feedback.this, "Signature cannot be empty", Toast.LENGTH_LONG).show();
                         //new SUBMIT_INFO().execute();
                         // img_base64
-                    } else if (str_chec_step.contentEquals("1")) {
+                    } else if (signatureView.isBitmapEmpty()) {
                         if (Str_driver_notes.contentEquals("noid")) {
-                            Toast.makeText(feedback.this, "Driver notes cannot be empty", Toast.LENGTH_LONG).show();
+                            Toast.makeText(feedback.this, R.string.driver_toast, Toast.LENGTH_LONG).show();
+                        } else {
+                            UPDATE_FEEDBACK();
+                        }
+                    } else if (str_chec_step.contentEquals("1")) {
+                        if (Str_collect_payment.contentEquals("true")) {
+                            if (Str_driver_notes.contentEquals("noid")) {
+                                Toast.makeText(feedback.this, R.string.driver_toast, Toast.LENGTH_LONG).show();
+                            }
                         }
                     } else {
                         //  Bitmap bitmap = signatureView.getSignatureBitmap();
@@ -912,7 +1075,7 @@ public class feedback extends AppCompatActivity {
 
 
         JSONObject jsonnode, json_User;
-        String jsonStr="";
+        String jsonStr = "";
 
 
         @Override
@@ -939,7 +1102,7 @@ public class feedback extends AppCompatActivity {
             HttpHandler sh = new HttpHandler();
             // Making a request to url and getting response
             //String url = "http://api.androidhive.info/contacts/";
-             jsonStr = sh.makeServiceCall("http://112.196.3.42:8298/v1/ProjectSiteCharge/GetProjectSiteChargeIDBinWateType/" + Project_site_id, Access_tocken);
+            jsonStr = sh.makeServiceCall("http://112.196.3.42:8298/v1/ProjectSiteCharge/GetProjectSiteChargeIDBinWateType/" + Project_site_id, Access_tocken);
 
             Log.d("Response: ", "> " + jsonStr);
 
@@ -958,6 +1121,7 @@ public class feedback extends AppCompatActivity {
 //                    Json_category = new JSONObject(Str_response);
 //                    Str_response = Json_category.getString("categories");
                     jArr = new JSONArray(jsonStr);
+                    bin_waste.add(new waste_value("Select Bin/waste", "noid"));
                     for (int count = 0; count < jArr.length(); count++) {
                         JSONObject jsonObjj = null;
 
@@ -1016,12 +1180,13 @@ public class feedback extends AppCompatActivity {
                 adapter.setDropDownViewResource(R.layout.support_simple_spinner_dropdown_item);
 
                 wastetype.setAdapter(adapter);
+                wastetype.setSelection(getIndex(wastetype, Check_bin_type));
                 try {
                     char first = bin_waste.get(0).getContact_name().charAt(0);
                     String str = String.valueOf(first);
 
                     if (Strng_bin_number.contentEquals("")) {
-                        Edttxt_bin.setText(str);
+                        //Edttxt_bin.setText(str);
                         str_prefix = str;
                     } else {
                         //Edttxt_bin.setText(Strng_bin_number);
@@ -1354,31 +1519,57 @@ public class feedback extends AppCompatActivity {
     @Override
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
-        if (requestCode == CAMERA_PHOTO && resultCode == RESULT_OK) {
-            if (imageToUploadUri != null) {
-                try {
-                    Uri selectedImage = imageToUploadUri;
-                    getContentResolver().notifyChange(selectedImage, null);
-                    Str_img_path = imageToUploadUri.getPath();
-                    // img_base64 = getFileToByte(Str_img_path);
-                    Bitmap reducedSizeBitmap = getBitmap(imageToUploadUri.getPath());
-
-                    // Bitmap rotated_bitmap = rotateBitmap(reducedSizeBitmap, 90);
-                    if (reducedSizeBitmap != null) {
-
-                        Img_image.setImageBitmap(reducedSizeBitmap);
-                        img_base64 = convertBitmapToString(reducedSizeBitmap);
-
-                    } else {
-                        Toast.makeText(this, "Error while capturing Image", Toast.LENGTH_LONG).show();
+        // mCameraIntentHelper.onActivityResult(requestCode, resultCode, data);
+        if (requestCode == Camera.REQUEST_TAKE_PHOTO) {
+//        if (requestCode == CAMERA_PHOTO && resultCode == RESULT_OK) {
+//
+//            if (imageToUploadUri != null) {
+//                try {
+//                    Uri selectedImage = imageToUploadUri;
+//                    getContentResolver().notifyChange(selectedImage, null);
+//                    Str_img_path = imageToUploadUri.getPath();
+//                    // img_base64 = getFileToByte(Str_img_path);
+//                    Bitmap reducedSizeBitmap = getBitmap(imageToUploadUri.getPath());
+//
+//                    // Bitmap rotated_bitmap = rotateBitmap(reducedSizeBitmap, 90);
+//                    if (reducedSizeBitmap != null) {
+//
+//                        Img_image.setImageBitmap(reducedSizeBitmap);
+//                       // new bitmap_to_string().execute();
+//                        img_base64 = convertBitmapToString(reducedSizeBitmap);
+//
+//                    } else {
+//                        Toast.makeText(this, "Error while capturing Image", Toast.LENGTH_LONG).show();
+//                    }
+//                } catch (OutOfMemoryError e) {
+//                    e.printStackTrace();
+//                    img_base64 = "";
+//                    Toast.makeText(this, "Memory Error while capturing Image", Toast.LENGTH_LONG).show();
+//                }
+//            } else {
+//                Toast.makeText(this, "Error while capturing Image", Toast.LENGTH_LONG).show();
+//            }
+            //  camera.getCameraBitmapPath().
+            try {
+                bitmap = camera.getCameraBitmap();
+                if (bitmap != null) {
+                    if (bitmap != null) {
+                        bitmap = BitmapHelper.shrinkBitmap(bitmap, 300, 360);
+                        // ImageView imageView = (ImageView) findViewById(de.ecotastic.android.camerautil.sample.R.id.activity_camera_intent_image_view);
+                        Img_image.setImageBitmap(bitmap);
+                        img_base64 = convertBitmapToString(bitmap);
                     }
-                } catch (OutOfMemoryError e) {
-                    e.printStackTrace();
-                    img_base64 = "";
-                    Toast.makeText(this, "Memory Error while capturing Image", Toast.LENGTH_LONG).show();
+                    // Img_image.setImageBitmap(bitmap);
+                    //  String str = camera.getCameraBitmapPath();
+                    // Bitmap reducedSizeBitmap = getBitmap(str);
+                    //new bitmap_to_string().execute();
+                    //img_base64 = convertBitmapToString(reducedSizeBitmap);
+                } else {
+                    Toast.makeText(this.getApplicationContext(), "Picture not taken!", Toast.LENGTH_SHORT).show();
                 }
-            } else {
-                Toast.makeText(this, "Error while capturing Image", Toast.LENGTH_LONG).show();
+            } catch (OutOfMemoryError e) {
+                e.printStackTrace();
+                Toast.makeText(this, "Memory Error while capturing Image", Toast.LENGTH_LONG).show();
             }
         } else {
             // This is important, otherwise the result will not be passed to the fragment
@@ -1447,179 +1638,36 @@ public class feedback extends AppCompatActivity {
         }
     }
 
-    public static Bitmap rotateBitmap(Bitmap bitmap, int orientation) {
-
-        Matrix matrix = new Matrix();
-        switch (orientation) {
-            case ExifInterface.ORIENTATION_NORMAL:
-                return bitmap;
-            case ExifInterface.ORIENTATION_FLIP_HORIZONTAL:
-                matrix.setScale(-1, 1);
-                break;
-            case ExifInterface.ORIENTATION_ROTATE_180:
-                matrix.setRotate(180);
-                break;
-            case ExifInterface.ORIENTATION_FLIP_VERTICAL:
-                matrix.setRotate(180);
-                matrix.postScale(-1, 1);
-                break;
-            case ExifInterface.ORIENTATION_TRANSPOSE:
-                matrix.setRotate(90);
-                matrix.postScale(-1, 1);
-                break;
-            case ExifInterface.ORIENTATION_ROTATE_90:
-                matrix.setRotate(90);
-                break;
-            case ExifInterface.ORIENTATION_TRANSVERSE:
-                matrix.setRotate(-90);
-                matrix.postScale(-1, 1);
-                break;
-            case ExifInterface.ORIENTATION_ROTATE_270:
-                matrix.setRotate(-90);
-                break;
-            default:
-                return bitmap;
-        }
-        try {
-
-            Bitmap bmRotated = Bitmap.createBitmap(bitmap, 0, 0, bitmap.getWidth(), bitmap.getHeight(), matrix, true);
-
-//            try {
-//                bitmap.recycle();
-//            }catch (java.lang.RuntimeException e){
-//                e.printStackTrace();
-//            }
-            return bmRotated;
-
-        } catch (OutOfMemoryError e) {
-            e.printStackTrace();
-            return null;
-        }
-
-    }
-
-    public static String getFileToByte(String filePath) {
-        Bitmap bmp = null;
-        ByteArrayOutputStream bos = null;
-        byte[] bt = null;
-        String encodeString = null;
-        try {
-            bmp = BitmapFactory.decodeFile(filePath);
-            bos = new ByteArrayOutputStream();
-            bmp.compress(Bitmap.CompressFormat.JPEG, 100, bos);
-            bt = bos.toByteArray();
-            // encodeString = Base64.encodeToString(bt, Base64.DEFAULT);
-
-            //System.out.println("Base 64....." + encodeString);
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-        return encodeString;
-    }
-
-    private class SUBMIT_INFO extends AsyncTask<Void, String, Void> implements DialogInterface.OnCancelListener {
-
-
-        JSONObject jsonnode, json_User;
-
-
+    private class bitmap_to_string extends AsyncTask<Void, String, Void> implements DialogInterface.OnCancelListener {
         @Override
         protected void onPreExecute() {
             super.onPreExecute();
-
-            // mProgressHUD = ProgressHUD.show(Login_Screen.this, "Connecting", true, true, this);
-            // Showing progress dialog
             pDialog = new ProgressDialog(feedback.this);
-            pDialog.setMessage("Please wait...");
+            pDialog.setMessage("Loading image...");
             pDialog.setCancelable(false);
             pDialog.show();
 
+            // mProgressHUD = ProgressHUD.show(Login_Screen.this, "Connecting", true, true, this);
+            // Showing progress dialog
+
 
         }
 
         @Override
-        protected Void doInBackground(Void... arg0) {
-            // Creating service handler class instance
-            publishProgress("Please wait...");
-
-
-            ServiceHandler sh = new ServiceHandler();
-            List<NameValuePair> nameValuePairs = new ArrayList<NameValuePair>(16);
-            //nameValuePairs.add(new BasicNameValuePair("email", email_fb));
-            nameValuePairs.add(new BasicNameValuePair("JobID", Job_id));
-            nameValuePairs.add(new BasicNameValuePair("CustomerSignature", Str_signature_base_64));
-            nameValuePairs.add(new BasicNameValuePair("PhotoFile", img_base64));
-            nameValuePairs.add(new BasicNameValuePair("ProjectSiteId", Project_site_id));
-            nameValuePairs.add(new BasicNameValuePair("ProjectSiteChargeID", str_projectsite_chargeid));
-            nameValuePairs.add(new BasicNameValuePair("JobAdditionalCharges", Job_additional_charge));
-            nameValuePairs.add(new BasicNameValuePair("SignedBy", Strng_signedby));
-            nameValuePairs.add(new BasicNameValuePair("Rating", Str_rating));
-            nameValuePairs.add(new BasicNameValuePair("PaymentCollected", Payment_collected_method));
-            nameValuePairs.add(new BasicNameValuePair("CollectionMethod", Str_collection_method));
-            nameValuePairs.add(new BasicNameValuePair("AmountCollected", Str_amount_collected));
-            nameValuePairs.add(new BasicNameValuePair("DriverNotes", Str_driver_notes));
-            nameValuePairs.add(new BasicNameValuePair("driverId", Driver_id));
-            nameValuePairs.add(new BasicNameValuePair("JobStepId", Job_stepid));
-            nameValuePairs.add(new BasicNameValuePair("JobNumber", Job_number));
-            nameValuePairs.add(new BasicNameValuePair("Completed", "2018-05-10T14:02:23.3530000+0530"));
-            nameValuePairs.add(new BasicNameValuePair("BinNumber", "56565"));
-            String str = nameValuePairs.toString();
-            str = str.replace("=", ":");
-            //BinNumber
-            //nameValuePairs = new ArrayList<NameValuePair>(Arrays.asList(str.split(",")));
-
-            String jsonStr = sh.makeServiceCall_withHeader("http://112.196.3.42:8298/v1/Job/UpdateJobStepMobile",
-                    ServiceHandler.POST, nameValuePairs, Access_tocken);
-
-            Log.d("Response", "> " + jsonStr);
-
-            if (jsonStr != null) {
-                JSONObject jsonObj = null;
-                try {
-                    jsonObj = new JSONObject(jsonStr);
-                } catch (JSONException e) {
-                    e.printStackTrace();
-                }
-
-                // Getting JSON Array node
-                // JSONArray array1 = null;
-//                try {
-//                    status = jsonObj.getString("status");
-//
-//                    Message = jsonObj.getString("message");
-//                    if (status.contentEquals("true")) {
-//                        JSONObject jsonObj_data = null;
-//                        jsonObj_data = jsonObj.getJSONObject("data");
-//
-//
-//                        Device_id = jsonObj_data.getString("device_id");
-//                        Acess_tocken = jsonObj_data.getString("access_token");
-//                    }
-//
-//                } catch (JSONException e) {
-//                    e.printStackTrace();
-//                }
-
-
-            } else {
-                Log.e("ServiceHandler", "Couldn't get any data from the url");
-            }
-
-            return null;
-        }
-
-        @Override
-        protected void onPostExecute(Void result) {
-            super.onPostExecute(result);
-            // Dismiss the progress dialog
+        protected void onPostExecute(Void aVoid) {
+            super.onPostExecute(aVoid);
             pDialog.dismiss();
-            // new Status_update().execute();
-
         }
 
         @Override
         public void onCancel(DialogInterface dialog) {
 
+        }
+
+        @Override
+        protected Void doInBackground(Void... voids) {
+            img_base64 = convertBitmapToString(bitmap);
+            return null;
         }
     }
 
@@ -1714,224 +1762,16 @@ public class feedback extends AppCompatActivity {
         }
     }
 
-    private void Submit_Update() {
-
-        pdioalog__ = new ProgressDialog(feedback.this);
-        pdioalog__.setMessage("Uploading, please wait...");
-        pdioalog__.show();
-        final StringRequest stringRequest = new StringRequest(Request.Method.POST, "http://112.196.3.42:8298/v1/Job/UpdateJobStepMobile",
-                new Response.Listener<String>() {
-                    @Override
-                    public void onResponse(String response) {
-                        pdioalog__.dismiss();
-                        Log.d("uploade", response);
-                        try {
-                            JSONObject jsonObject = new JSONObject(response);
-
-                        } catch (JSONException e1) {
-                            e1.printStackTrace();
-                        }
-
-
-                    }
-                },
-                new Response.ErrorListener() {
-                    @Override
-                    public void onErrorResponse(VolleyError error) {
-                        pdioalog__.dismiss();
-                        Toast.makeText(feedback.this, "No internet connection", Toast.LENGTH_LONG).show();
-
-                    }
-                }) {
-            @Override
-            public Map<String, String> getHeaders() throws AuthFailureError {
-                Map<String, String> params = new Hashtable<String, String>();
-                params.put("Token", Access_tocken);
-                params.put("Content-Type", "application/json");
-
-                return params;
-            }
-
-            @Override
-            protected Map<String, String> getParams() throws AuthFailureError {
-
-                //Map<String, String> params = new Hashtable<String, String>();
-
-                Map<String, String> parameters = new HashMap<String, String>();
-                parameters.put("JobID", Job_id);
-                parameters.put("CustomerSignature", Str_signature_base_64);
-                parameters.put("PhotoFile", img_base64);
-                parameters.put("ProjectSiteId", Project_site_id);
-                parameters.put("ProjectSiteChargeID", str_projectsite_chargeid);
-                parameters.put("JobAdditionalCharges", additional_charges_string_to_send);
-                parameters.put("SignedBy", Strng_signedby);
-                parameters.put("Rating", Str_rating);
-                parameters.put("PaymentCollected", Payment_collected_method);
-                parameters.put("CollectionMethod", Str_collection_method);
-                parameters.put("AmountCollected", Str_amount_collected);
-                parameters.put("DriverNotes", Str_driver_notes);
-                parameters.put("driverId", Driver_id);
-                parameters.put("JobStepId", Job_stepid);
-                parameters.put("JobNumber", Job_number);
-                parameters.put("Completed", "2018-05-07T12:56:24.4176763+08:00");
-                parameters.put("BinNumber", "56565");
-                // nameValuePairs.add(new BasicNameValuePair("BinNumber", "56565"));
-                //  parameters.put("image", imageString);
-
-                // params.put("image", image);
-                return parameters;
-            }
-        };
-        {
-            int socketTimeout = 310000;
-            RetryPolicy policy = new DefaultRetryPolicy(socketTimeout, DefaultRetryPolicy.DEFAULT_MAX_RETRIES, DefaultRetryPolicy.DEFAULT_BACKOFF_MULT);
-            stringRequest.setRetryPolicy(policy);
-            RequestQueue requestQueue = Volley.newRequestQueue(this);
-            requestQueue.add(stringRequest);
-        }
-    }
 
     public String convertBitmapToString(Bitmap bmp) {
         ByteArrayOutputStream stream = new ByteArrayOutputStream();
         bmp.compress(Bitmap.CompressFormat.PNG, 90, stream); //compress to which format you want.
         byte[] byte_arr = stream.toByteArray();
+        //  String imageStr = Base64.encodeToString(byte_arr, Base64.DEFAULT);
         String imageStr = Base64.encodeBytes(byte_arr);
         return imageStr;
     }
 
-
-    private class Submit_Task extends AsyncTask<Void, Integer, String> {
-        @Override
-        protected void onPreExecute() {
-            // setting progress bar to zero
-            pDialog = new ProgressDialog(feedback.this);
-            pDialog.setMessage("Please wait...");
-            pDialog.setCancelable(false);
-            pDialog.setIndeterminate(false);
-            pDialog.setMax(100);
-            pDialog.setProgressStyle(ProgressDialog.STYLE_HORIZONTAL);
-            pDialog.show();
-//            progressBar.setVisibility(View.VISIBLE);
-//            progressBar.setProgress(0);
-            super.onPreExecute();
-        }
-
-        @Override
-        protected void onProgressUpdate(Integer... progress) {
-            // Making progress bar visible
-
-
-            // updating progress bar value
-            pDialog.setProgress(progress[0]);
-
-            // updating percentage value
-            //txtPercentage.setText(String.valueOf(progress[0]) + "%");
-        }
-
-        @Override
-        protected String doInBackground(Void... params) {
-            return uploadFile();
-        }
-
-        @SuppressWarnings("deprecation")
-        private String uploadFile() {
-            String responseString = null;
-
-            HttpClient httpclient = new DefaultHttpClient();
-            HttpPost httppost = new HttpPost("http://112.196.3.42:8298/v1/Job/UpdateJobStepMobile");
-            httppost.addHeader("Token", Access_tocken);
-
-            try {
-                AndroidMultiPartEntity entity = new AndroidMultiPartEntity(
-                        new AndroidMultiPartEntity.ProgressListener() {
-
-                            @Override
-                            public void transferred(long num) {
-                                publishProgress((int) ((num / (float) totalSize) * 100));
-                            }
-                        });
-
-                entity.addPart("JobID", new StringBody(Job_id));
-                entity.addPart("CustomerSignature", new StringBody(Str_signature_base_64));
-                entity.addPart("PhotoFile", new StringBody(img_base64));
-                entity.addPart("ProjectSiteId", new StringBody(Project_site_id));
-                entity.addPart("ProjectSiteChargeID", new StringBody(str_projectsite_chargeid));
-                entity.addPart("JobAdditionalCharges", new StringBody(Job_additional_charge));
-                entity.addPart("SignedBy", new StringBody(Strng_signedby));
-                entity.addPart("Rating", new StringBody(Str_rating));
-                entity.addPart("PaymentCollected", new StringBody(Payment_collected_method));
-                entity.addPart("CollectionMethod", new StringBody(Str_collection_method));
-                entity.addPart("AmountCollected", new StringBody(Str_amount_collected));
-                entity.addPart("DriverNotes", new StringBody(Str_driver_notes));
-                entity.addPart("driverId", new StringBody(Driver_id));
-                entity.addPart("JobStepId", new StringBody(Job_stepid));
-                entity.addPart("JobNumber", new StringBody(Job_number));
-                entity.addPart("Completed", new StringBody("2018-05-07T12:56:24.4176763+08:00"));
-                entity.addPart("BinNumber", new StringBody(Str_bin));
-
-
-                totalSize = entity.getContentLength();
-                httppost.setEntity(entity);
-//
-                // Making server call
-                HttpResponse response = httpclient.execute(httppost);
-                HttpEntity r_entity = response.getEntity();
-
-                int statusCode = response.getStatusLine().getStatusCode();
-                if (statusCode == 200) {
-                    // Server response
-                    responseString = EntityUtils.toString(r_entity);
-                } else {
-                    responseString = "Error occurred! Http Status Code: "
-                            + statusCode;
-                }
-
-            } catch (ClientProtocolException e) {
-                responseString = e.toString();
-            } catch (IOException e) {
-                responseString = e.toString();
-            }
-            if (responseString != null) {
-                JSONObject jsonObj = null;
-                try {
-                    jsonObj = new JSONObject(responseString);
-                } catch (JSONException e) {
-                    e.printStackTrace();
-                }
-
-                // Getting JSON Array node
-                // JSONArray array1 = null;
-
-
-                // entity.addPart("status", new StringBody("1"));
-
-
-                // entity.addPart("status", new StringBody("1"));
-
-
-                //  entity.addPart("status", new StringBody("1"));
-            }
-
-
-            return responseString;
-
-        }
-
-        @Override
-        protected void onPostExecute(String result) {
-            super.onPostExecute(result);
-            //Log.e(TAG, "Response from server: " + result);
-
-            // showing the server response in an alert dialog
-            //  showAlert(result);
-
-            // new User_profile().execute();
-
-            pDialog.dismiss();
-
-        }
-
-    }
 
     public void UPDATE_FEEDBACK() {
         String pattern = "yyyy-MM-dd'T'HH:mm:ss.SSSSSSSZ";
@@ -1978,7 +1818,7 @@ public class feedback extends AppCompatActivity {
                             new Status_update().execute();
                             // String respose = response.toString();
                             // Toast.makeText(feedback.this,respose,Toast.LENGTH_LONG).show();
-                        }else{
+                        } else {
                             //Toast.makeText(feedback.this,response.toString(),Toast.LENGTH_LONG).show();
                             open_loginWindow();
                         }
@@ -2021,6 +1861,129 @@ public class feedback extends AppCompatActivity {
 
         AlertDialog alertDialog = alertDialogBuilder.create();
         alertDialog.show();
+    }
+
+    private int getIndex(Spinner spinner, String myString) {
+        for (int i = 0; i < spinner.getCount(); i++) {
+            if (spinner.getItemAtPosition(i).toString().equalsIgnoreCase(myString)) {
+                return i;
+            }
+        }
+
+        return 0;
+    }
+
+    private void setupCameraIntentHelper() {
+        mCameraIntentHelper = new CameraIntentHelper(this, new CameraIntentHelperCallback() {
+            @Override
+            public void onPhotoUriFound(Date dateCameraIntentStarted, Uri photoUri, int rotateXDegrees) {
+                //messageView.setText(getString(R.string.activity_camera_intent_photo_uri_found) + photoUri.toString());
+
+                Bitmap photo = BitmapHelper.readBitmap(feedback.this, photoUri);
+                if (photo != null) {
+                    photo = BitmapHelper.shrinkBitmap(photo, 300, rotateXDegrees);
+                    // ImageView imageView = (ImageView) findViewById(de.ecotastic.android.camerautil.sample.R.id.activity_camera_intent_image_view);
+                    Img_image.setImageBitmap(photo);
+                }
+            }
+
+            @Override
+            public void deletePhotoWithUri(Uri photoUri) {
+                BitmapHelper.deleteImageWithUriIfExists(photoUri, feedback.this);
+            }
+
+            @Override
+            public void onSdCardNotMounted() {
+                // Toast.makeText(getApplicationContext(), getString(R.string.error_sd_card_not_mounted), Toast.LENGTH_LONG).show();
+            }
+
+            @Override
+            public void onCanceled() {
+                //Toast.makeText(getApplicationContext(), getString(R.string.warning_camera_intent_canceled), Toast.LENGTH_LONG).show();
+            }
+
+            @Override
+            public void onCouldNotTakePhoto() {
+                // Toast.makeText(getApplicationContext(), getString(R.string.error_could_not_take_photo), Toast.LENGTH_LONG).show();
+            }
+
+            @Override
+            public void onPhotoUriNotFound() {
+                //messageView.setText(getString(R.string.activity_camera_intent_photo_uri_not_found));
+            }
+
+            @Override
+            public void logException(Exception e) {
+                //Toast.makeText(getApplicationContext(), getString(R.string.error_sth_went_wrong), Toast.LENGTH_LONG).show();
+                // Log.d(getClass().getName(), e.getMessage());
+            }
+        });
+    }
+
+    @Override
+    protected void onSaveInstanceState(Bundle savedInstanceState) {
+        super.onSaveInstanceState(savedInstanceState);
+        mCameraIntentHelper.onSaveInstanceState(savedInstanceState);
+    }
+
+    @Override
+    protected void onRestoreInstanceState(Bundle savedInstanceState) {
+        super.onRestoreInstanceState(savedInstanceState);
+        mCameraIntentHelper.onRestoreInstanceState(savedInstanceState);
+    }
+
+    public static void setListViewHeightBasedOnChildren(ListView listView) {
+        ListAdapter listAdapter = listView.getAdapter();
+        if (listAdapter == null) {
+            // pre-condition
+            return;
+        }
+
+        int totalHeight = 0;
+        for (int i = 0; i < listAdapter.getCount(); i++) {
+            View listItem = listAdapter.getView(i, null, listView);
+            listItem.measure(0, 0);
+            totalHeight += listItem.getMeasuredHeight();
+        }
+
+        ViewGroup.LayoutParams params = listView.getLayoutParams();
+        params.height = totalHeight +(listView.getDividerHeight() * (listAdapter.getCount() - 1));
+        listView.setLayoutParams(params);
+        listView.requestLayout();
+    }
+    public static boolean setListViewHeightBasedOnItems(ListView listView) {
+
+        ListAdapter listAdapter = listView.getAdapter();
+        if (listAdapter != null) {
+
+            int numberOfItems = listAdapter.getCount();
+
+            // Get total height of all items.
+            int totalItemsHeight = 0;
+            for (int itemPos = 0; itemPos < numberOfItems; itemPos++) {
+                View item = listAdapter.getView(itemPos, null, listView);
+                float px = 500 * (listView.getResources().getDisplayMetrics().density);
+                item.measure(View.MeasureSpec.makeMeasureSpec((int)px, View.MeasureSpec.AT_MOST), View.MeasureSpec.makeMeasureSpec(0, View.MeasureSpec.UNSPECIFIED));
+                totalItemsHeight += item.getMeasuredHeight();
+            }
+
+            // Get total height of all item dividers.
+            int totalDividersHeight = listView.getDividerHeight() *
+                    (numberOfItems - 1);
+            // Get padding
+            int totalPadding = listView.getPaddingTop() + listView.getPaddingBottom();
+
+            // Set list height.
+            ViewGroup.LayoutParams params = listView.getLayoutParams();
+            params.height = totalItemsHeight + totalDividersHeight + totalPadding+20;
+            listView.setLayoutParams(params);
+            listView.requestLayout();
+            return true;
+
+        } else {
+            return false;
+        }
+
     }
 }
 
