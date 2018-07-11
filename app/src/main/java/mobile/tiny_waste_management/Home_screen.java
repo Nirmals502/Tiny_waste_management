@@ -171,12 +171,12 @@ public class Home_screen extends AppCompatActivity
         Rlv_date_holder = (RelativeLayout) findViewById(R.id.rlv_date_holder);
         Rlv_version_ = (RelativeLayout) findViewById(R.id.rlv_version_holder);
         apblayout = (AppBarLayout) findViewById(R.id.appbar);
-        Format formatter = new SimpleDateFormat("dd MMMM yyyy");
+        Format formatter = new SimpleDateFormat("dd MMM yyyy");
         String today = formatter.format(new Date());
         //String date = new SimpleDateFormat("yyyy-MM-dd", Locale.getDefault()).format(new Date());
         date_now.setText(today);
 
-        formatter = new SimpleDateFormat("dd-MM-yyyy");
+        formatter = new SimpleDateFormat("dd-MMM-yyyy");
         today = formatter.format(new Date());
 
 
@@ -427,7 +427,7 @@ public class Home_screen extends AppCompatActivity
                     e.printStackTrace();
                 }
 
-                DateFormat outputFormat = new SimpleDateFormat("dd-MM-yyyy",
+                DateFormat outputFormat = new SimpleDateFormat("dd-MMM-yyyy",
                         Locale.getDefault());
                 // outputFormat.setTimeZone(TimeZone.getTimeZone("IST"));
                 outputFormat.setTimeZone(TimeZone.getDefault());
@@ -818,7 +818,7 @@ public class Home_screen extends AppCompatActivity
             HttpHandler sh = new HttpHandler();
             // Making a request to url and getting response
             //String url = "http://api.androidhive.info/contacts/";
-            jsonStr = sh.makeServiceCall("http://112.196.3.42:8298/api/Job?Driverid=" + Driver_id + "&startDate=" + fist_date + "&endDate=" + last_date + "&jobNumber=" + Search_withjob_number, Access_tocken);
+            jsonStr = sh.makeServiceCall("http://tidy-api-dev.logisfleet.com/api/Job?Driverid=" + Driver_id + "&startDate=" + fist_date + "&endDate=" + last_date + "&jobNumber=" + Search_withjob_number, Access_tocken);
             //jsonStr = CharMatcher.anyOf(" *#&").removeFrom(dirtyString);
             // String newurl =jsonStr.replaceAll("null"," ");
             Log.d("Response: ", "> " + jsonStr);
@@ -1063,9 +1063,30 @@ public class Home_screen extends AppCompatActivity
                                 jobs_steps.put("CustomerSignature1", CustomerSignature1);
                                 jobs_steps.put("PhotoFile1", PhotoFile1);
                                 jobs_steps.put("signedby1", signedby1);
+
+//                                Arraylist_for_Search_shifted1.clear();
+//                                Arraylist_for_Search_shifted2.clear();
+//                                Arraylist_for_Search_inprogress1.clear();
+//                                Arraylist_for_Search_inprogress2.clear();
+//                                Arraylist_for_Search_changed1.clear();
+//                                Arraylist_for_Search_changed2.clear();
+                                int size = Arraylist_for_Search_inprogress1.size();
+                                int size2 = Arraylist_for_Search_shifted1.size();
+                                int size3 = Arraylist_for_Search_changed1.size();
+                                int size4 = Arraylist_for_Search_pulled1.size();
+                                String str_size = String.valueOf(size);
+                                String str_size2 = String.valueOf(size2);
+                                String str_size3 = String.valueOf(size3);
+                                String str_size4 = String.valueOf(size4);
+                                jobs_steps.put("inprogresssize", str_size);
+                                jobs_steps.put("Shifted_size", str_size2);
+                                jobs_steps.put("Changed_size", str_size3);
+                                jobs_steps.put("pulled_size", str_size4);
+
                                 if (jobstatus.contentEquals("Assigned")) {
                                     Arraylist_for_Search_assigned1.add(jobs_steps);
                                 } else if (jobstatus.contentEquals("Acknowledged")) {
+
                                     Arraylist_for_Search_acknowledge1.add(jobs_steps);
                                 } else if (jobstatus.contentEquals("In Progress")) {
                                     Arraylist_for_Search_inprogress1.add(jobs_steps);
@@ -1080,6 +1101,7 @@ public class Home_screen extends AppCompatActivity
                                 } else if (jobstatus.contentEquals("Cancelled")) {
                                     Arraylist_for_Search_cancelled1.add(jobs_steps);
                                 }
+
 
                             } catch (JSONException e) {
                                 e.printStackTrace();

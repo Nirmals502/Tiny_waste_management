@@ -196,7 +196,7 @@ public class JobType_adapter extends BaseAdapter {
                 @Override
                 public void onClick(View v) {
                     String ContactNo1 = jobs_steps.get(position).get("ContactNo");
-                    String str_phone="";
+                    String str_phone = "";
                     //String job_step_id1 = jobs_steps.get(position).get("job_step_id1");
                     try {
                         String[] separated = ContactNo1.split(",,");
@@ -204,7 +204,7 @@ public class JobType_adapter extends BaseAdapter {
 
                     } catch (java.lang.IndexOutOfBoundsException e) {
                         e.printStackTrace();
-                        str_phone="";
+                        str_phone = "";
                     }
                     Intent intent = new Intent(Intent.ACTION_DIAL);
                     intent.setData(Uri.parse("tel:" + str_phone));
@@ -215,7 +215,7 @@ public class JobType_adapter extends BaseAdapter {
                 @Override
                 public void onClick(View v) {
                     String ContactNo1 = jobs_steps.get(position).get("ContactNo");
-                    String str_phone="";
+                    String str_phone = "";
                     //String job_step_id1 = jobs_steps.get(position).get("job_step_id1");
                     try {
                         String[] separated = ContactNo1.split(",,");
@@ -223,7 +223,7 @@ public class JobType_adapter extends BaseAdapter {
 
                     } catch (java.lang.IndexOutOfBoundsException e) {
                         e.printStackTrace();
-                        str_phone="";
+                        str_phone = "";
 
                     }
                     Intent intent = new Intent(Intent.ACTION_DIAL);
@@ -317,27 +317,27 @@ public class JobType_adapter extends BaseAdapter {
 
                 }
 
-                    mViewHolder.lv_aditional_chargesStep1.setOnTouchListener(new View.OnTouchListener() {
-                        @Override
-                        public boolean onTouch(View view, MotionEvent motionEvent) {
-                            int action = motionEvent.getAction();
-                            switch (action) {
-                                case MotionEvent.ACTION_DOWN:
-                                    // Disable the scroll view to intercept the touch event
-                                    view.getParent().requestDisallowInterceptTouchEvent(true);
-                                    return false;
-                                case MotionEvent.ACTION_UP:
-                                    // Allow scroll View to interceot the touch event
-                                    view.getParent().requestDisallowInterceptTouchEvent(false);
-                                    return true;
-                                case MotionEvent.ACTION_MOVE:
-                                    view.getParent().requestDisallowInterceptTouchEvent(true);
-                                    return false;
-                                default:
-                                    return true;
-                            }
+                mViewHolder.lv_aditional_chargesStep1.setOnTouchListener(new View.OnTouchListener() {
+                    @Override
+                    public boolean onTouch(View view, MotionEvent motionEvent) {
+                        int action = motionEvent.getAction();
+                        switch (action) {
+                            case MotionEvent.ACTION_DOWN:
+                                // Disable the scroll view to intercept the touch event
+                                view.getParent().requestDisallowInterceptTouchEvent(true);
+                                return false;
+                            case MotionEvent.ACTION_UP:
+                                // Allow scroll View to interceot the touch event
+                                view.getParent().requestDisallowInterceptTouchEvent(false);
+                                return true;
+                            case MotionEvent.ACTION_MOVE:
+                                view.getParent().requestDisallowInterceptTouchEvent(true);
+                                return false;
+                            default:
+                                return true;
                         }
-                    });
+                    }
+                });
 
                 // additional_charges_string_to_send = TextUtils.join("| ", alstring_to_send);
             } catch (java.lang.NullPointerException e) {
@@ -1107,7 +1107,7 @@ public class JobType_adapter extends BaseAdapter {
 
                 } catch (java.lang.IndexOutOfBoundsException e) {
                     e.printStackTrace();
-                    step1_bintype="";
+                    step1_bintype = "";
 
                 }
                 try {
@@ -1117,7 +1117,7 @@ public class JobType_adapter extends BaseAdapter {
 
                 } catch (java.lang.IndexOutOfBoundsException e) {
                     e.printStackTrace();
-                    step2_bintype="";
+                    step2_bintype = "";
 
                 }
 
@@ -1128,7 +1128,7 @@ public class JobType_adapter extends BaseAdapter {
 
                 } catch (java.lang.IndexOutOfBoundsException e) {
                     e.printStackTrace();
-                    step1_waste_type="";
+                    step1_waste_type = "";
 
                 }
                 try {
@@ -1138,12 +1138,12 @@ public class JobType_adapter extends BaseAdapter {
 
                 } catch (java.lang.IndexOutOfBoundsException e) {
                     e.printStackTrace();
-                    step2_wastetype="";
+                    step2_wastetype = "";
 
                 }
 
-                step1_bintype = step1_bintype+"-"+step1_waste_type;
-                step2_bintype = step2_bintype+"-"+step2_wastetype;
+                step1_bintype = step1_bintype + "-" + step1_waste_type;
+                step2_bintype = step2_bintype + "-" + step2_wastetype;
                 String job_step_id1 = jobs_steps.get(position).get("job_step_id1");
                 try {
                     String[] separated = job_step_id1.split(",,");
@@ -1175,7 +1175,7 @@ public class JobType_adapter extends BaseAdapter {
                 }
 
                 if (Status.contentEquals("In Progress")) {
-
+                    // if (subscriptionarray.size() == 0) {
                     Intent i1 = new Intent(context, feedback.class);
                     i1.putExtra("Job_number", mViewHolder.Job_number);
                     i1.putExtra("Job_additional_charge", mViewHolder.Job_additional_charge);
@@ -1194,6 +1194,10 @@ public class JobType_adapter extends BaseAdapter {
 
                     context.startActivity(i1);
                     ((Activity) context).finish();
+//                    } else {
+//                        Toast.makeText(context, "Already one job in Progress", Toast.LENGTH_LONG).show();
+//                    }
+
                 } else if (Status.contentEquals("Changed")) {
                     //RelativeLayout rlv_step1, rlv_step2;
 
@@ -1313,8 +1317,42 @@ public class JobType_adapter extends BaseAdapter {
                     context.startActivity(i1);
                     ((Activity) context).finish();
                 } else {
+                    if (Status.contentEquals("Acknowledge")) {
+                        String str_size = "";
+                        String str_size2 = "";
+                        String str_size3 = "";
+                        String str_size4 = "";
+                        // int lastindex = subscriptionarray.size()-1;
+//                        for (int i=0;i<subscriptionarray.size();i++)
+//                        {
+//                            HashMap<String, String> hashmap= subscriptionarray.get(i);
+//                            str_size= hashmap.get("inprogresssize");
+//                        }
+                        str_size = jobs_steps.get(position).get("inprogresssize");
+                        str_size2 = jobs_steps.get(position).get("Shifted_size");
+                        str_size3 = jobs_steps.get(position).get("Changed_size");
+                        str_size4 = jobs_steps.get(position).get("pulled_size");
+                        //str_size = subscriptionarray.
+                        //  String str = getValueByKey(subscriptionarray,"key1");
+                        if (!str_size.contentEquals("0")) {
+                            Toast.makeText(context, "Already one job in Progress", Toast.LENGTH_LONG).show();
+                            // new Status_update().execute();
+                        } else if (!str_size2.contentEquals("0")) {
+                            Toast.makeText(context, "Already one job in Progress", Toast.LENGTH_LONG).show();
+                            // new Status_update().execute();
+                        } else if (!str_size3.contentEquals("0")) {
+                            Toast.makeText(context, "Already one job in Progress", Toast.LENGTH_LONG).show();
+                            // new Status_update().execute();
+                        } else if (!str_size4.contentEquals("0")) {
+                            Toast.makeText(context, "Already one job in Progress", Toast.LENGTH_LONG).show();
+                            // new Status_update().execute();
+                        } else {
+                            new Status_update().execute();
+                        }
+                    } else {
+                        new Status_update().execute();
+                    }
 
-                    new Status_update().execute();
                     //Submit_Update();
                 }
 
@@ -1325,7 +1363,7 @@ public class JobType_adapter extends BaseAdapter {
     }
 
     private class MyViewHolder {
-        TextView Additionalremarks, job_number,Txt_aditional_charge,txt_datetime, txt_jobtype, amounttocollected, customername, personincharge, contactnumber, siteadess, bintype, wastetype, remarksforstep, personincharge2, txt_person_in___, contactnumber2, siteadess2, bintype2, wastetype2, remarksforstep2, Txt_contperson, Rating;
+        TextView Additionalremarks, job_number, Txt_aditional_charge, txt_datetime, txt_jobtype, amounttocollected, customername, personincharge, contactnumber, siteadess, bintype, wastetype, remarksforstep, personincharge2, txt_person_in___, contactnumber2, siteadess2, bintype2, wastetype2, remarksforstep2, Txt_contperson, Rating;
         ImageView img_signature1, photo1, img_signature2, photo2;
         ;
         TextView collection_method1, amountcollected1, drivernotes1, completedtime1, collection_method2, amountcollected2, drivernotes2, completedtime2, Signedby1, signedby2;
@@ -1429,7 +1467,7 @@ public class JobType_adapter extends BaseAdapter {
 
             // Making a request to url and getting response
             //String url = "http://api.androidhive.info/contacts/";
-            String str_url = "http://112.196.3.42:8298/v1/Job/UpdateJobStatus?JobId=" + Jobidd + "&nextstatus=" + Next_statuss + "&driverid=" + Driver_id + "&currentstatus=" + current_statuss;
+            String str_url = "http://tidy-api-dev.logisfleet.com/v1/Job/UpdateJobStatus?JobId=" + Jobidd + "&nextstatus=" + Next_statuss + "&driverid=" + Driver_id + "&currentstatus=" + current_statuss;
             String newurl = str_url.replaceAll(" ", "%20");
             jsonStr = sh.makeServiceCall_withHeader(newurl, 2, params, Access_tocken);
 
@@ -1445,6 +1483,7 @@ public class JobType_adapter extends BaseAdapter {
 //                    e.printStackTrace();
 //                }
                 JSONArray jArr = null;
+
                 try {
                     //String Str_response = jsonObj.getString("data");
 //                    Json_category = new JSONObject(Str_response);
@@ -1494,7 +1533,7 @@ public class JobType_adapter extends BaseAdapter {
         pDialog = new ProgressDialog(context);
         pDialog.setMessage("Uploading, please wait...");
         pDialog.show();
-        final StringRequest stringRequest = new StringRequest(Request.Method.POST, "http://112.196.3.42:8298/v1/Job/UpdateJobStatus?JobId=" + Jobidd + "&nextstatus=" + Next_statuss + "&driverid=" + Driver_id + "&currentstatus=" + current_statuss,
+        final StringRequest stringRequest = new StringRequest(Request.Method.POST, "http://tidy-api-dev.logisfleet.com/v1/Job/UpdateJobStatus?JobId=" + Jobidd + "&nextstatus=" + Next_statuss + "&driverid=" + Driver_id + "&currentstatus=" + current_statuss,
                 new Response.Listener<String>() {
                     @Override
                     public void onResponse(String response) {

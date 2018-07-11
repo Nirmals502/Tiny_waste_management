@@ -1102,7 +1102,7 @@ public class feedback extends AppCompatActivity {
             HttpHandler sh = new HttpHandler();
             // Making a request to url and getting response
             //String url = "http://api.androidhive.info/contacts/";
-            jsonStr = sh.makeServiceCall("http://112.196.3.42:8298/v1/ProjectSiteCharge/GetProjectSiteChargeIDBinWateType/" + Project_site_id, Access_tocken);
+            jsonStr = sh.makeServiceCall("http://tidy-api-dev.logisfleet.com/v1/ProjectSiteCharge/GetProjectSiteChargeIDBinWateType/" + Project_site_id, Access_tocken);
 
             Log.d("Response: ", "> " + jsonStr);
 
@@ -1235,7 +1235,7 @@ public class feedback extends AppCompatActivity {
             HttpHandler sh = new HttpHandler();
             // Making a request to url and getting response
             //String url = "http://api.androidhive.info/contacts/";
-            jsonStr_for_collection_method = sh.makeServiceCall("http://112.196.3.42:8298/v1/Job/GetPaymentterms", Access_tocken);
+            jsonStr_for_collection_method = sh.makeServiceCall("http://tidy-api-dev.logisfleet.com/v1/Job/GetPaymentterms", Access_tocken);
             //String[] options=
 
             Log.d("Response: ", "> " + jsonStr_for_collection_method);
@@ -1348,7 +1348,7 @@ public class feedback extends AppCompatActivity {
             HttpHandler sh = new HttpHandler();
             // Making a request to url and getting response
             //String url = "http://api.androidhive.info/contacts/";
-            jsonStr_for_collection_method = sh.makeServiceCall("http://112.196.3.42:8298/v1/DriverNote/GetAllDriverNote", Access_tocken);
+            jsonStr_for_collection_method = sh.makeServiceCall("http://tidy-api-dev.logisfleet.com/v1/DriverNote/GetAllDriverNote", Access_tocken);
             //String[] options=
 
             Log.d("Response: ", "> " + jsonStr_for_collection_method);
@@ -1702,7 +1702,7 @@ public class feedback extends AppCompatActivity {
             HttpHandler sh = new HttpHandler();
             // Making a request to url and getting response
             //String url = "http://api.androidhive.info/contacts/";
-            String str_url = "http://112.196.3.42:8298/v1/Job/UpdateJobStatus?JobId=" + Job_id + "&nextstatus=" + Next_status + "&driverid=" + Driver_id + "&currentstatus=" + current_status;
+            String str_url = "http://tidy-api-dev.logisfleet.com/v1/Job/UpdateJobStatus?JobId=" + Job_id + "&nextstatus=" + Next_status + "&driverid=" + Driver_id + "&currentstatus=" + current_status;
             String newurl = str_url.replaceAll(" ", "%20");
             jsonStr = sh.makeServiceCall_post(newurl, Access_tocken);
 
@@ -1819,6 +1819,7 @@ public class feedback extends AppCompatActivity {
                             // String respose = response.toString();
                             // Toast.makeText(feedback.this,respose,Toast.LENGTH_LONG).show();
                         } else {
+                            System.out.println("response............"+response.errorBody());
                             //Toast.makeText(feedback.this,response.toString(),Toast.LENGTH_LONG).show();
                             open_loginWindow();
                         }

@@ -16,7 +16,7 @@ import retrofit2.converter.gson.GsonConverterFactory;
  */
 
 public class ApiClient {
-    public static final String BASE_URL = "http://112.196.3.42:8298/v1/Job/";
+    public static final String BASE_URL = "http://tidy-api-dev.logisfleet.com/v1/Job/";
     private static Retrofit retrofit = null;
 
     public static Retrofit getClient(final String Tocken) {
